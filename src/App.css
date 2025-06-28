@@ -1,0 +1,39 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 4rem 0;
+}
+
+.main-content h1 {
+  font-size: 3rem;
+  color: #6c5dd3;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.main-content p {
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 2rem 0;
+  }
+  
+  .main-content h1 {
+    font-size: 2rem;
+  }
+  
+  .main-content p {
+    font-size: 1rem;
+  }
+}
