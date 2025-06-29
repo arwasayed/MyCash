@@ -220,7 +220,7 @@ const LandingPage = () => {
               </p>
               <div className="step-image">
                 <img
-                  src="/public/Landing-Page/landing-image/img(1)(2).png"
+                  src="/public/Landing-Page/landing-image/AchivGoals1.png"
                   alt="Financial Goals"
                 />
               </div>
