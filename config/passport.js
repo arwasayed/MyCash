@@ -16,9 +16,12 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      passReqToCallback: true,
-      scope: ['profile', 'email'],
-      proxy: true // مهم إذا كنت تستخدم خادم تطوير مثل ngrok
+   
+      accessType: 'offline',
+      prompt: 'consent'
+      // passReqToCallback: true,
+      // scope: ['profile', 'email'],
+
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
@@ -37,10 +40,12 @@ passport.use(
         // 2. إعداد البيانات مع قيم افتراضية
         const email = profile.emails[0].value;
         const nickname = profile.displayName || `user${Math.random().toString(36).substring(2, 10)}`;
-        const avatar = (profile.photos && profile.photos[0]) ? profile.photos[0].value : 'default-avatar.png';
+        const avatar = (profile.photos && profile.photos[0]) ?
+          profile.photos[0].value :
+          'https://example.com/default-avatar.png';
 
         // 3. البحث عن مستخدم موجود أو إنشاء جديد
-        let user = await User.findOne({ 
+        let user = await User.findOne({
           $or: [
             { email },
             { googleId: profile.id }
