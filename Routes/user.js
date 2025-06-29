@@ -1,11 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const { signup, login, forgotPassword, resetPassword } = require('../Controllers/userController');
+const passport = require('passport');
+const {
+  signup,
+  login,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+  googleCallback
+} = require('../controllers/userController');
 const { protect } = require('../middlewares/authMiddleware');
+
 
 router.post('/signup', signup);
 router.post('/login', login);
-router.post('/forgotPassword', forgotPassword);
-router.patch('/resetPassword/:token', resetPassword);
+router.post('/forgot-password', forgotPassword);
+router.patch('/reset-password/:token', resetPassword);
+router.get('/verify-email/:token', verifyEmail); 
+
+//google
+router.get('/auth/google',
+  passport.authenticate('google', {
+    scope: ['email', 'profile'],
+    session: false,
+    prompt: 'select_account' 
+  })
+);
+router.get('/auth/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: '/login',
+    session: false
+  }),
+  googleCallback 
+);
 
 module.exports = router;

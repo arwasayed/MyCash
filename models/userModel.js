@@ -35,31 +35,48 @@ const userSchema = new mongoose.Schema({
       return v.trim().toLowerCase();
     }
   },
-  phone: {
+  
+  provider: {
     type: String,
-    unique: {
-      value: true,
-      message: 'Phone number is already registered'
+    enum: ['local', 'google'],
+    default: 'local'
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  phone: {
+  type: String,
+  unique: {
+    value: true,
+    message: 'Phone number is already registered'
+  },
+  sparse: true,
+  required: false, 
+  validate: {
+    validator: function(v) {
+      if (!v) return true; 
+      const cleaned = v.replace(/^\+20|^0020|[\s-]/g, '');
+      return /^01[0125]\d{8}$/.test(cleaned);
     },
-    sparse: true,
-    validate: {
-      validator: function(v) {
-        const cleaned = v.replace(/^\+20|^0020|[\s-]/g, '');
-        return /^01[0125]\d{8}$/.test(cleaned);
-      },
-      message: 'Invalid Egyptian phone number. Must be 11 digits starting with 010, 011, 012, or 015'
-    },
-    set: function(v) {
-      return v.replace(/^\+20|^0020|[\s-]/g, '');
-    }
+    message: 'Invalid Egyptian phone number. Must be 11 digits starting with 010, 011, 012, or 015'
+  },
+  set: function(v) {
+    return v ? v.replace(/^\+20|^0020|[\s-]/g, '') : v;
+  }
+
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
+    required: function() {
+      return this.provider === 'local';
+    },
     minlength: [8, 'Password must be at least 8 characters'],
     select: false,
     validate: {
       validator: function(v) {
+        if (this.provider === 'google') return true;
         return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(v);
       },
       message: 'Password must contain at least: 1 uppercase, 1 lowercase, 1 number'
@@ -104,11 +121,14 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
+
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   emailVerified: {
     type: Boolean,
-    default: false
+    default: function() {
+      return this.provider === 'google';
+    }
   },
   emailVerifyToken: String,
   emailVerifyExpire: Date
@@ -119,6 +139,10 @@ const userSchema = new mongoose.Schema({
     transform: function(doc, ret) {
       delete ret.password;
       delete ret.__v;
+      delete ret.resetPasswordToken;
+      delete ret.resetPasswordExpire;
+      delete ret.emailVerifyToken;
+      delete ret.emailVerifyExpire;
       return ret;
     }
   },
@@ -132,14 +156,11 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
+  if (!this.isModified('password') || this.provider !== 'local') return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
-
 
 userSchema.pre('save', async function(next) {
   if (this.isModified('email')) {
@@ -164,36 +185,34 @@ userSchema.methods.updateLastLogin = async function() {
   await this.save({ validateBeforeSave: false });
 };
 
-
 userSchema.methods.comparePassword = async function(candidatePassword) {
+  if (this.provider !== 'local') {
+    throw new Error('Compare password is only available for local users');
+  }
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-
 userSchema.methods.createPasswordResetToken = function() {
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  if (this.provider !== 'local') {
+    throw new Error('Password reset is only available for local users');
+  }
   
+  const resetToken = crypto.randomBytes(32).toString('hex');
   this.resetPasswordToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-  
-  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; 
-  
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
 
-
 userSchema.methods.createEmailVerifyToken = function() {
   const verifyToken = crypto.randomBytes(32).toString('hex');
-  
   this.emailVerifyToken = crypto
     .createHash('sha256')
     .update(verifyToken)
     .digest('hex');
-  
-  this.emailVerifyExpire = Date.now() + 24 * 60 * 60 * 1000; 
-  
+  this.emailVerifyExpire = Date.now() + 24 * 60 * 60 * 1000;
   return verifyToken;
 };
 
