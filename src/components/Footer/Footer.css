@@ -84,6 +84,30 @@
   display: block;
 }
 
+.footer-social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.footer-social-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e9e6f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.footer-social-icon svg {
+  display: block;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .footer {

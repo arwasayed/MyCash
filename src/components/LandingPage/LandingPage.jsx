@@ -1,5 +1,13 @@
 import React from "react";
 import "./LandingPage.css";
+import {
+  MdOutlineTrackChanges,
+  MdBarChart,
+  MdOutlineLightbulb,
+  MdSmartphone,
+  MdOutlineShield,
+} from "react-icons/md";
+import { GiRobotGolem } from "react-icons/gi";
 
 const LandingPage = () => {
   return (
@@ -20,15 +28,34 @@ const LandingPage = () => {
             </p>
             <div className="hero-buttons d-flex gap-2 flex-wrap justify-content-end">
               <button className="btn-primary">
-                ابدأ الآن مجاناً <span className="rocket-icon">🚀</span>
+                ابدأ الآن مجاناً
+                <span className="startnow-icon" style={{ marginRight: 8 }}>
+                  <img
+                    src="/public/Landing-Page/landing-icons/StartNow.svg"
+                    alt="ابدأ الآن"
+                    width={19}
+                    height={19}
+                  />
+                </span>
               </button>
               <button className="btn-secondary">
-                شاهد كيف يعمل <span className="play-icon">▶</span>
+                شاهد كيف يعمل
+                <span className="watchnow-icon" style={{ marginRight: 8 }}>
+                  <img
+                    src="/public/Landing-Page/landing-icons/WatchNow.svg"
+                    alt="شاهد كيف يعمل"
+                    width={15}
+                    height={19}
+                  />
+                </span>
               </button>
             </div>
           </div>
           <div className="hero-image">
-            <img src="/public/img0.png" alt="AI Assistant with person" />
+            <img
+              src="/public/Landing-Page/landing-image/img0.png"
+              alt="AI Assistant with person"
+            />
           </div>
         </div>
       </section>
@@ -42,55 +69,16 @@ const LandingPage = () => {
               مميزات تجعل إدارة أموالك أسهل وأكثر متعة
             </p>
           </div>
-
           <div className="features-grid">
             {/* Row 1 */}
             <div className="feature-card">
               <div className="feature-icon purple-icon">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    x="5"
-                    y="8"
-                    width="14"
-                    height="10"
-                    rx="5"
-                    fill="#ede9fe"
-                    stroke="#8b5cf6"
-                    strokeWidth="1.5"
-                  />
-                  <circle cx="8.5" cy="13" r="1" fill="#8b5cf6" />
-                  <circle cx="15.5" cy="13" r="1" fill="#8b5cf6" />
-                  <rect
-                    x="10"
-                    y="3"
-                    width="4"
-                    height="2"
-                    rx="1"
-                    fill="#8b5cf6"
-                  />
-                  <rect
-                    x="2"
-                    y="11"
-                    width="2"
-                    height="2"
-                    rx="1"
-                    fill="#8b5cf6"
-                  />
-                  <rect
-                    x="20"
-                    y="11"
-                    width="2"
-                    height="2"
-                    rx="1"
-                    fill="#8b5cf6"
-                  />
-                </svg>
+                <img
+                  src="/public/Landing-Page/landing-icons/AI.svg"
+                  alt="مساعد ذكي شخصي"
+                  width={32}
+                  height={32}
+                />
               </div>
               <h3 className="feature-title">مساعد ذكي شخصي</h3>
               <p className="feature-description">
@@ -102,44 +90,12 @@ const LandingPage = () => {
 
             <div className="feature-card">
               <div className="feature-icon green-icon">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    x="3"
-                    y="13"
-                    width="3"
-                    height="8"
-                    rx="1.5"
-                    fill="#d1fae5"
-                    stroke="#10b981"
-                    strokeWidth="1.5"
-                  />
-                  <rect
-                    x="8.5"
-                    y="9"
-                    width="3"
-                    height="12"
-                    rx="1.5"
-                    fill="#d1fae5"
-                    stroke="#10b981"
-                    strokeWidth="1.5"
-                  />
-                  <rect
-                    x="14"
-                    y="5"
-                    width="3"
-                    height="16"
-                    rx="1.5"
-                    fill="#d1fae5"
-                    stroke="#10b981"
-                    strokeWidth="1.5"
-                  />
-                </svg>
+                <img
+                  src="/public/Landing-Page/landing-icons/Reports.svg"
+                  alt="تقارير تفاعلية"
+                  width={32}
+                  height={32}
+                />
               </div>
               <h3 className="feature-title">تقارير تفاعلية</h3>
               <p className="feature-description">
@@ -151,31 +107,12 @@ const LandingPage = () => {
 
             <div className="feature-card">
               <div className="feature-icon pink-icon">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="#ec4899"
-                    strokeWidth="2"
-                    fill="#fff0f6"
-                  />
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="5"
-                    stroke="#ec4899"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                  <circle cx="12" cy="12" r="2" fill="#ec4899" />
-                </svg>
+                <img
+                  src="/public/Landing-Page/landing-icons/Goals.svg"
+                  alt="أهداف ذكية"
+                  width={32}
+                  height={32}
+                />
               </div>
               <h3 className="feature-title">أهداف ذكية</h3>
               <p className="feature-description">
@@ -188,27 +125,12 @@ const LandingPage = () => {
             {/* Row 2 */}
             <div className="feature-card">
               <div className="feature-icon purple-shield-icon">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 3l7 4v5c0 5-3.5 9-7 9s-7-4-7-9V7l7-4z"
-                    fill="#ede9fe"
-                    stroke="#9333ea"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M12 11v3"
-                    stroke="#9333ea"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="12" cy="15" r="1" fill="#9333ea" />
-                </svg>
+                <img
+                  src="/public/Landing-Page/landing-icons/Securty.svg"
+                  alt="أمان عالي"
+                  width={32}
+                  height={32}
+                />
               </div>
               <h3 className="feature-title">أمان عالي</h3>
               <p className="feature-description">
@@ -218,32 +140,12 @@ const LandingPage = () => {
 
             <div className="feature-card">
               <div className="feature-icon blue-icon">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    x="7"
-                    y="3"
-                    width="10"
-                    height="18"
-                    rx="2"
-                    fill="#dbeafe"
-                    stroke="#3b82f6"
-                    strokeWidth="1.5"
-                  />
-                  <rect
-                    x="10"
-                    y="18"
-                    width="4"
-                    height="2"
-                    rx="1"
-                    fill="#3b82f6"
-                  />
-                </svg>
+                <img
+                  src="/public/Landing-Page/landing-icons/EasyUsed.svg"
+                  alt="سهولة الاستخدام"
+                  width={32}
+                  height={32}
+                />
               </div>
               <h3 className="feature-title">سهولة الاستخدام</h3>
               <p className="feature-description">
@@ -255,27 +157,12 @@ const LandingPage = () => {
 
             <div className="feature-card">
               <div className="feature-icon yellow-icon">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="12" cy="12" r="10" fill="#fef9c3" />
-                  <path
-                    d="M9 17h6M10 20h4"
-                    stroke="#f59e0b"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M12 7v4"
-                    stroke="#f59e0b"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <img
+                  src="/public/Landing-Page/landing-icons/advice.svg"
+                  alt="نصائح ذكية"
+                  width={32}
+                  height={32}
+                />
               </div>
               <h3 className="feature-title">نصائح ذكية</h3>
               <p className="feature-description">
@@ -304,7 +191,10 @@ const LandingPage = () => {
                 أنشئ حسابك وأربط حساباتك البنكية بأمان تام
               </p>
               <div className="step-image">
-                <img src="/public/img(3).png" alt="Banking App" />
+                <img
+                  src="/public/Landing-Page/landing-image/img(3).png"
+                  alt="Banking App"
+                />
               </div>
             </div>
 
@@ -315,7 +205,10 @@ const LandingPage = () => {
                 اسأل عن أموالك واحصل على إجابات فورية
               </p>
               <div className="step-image">
-                <img src="/public/img(2).png" alt="AI Chat" />
+                <img
+                  src="/public/Landing-Page/landing-image/img(2).png"
+                  alt="AI Chat"
+                />
               </div>
             </div>
 
@@ -326,7 +219,10 @@ const LandingPage = () => {
                 تابع تقدمك واحصل على نصائح لتحقيق أهدافك
               </p>
               <div className="step-image">
-                <img src="/public/img(1)(2).png" alt="Financial Goals" />
+                <img
+                  src="/public/Landing-Page/landing-image/img(1)(2).png"
+                  alt="Financial Goals"
+                />
               </div>
             </div>
           </div>
@@ -341,11 +237,34 @@ const LandingPage = () => {
             انضم لآلاف المستخدمين الذين يديرون أموالهم بذكاء مع ماي كاش
           </p>
           <div className="cta-buttons d-flex gap-2 justify-content-center mb-4 flex-wrap">
-            <button className="btn-primary-cta">ابدأ رحلتك الآن ←</button>
-            <button className="btn-secondary-cta">تواصل معنا</button>
+            <button className="btn-primary-cta">
+              ابدأ رحلتك الآن
+              <span className="startjourny-icon" style={{ marginRight: 8 }}>
+                <img
+                  src="/public/Landing-Page/landing-icons/StartJourny.svg"
+                  alt="ابدأ رحلتك الآن"
+                  width={17}
+                  height={19}
+                />
+              </span>
+            </button>
+            <button className="btn-secondary-cta">
+              تواصل معنا
+              <span className="contactus-icon" style={{ marginRight: 8 }}>
+                <img
+                  src="/public/Landing-Page/landing-icons/ContactUs.svg"
+                  alt="تواصل معنا"
+                  width={23}
+                  height={19}
+                />
+              </span>
+            </button>
           </div>
           <div className="cta-image">
-            <img src="/public/img(4).png" alt="Happy People Celebrating" />
+            <img
+              src="/public/Landing-Page/landing-image/img(4).png"
+              alt="Happy People Celebrating"
+            />
           </div>
         </div>
       </section>
