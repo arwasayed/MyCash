@@ -1,9 +1,9 @@
-// utils/passport.js
+
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/userModel');
 
-// Debug: تحقق من وجود متغيرات البيئة
+
 console.log('Google Auth Environment Variables:', {
   clientID: !!process.env.GOOGLE_CLIENT_ID,
   callbackURL: process.env.GOOGLE_CALLBACK_URL
@@ -32,12 +32,12 @@ passport.use(
           displayName: profile.displayName
         });
 
-        // 1. التحقق من وجود البريد الإلكتروني (مطلوب)
+        
         if (!profile.emails || !profile.emails[0]) {
           throw new Error('Google authentication failed: No email provided');
         }
 
-        // 2. إعداد البيانات مع قيم افتراضية
+        
         const email = profile.emails[0].value;
         const nickname = profile.displayName || `user${Math.random().toString(36).substring(2, 10)}`;
         const avatar = (profile.photos && profile.photos[0]) ?
@@ -63,7 +63,7 @@ passport.use(
           });
           console.log('New user created:', user);
         } else {
-          // تحديث بيانات المستخدم إذا وجد
+         
           user.avatar = avatar;
           user.googleId = profile.id;
           await user.save();
