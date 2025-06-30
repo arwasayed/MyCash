@@ -1,5 +1,6 @@
 import React from "react";
 import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
@@ -59,9 +60,9 @@ const Navbar = () => {
             تسجيل الدخول
           </a>
           <span className="separator">|</span>
-          <a href="#" className="auth-link">
+          <Link to="/register" className="auth-link">
             إنشاء حساب
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

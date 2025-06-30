@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
-  plugins: [react()],
-   optimizeDeps: {
+  plugins: [react(), svgr()],
+  optimizeDeps: {
     include: ['react-router-dom']
   },
   server: {
@@ -13,6 +14,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
+    }
+  },
+  build: {
+    rollupOptions: {
+      input: 'src/main.jsx'
     }
   }
 })
