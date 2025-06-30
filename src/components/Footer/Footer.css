@@ -3,7 +3,10 @@
   border: none;
   border-radius: 0;
   margin-top: 0;
-  padding: 0;
+  padding: 2.5rem 0 1.5rem 0;
+  box-shadow: 0 -2px 12px rgba(139, 92, 246, 0.04);
+  width: 100%;
+  border-top: 1px solid #e5e7eb;
 }
 
 .footer-container {
@@ -13,6 +16,7 @@
   grid-template-columns: 2fr 1fr 1fr;
   gap: 4rem;
   align-items: start;
+  padding: 0 1rem;
 }
 
 .footer-section {
@@ -92,16 +96,20 @@
 }
 
 .footer-social-icon {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: #e9e6f7;
+  background: #ede9fe;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: none;
-  box-shadow: none;
+  transition: background 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
   text-decoration: none;
+}
+
+.footer-social-icon:hover {
+  background: #d1c4e9;
 }
 
 .footer-social-icon svg {

@@ -56,7 +56,7 @@ const Navbar = () => {
         </ul>
         {/* Auth links on the left */}
         <div className="d-flex align-items-center gap-2 order-3 ms-auto">
-          <a href="#" className="auth-link">
+          <a href="/login" className="auth-link">
             تسجيل الدخول
           </a>
           <span className="separator">|</span>
