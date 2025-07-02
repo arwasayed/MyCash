@@ -179,51 +179,46 @@ const LandingPage = () => {
           <div className="how-it-works-header text-center mb-5">
             <h2 className="how-it-works-title">كيف يعمل ماي كاش؟</h2>
             <p className="how-it-works-subtitle">
-              ثلاث خطوات بسيطة لبداية رحلتك المالية
+              ثلاث خطوات بسيطة لإدارة رحلتك المالية
             </p>
           </div>
 
-          <div className="steps-grid">
-            <div className="step-card">
-              <div className="step-number purple-step">1</div>
-              <h3 className="step-title">سجل وأربط حساباتك</h3>
-              <p className="step-description">
-                أنشئ حسابك وأربط حساباتك البنكية بأمان تام
-              </p>
-              <div className="step-image">
-                <img
-                  src="/public/Landing-Page/landing-image/img(3).png"
-                  alt="Banking App"
-                />
+          <div className="how-steps">
+            <div className="how-step">
+              <div className="how-step-circle step1">1</div>
+              <div className="how-step-title">سجل واربط حساباتك</div>
+              <div className="how-step-desc">
+                أنشئ حسابك واربِط حساباتك البنكية بأمان تام
               </div>
+              <img
+                src="/Landing-Page/landing-image/img(3).png"
+                alt="سجل حسابك"
+                className="how-step-img"
+              />
             </div>
-
-            <div className="step-card">
-              <div className="step-number green-step">2</div>
-              <h3 className="step-title">تحدث مع المساعد الذكي</h3>
-              <p className="step-description">
-                اسأل عن أموالك واحصل على إجابات فورية
-              </p>
-              <div className="step-image">
-                <img
-                  src="/public/Landing-Page/landing-image/img(2).png"
-                  alt="AI Chat"
-                />
+            <div className="how-step">
+              <div className="how-step-circle step2">2</div>
+              <div className="how-step-title">تحدث مع المساعد الذكي</div>
+              <div className="how-step-desc">
+                اسأل عن أمورك واحصل على إجابات فورية
               </div>
+              <img
+                src="/Landing-Page/landing-image/img(2).png"
+                alt="تحدث مع المساعد"
+                className="how-step-img"
+              />
             </div>
-
-            <div className="step-card">
-              <div className="step-number red-step">3</div>
-              <h3 className="step-title">حقق أهدافك المالية</h3>
-              <p className="step-description">
-                تابع تقدمك واحصل على نصائح لتحقيق أهدافك
-              </p>
-              <div className="step-image">
-                <img
-                  src="/public/Landing-Page/landing-image/AchivGoals1.png"
-                  alt="Financial Goals"
-                />
+            <div className="how-step">
+              <div className="how-step-circle step3">3</div>
+              <div className="how-step-title">حقق أهدافك المالية</div>
+              <div className="how-step-desc">
+                تابع أهدافك واحصل على اقتراحات لتحقيق أهدافك
               </div>
+              <img
+                src="/Landing-Page/landing-image/AchivGoals1.png"
+                alt="حقق أهدافك"
+                className="how-step-img"
+              />
             </div>
           </div>
         </div>
@@ -231,7 +226,10 @@ const LandingPage = () => {
 
       {/* Call to Action Section */}
       <section className="cta-section">
-        <div className="cta-container d-flex flex-column align-items-center">
+        <div
+          className="cta-container d-flex flex-column align-items-center justify-content-center text-center"
+          style={{ minHeight: "100vh" }}
+        >
           <h2 className="cta-title">جاهز لتغيير حياتك المالية؟</h2>
           <p className="cta-subtitle">
             انضم لآلاف المستخدمين الذين يديرون أموالهم بذكاء مع ماي كاش
@@ -260,7 +258,7 @@ const LandingPage = () => {
               </span>
             </button>
           </div>
-          <div className="cta-image">
+          <div className="cta-image mt-4">
             <img
               src="/public/Landing-Page/landing-image/img(4).png"
               alt="Happy People Celebrating"

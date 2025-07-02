@@ -52,10 +52,16 @@
   align-items: center;
 }
 
-.auth-links {
+.auth-links, .d-flex.align-items-center {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.auth-link, .separator {
+  white-space: nowrap;
 }
 
 .auth-link {
@@ -113,4 +119,9 @@
   width: 100%;
   min-height: 100vh;
   margin-top: 70px; /* Adjust if your navbar height is different */
+}
+
+.navbar .navbar-brand {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
