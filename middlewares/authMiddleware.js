@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // authMiddleware.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
@@ -18,6 +19,10 @@ const tokenBlacklist = {
   remove: function(token) { this.tokens.delete(token); }
 };
 
+=======
+const jwt = require('jsonwebtoken');
+const User = require('../models/userModel');
+>>>>>>> 76cede1ffaf8fb12bea9f3ebdaa4e7977f1b6383
 const sendAuthError = (res, statusCode, message) => {
   return res.status(statusCode).json({
     status: 'error',
@@ -25,6 +30,7 @@ const sendAuthError = (res, statusCode, message) => {
   });
 };
 
+<<<<<<< HEAD
 const isTokenBlacklisted = async (token) => {
   if (process.env.USE_REDIS === 'true') {
     const result = await getAsync(`blacklist:${token}`);
@@ -53,6 +59,8 @@ exports.removeFromBlacklist = async (token) => {
   }
 };
 
+=======
+>>>>>>> 76cede1ffaf8fb12bea9f3ebdaa4e7977f1b6383
 exports.protect = async (req, res, next) => {
   try {
     let token;
@@ -61,6 +69,7 @@ exports.protect = async (req, res, next) => {
       req.headers.authorization.startsWith('Bearer')
     ) {
       token = req.headers.authorization.split(' ')[1];
+<<<<<<< HEAD
     } else if (req.cookies?.token) {
       token = req.cookies.token;
     }
@@ -133,6 +142,38 @@ exports.protect = async (req, res, next) => {
       return sendAuthError(res, 401, 'Invalid token. Please log in again!');
     }
     if (err instanceof jwt.TokenExpiredError) {
+=======
+    }
+
+    if (!token) {
+      return sendAuthError(res, 401, 'You are not logged in! Please log in to get access.');
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const currentUser = await User.findById(decoded.id).select('+provider +password');
+
+    if (!currentUser) {
+      return sendAuthError(res, 401, 'The user belonging to this token no longer exists.');
+    }
+    if (currentUser.provider === 'local' && !currentUser.password) {
+      return sendAuthError(res, 401, 'Please log in using your email and password');
+    }
+    if (currentUser.provider === 'local' && currentUser.passwordChangedAt) {
+      const changedTimestamp = parseInt(
+        currentUser.passwordChangedAt.getTime() / 1000,
+        10
+      );
+      if (decoded.iat < changedTimestamp) {
+        return sendAuthError(res, 401, 'User recently changed password! Please log in again.');
+      }
+    }
+    req.user = currentUser;
+    next();
+  } catch (err) {
+    if (err.name === 'JsonWebTokenError') {
+      return sendAuthError(res, 401, 'Invalid token. Please log in again!');
+    }
+    if (err.name === 'TokenExpiredError') {
+>>>>>>> 76cede1ffaf8fb12bea9f3ebdaa4e7977f1b6383
       return sendAuthError(res, 401, 'Your token has expired! Please log in again.');
     }
     sendAuthError(res, 500, 'Authentication failed. Please try again later.');
@@ -141,16 +182,21 @@ exports.protect = async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
+<<<<<<< HEAD
     if (!req.user || !roles.includes(req.user.role)) {
       console.error('Unauthorized access attempt:', {
         userRole: req.user?.role,
         requiredRoles: roles
       });
+=======
+    if (!roles.includes(req.user.role)) {
+>>>>>>> 76cede1ffaf8fb12bea9f3ebdaa4e7977f1b6383
       return sendAuthError(res, 403, 'You do not have permission to perform this action.');
     }
     next();
   };
 };
+<<<<<<< HEAD
 
 exports.onlyForLocal = (req, res, next) => {
   if (req.user?.provider !== 'local') {
@@ -171,4 +217,11 @@ exports.verifyToken = async (token) => {
   });
   
   return decoded;
+=======
+exports.onlyForLocal = (req, res, next) => {
+  if (req.user.provider !== 'local') {
+    return sendAuthError(res, 403, 'This action is only available for local accounts.');
+  }
+  next();
+>>>>>>> 76cede1ffaf8fb12bea9f3ebdaa4e7977f1b6383
 };
