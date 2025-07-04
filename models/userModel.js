@@ -89,27 +89,14 @@ const userSchema = new mongoose.Schema({
     maxlength: [30, 'Nickname cannot exceed 30 characters'],
     match: [/^[a-zA-Z0-9_\- ]+$/, 'Nickname can only contain letters, numbers, spaces, hyphens and underscores']
   },
-<<<<<<< HEAD
 avatar: {
   type: String,
-  default: 'default-avatar.png', 
+  default: 'default-avatar.png', // صورة افتراضية
   validate: {
     validator: function(v) {
       return /\.(jpg|jpeg|png|gif|webp)$|^https?:\/\//i.test(v);
     },
     message: 'يجب أن تكون الصورة بصيغة صالحة (JPG, PNG, GIF) أو رابط URL'
-=======
- // In your userModel.js
-avatar: {
-  type: String,
-  // Either remove the validation or make it more flexible
-  validate: {
-    validator: function(v) {
-      // Allow URLs or specific file extensions
-      return /\.(jpg|jpeg|png|gif|webp)$|^https?:\/\//i.test(v);
-    },
-    message: props => `${props.value} is not a valid image URL or file!`
->>>>>>> 76cede1ffaf8fb12bea9f3ebdaa4e7977f1b6383
   }
 
     
