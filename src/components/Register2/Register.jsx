@@ -30,7 +30,7 @@ const SignupSection = () => {
       const response = await fetch("http://localhost:3000/api/user/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, nickname: fullName }),
+        body: JSON.stringify({ email, password,passwordConfirm: confirmPassword, nickname: fullName }),
       });
       if (!response.ok) {
         const text = await response.text();
@@ -55,8 +55,8 @@ const SignupSection = () => {
             </p>
           </div>
 
-          <Form onSubmit={handleSignup}>
-            <Form.Group className="position-relative input-with-icon">
+          <Form onSubmit={handleSignup} className="register">
+            <Form.Group className="position-relative input-with-icon icon">
               <Form.Label className="">الاسم الكامل</Form.Label>
               <Form.Control
                 type="text"
@@ -64,11 +64,24 @@ const SignupSection = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
-              <img src={UserIcon} alt="user icon" className="input-icon" />
+                  <img
+                  src={UserIcon}
+                  alt="lock"
+                  style={{
+                    position: "absolute",
+                    right: 10,
+                    top: "65%",
+                    transform: "translateY(-100%)",
+                    width: 24,
+                    height: 24,
+                    pointerEvents: "none",
+                  }}
+                />
+
               <br />
             </Form.Group>
 
-            <Form.Group className="mb-3 position-relative input-with-icon">
+            <Form.Group className="mb-3 position-relative input-with-icon icon">
               <Form.Label>البريد الإلكتروني</Form.Label>
               <Form.Control
                 type="email"
@@ -76,7 +89,20 @@ const SignupSection = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <img src={MailIcon} alt="user icon" className="input-icon" />
+              <img
+                  src={MailIcon}
+                  alt="lock"
+                  style={{
+                    position: "absolute",
+                    right: 10,
+                    top: "65%",
+                    transform: "translateY(-50%)",
+                    width: 24,
+                    height: 24,
+                    pointerEvents: "none",
+                  }}
+                />
+
             </Form.Group>
 
             <Form.Group className="mb-3 position-relative input-with-icon">
@@ -179,14 +205,29 @@ const SignupSection = () => {
               <br />
             </Form.Group>
 
-            {error && <Alert variant="danger">{error}</Alert>}
-            {success && <Alert variant="success">{success}</Alert>}
+            {message && (
+  <div className="custom-alert success">
+    <span className="alert-icon">✅</span>
+    <span className="alert-text">{message}</span>
+  </div>
+)}
+
+{error && (
+  <div className="custom-alert error">
+    <span className="alert-icon">❌</span>
+    <span className="alert-text">{error}</span>
+  </div>
+)}
 
             <Button variant="primary" className="register-button" type="submit">
               <p>← إنشاء حساب جديد</p>
             </Button>
           </Form>
-
+          <div>
+   <Button variant="primary" className="Google-button" type="submit">
+              <p> <img src="/images/devicon_google (1).svg"/>  Google تسجيل باستخدام </p>
+            </Button>
+            </div>
           <p className="login-text">
             تسجيل الدخول
             <Link to="/login" className="login-link">

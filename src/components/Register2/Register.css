@@ -62,12 +62,15 @@
 }
 
 .form-subtitle {
+  width:100% ;
   font-family: 'Cairo', sans-serif;
   font-size: 1.1rem;
   color: #7B88A8;
 }
 
-
+::placeholder{
+  color: #ADAEBC !important;
+}
 
 /* Input Styles */
 .input-with-icon {
@@ -84,32 +87,29 @@
   font-family: 'Cairo', sans-serif;
 }
 
-.input-icon {
-  position: absolute;
-  top: 65%;
-  right: 20px;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  pointer-events: none;
-}
+
 
 
 /* Button Styles */
 .register-button {
-  width: 100%;
-  height: 56px;
-  border-radius: 12px;
-  background: #6C5DD3;
+  width: 100% !important;
+max-width: 1000px;
+  height: 56px !important;
+  border-radius: 12px !important;
+  background: #6C5DD3 !important;
   border: none;
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Cairo', sans-serif !important;
   font-size: 1.1rem;
   font-weight: 600;
-  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1) !important;
   transition: background 0.3s ease;
+  padding-top: 15px !important;
+  text-align: center;
+  
 }
-p {
+.register-button p {
   width: 100%;
+  max-width: 900px;
   height: 100%;
   font-family: Cairo;
   font-weight: 400;
@@ -117,11 +117,44 @@ p {
   line-height: 100%;
   letter-spacing: 0%;
   text-align: center;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .register-button:hover {
   background: #8c7ee6;
+}
+
+.Google-button{
+  
+  width: 100%;
+  max-width: 1000px;
+height: 56px;
+text-align: center;
+padding-top: 15px !important;
+border-radius: 12px;
+background: #F1F1F1 !important;
+border: 1px solid #6C5DD3  !important;
+box-shadow: 0px 10px 15px 0px #0000001A !important;
+
+box-shadow: 0px 4px 6px 0px #0000001A !important;
+}
+.Google-button p{
+  width: 100%;
+height: 30px;
+top: 13.5px;
+
+font-family: Cairo;
+font-weight: 500;
+font-size: 16px;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+color: #6C5DD3 !important;
+
+}
+
+.Google-button > p > img{
+  margin-right: 5px;
 }
 
 .terms-link {
@@ -131,6 +164,7 @@ p {
 }
 
 .login-text {
+  width:100% ;
   text-align: center;
   color: #6B7280;
   margin-top: 20px;

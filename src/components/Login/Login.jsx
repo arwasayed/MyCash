@@ -69,21 +69,37 @@ const Login = () => {
               <div className="d-flex justify-content-between align-items-center w-100" style={{ maxWidth: '300px' }}>
                 <div className="form-check d-flex align-items-center m-0">
                   <input className="form-check-input ms-2" type="checkbox" id="rememberMe" />
-                  <label className="form-check-label custom-form-check-label" htmlFor="rememberMe">تذكرني</label>
+                  <label className="form-check-label custom-form-check-label " htmlFor="rememberMe">تذكرني</label>
                 </div>
-                <a href="#" className="custom-link">نسيت كلمة السر؟</a>
+                <a href="/ForgetPassword" className="custom-link login-link">نسيت كلمة السر؟</a>
               </div>
             </div>
+{message && (
+  <div className="custom-alert success">
+    <span className="alert-icon">✅</span>
+    <span className="alert-text">{message}</span>
+  </div>
+)}
 
-            {error && <Alert variant="danger">{error}</Alert>}
-            {success && <Alert variant="success">{success}</Alert>}
+{error && (
+  <div className="custom-alert error">
+    <span className="alert-icon">❌</span>
+    <span className="alert-text">{error}</span>
+  </div>
+)}
 
             <Button variant="primary" className="login-button" type="submit">
               <p>تسجيل الدخول</p>
             </Button>
           </Form>
 
-          <span className='newaccount'><a href="#" className='login-link'>إنشاء حساب جديد</a> ليس لديك حساب؟</span>
+           <div>
+             <Button variant="primary" className="Google-button" type="submit">
+                        <p> تسجيل باستخدام  Google<img src="/images/devicon_google (1).svg"/>  </p>
+                      </Button>
+                      </div>
+
+          <span className='newaccount'><a href="/register" className='login-link'>إنشاء حساب جديد</a> ليس لديك حساب؟</span>
         </div>
 
         <div className='login-image-box'>
