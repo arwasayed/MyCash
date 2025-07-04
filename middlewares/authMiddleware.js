@@ -1,21 +1,21 @@
-// authMiddleware.js
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const { promisify } = require('util');
 const redis = require('redis');
 
-// إنشاء عميل Redis للقائمة السوداء (إذا كنت تستخدم Redis)
+
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST || '127.0.0.1',
   port: process.env.REDIS_PORT || 6379
 });
 
-// تحويل دوال Redis إلى Promise
+
 const getAsync = promisify(redisClient.get).bind(redisClient);
 const setAsync = promisify(redisClient.set).bind(redisClient);
 const delAsync = promisify(redisClient.del).bind(redisClient);
 
-// كائن بديل إذا لم تستخدم Redis (لتطوير محلي فقط)
+
 const tokenBlacklist = {
   tokens: new Set(),
   add: function(token) { this.tokens.add(token); },
@@ -30,7 +30,7 @@ const sendAuthError = (res, statusCode, message) => {
   });
 };
 
-// التحقق من القائمة السوداء
+
 const isTokenBlacklisted = async (token) => {
   if (process.env.USE_REDIS === 'true') {
     const result = await getAsync(`blacklist:${token}`);
@@ -40,7 +40,7 @@ const isTokenBlacklisted = async (token) => {
   }
 };
 
-// إضافة توكن للقائمة السوداء
+
 exports.addToBlacklist = async (token, expiresIn) => {
   if (process.env.USE_REDIS === 'true') {
     await setAsync(`blacklist:${token}`, '1');
@@ -52,7 +52,7 @@ exports.addToBlacklist = async (token, expiresIn) => {
   }
 };
 
-// إزالة توكن من القائمة السوداء (إذا لزم الأمر)
+
 exports.removeFromBlacklist = async (token) => {
   if (process.env.USE_REDIS === 'true') {
     await delAsync(`blacklist:${token}`);
@@ -63,7 +63,7 @@ exports.removeFromBlacklist = async (token) => {
 
 exports.protect = async (req, res, next) => {
   try {
-    // 1. الحصول على التوكن من Headers أو Cookies
+ 
     let token;
     if (
       req.headers.authorization &&
@@ -74,37 +74,37 @@ exports.protect = async (req, res, next) => {
       token = req.cookies.token;
     }
 
-    // 2. التحقق من وجود التوكن
+
     if (!token) {
       console.error('No token provided');
       return sendAuthError(res, 401, 'You are not logged in! Please log in to get access.');
     }
 
-    // 3. التحقق من أن التوكن ليس في القائمة السوداء
+    
     if (await isTokenBlacklisted(token)) {
       console.error('Blacklisted token attempt');
       return sendAuthError(res, 401, 'This session has been terminated. Please log in again.');
     }
 
-    // 4. التحقق من تنسيق التوكن
+   
     if (!token.match(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/)) {
       console.error('Malformed token:', token);
       return sendAuthError(res, 401, 'Invalid token format');
     }
 
-    // 5. فك تشفير التوكن
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       ignoreExpiration: false,
       algorithms: ['HS256']
     });
 
-    // 6. التحقق من وجود ID في التوكن
+  
     if (!decoded?.id) {
       console.error('Token missing user ID:', decoded);
       return sendAuthError(res, 401, 'Invalid token payload');
     }
 
-    // 7. البحث عن المستخدم في قاعدة البيانات
+ 
     const currentUser = await User.findById(decoded.id)
       .select('+provider +password +passwordChangedAt');
 
@@ -113,7 +113,7 @@ exports.protect = async (req, res, next) => {
       return sendAuthError(res, 401, 'The user belonging to this token no longer exists.');
     }
 
-    // 8. التحقق من كلمة المرور للمستخدمين المحليين
+ 
     if (currentUser.provider === 'local') {
       if (!currentUser.password) {
         console.error('Local user missing password:', currentUser.email);
@@ -132,16 +132,16 @@ exports.protect = async (req, res, next) => {
       }
     }
 
-    // 9. تسجيل معلومات المستخدم للتصحيح
+   
     console.log('Authenticated user:', {
       id: currentUser._id,
       email: currentUser.email,
       provider: currentUser.provider
     });
 
-    // 10. إضافة المستخدم إلى request
+  
     req.user = currentUser;
-    req.token = token; // إضافة التوكن للطلب لاستخدامه لاحقاً
+    req.token = token; 
     next();
   } catch (err) {
     // 11. معالجة الأخطاء
@@ -184,7 +184,7 @@ exports.onlyForLocal = (req, res, next) => {
   next();
 };
 
-// دالة مساعدة للتحقق من التوكن
+
 exports.verifyToken = async (token) => {
   if (await isTokenBlacklisted(token)) {
     throw new Error('Token is blacklisted');
