@@ -8,6 +8,7 @@ const userRoutes = require('./Routes/user');
 const userSettingsRoutes = require('./Routes/userSettingsRoutes');
 const chatRoute = require("./Routes/chatRoute");
 const expenseRoute = require("./Routes/expenseRoute");
+
 const savingGoalRoutes = require("./Routes/savingGoal");
 const challengeRoutes = require("./Routes/challenge");
 const badgeRoutes= require("./Routes/badge");
@@ -32,11 +33,13 @@ app.use((err, req, res, next) => {
 
 app.use("/api", chatRoute);
 app.use("/api", expenseRoute); 
+
 app.use("/api/saving-goals", savingGoalRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/badges", badgeRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/notifications", notificationRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async() =>{
   console.log(`🚀 Server running on http://localhost:${PORT}`);
