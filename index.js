@@ -5,7 +5,9 @@ const mongoose = require('mongoose');
 const passport = require('passport'); 
 require('./config/passport');
 const userRoutes = require('./Routes/user');
-const userSettingsRoutes = require('./routes/userSettingsRoutes');
+const userSettingsRoutes = require('./Routes/userSettingsRoutes');
+const chatRoute = require("./Routes/chatRoute");
+const expenseRoute = require("./Routes/expenseRoute");
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log(' Connected to MongoDB'))
@@ -22,6 +24,14 @@ app.use((err, req, res, next) => {
   res.status(500).json({ status: 'error', message: 'Something went wrong!' });
 });
 
+app.use("/api", chatRoute);
+app.use("/api", expenseRoute); 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => 
-  console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.listen(PORT, async() =>{
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  try {
+    await require('./Controllers/chatController').initializeRAG();
+  } catch (err) {
+    console.warn("Failed to initialize RAG service:", err.message);
+  }
+});

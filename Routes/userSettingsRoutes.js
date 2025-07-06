@@ -10,7 +10,7 @@ const {
   changePassword,
   logout,
   deleteAccount
-} = require('../controllers/userSettingsController');
+} = require('../Controllers/userSettingsController');
 const multer = require('multer');
 const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) {
