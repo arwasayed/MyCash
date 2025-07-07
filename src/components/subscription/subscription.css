@@ -1,0 +1,520 @@
+.forgot-container {
+  height: auto;
+  background-color: #f8f9fa;
+display: flex;
+flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  width:100% ;
+  margin-top: 50px;
+  direction: rtl;
+}
+div.Rectangle{
+width: 100%;
+height: auto;
+opacity: 1;
+padding-top: 50px;
+background: linear-gradient(90deg, rgba(108, 93, 211, 0.1) 0%, rgba(0, 196, 140, 0.1) 100%);
+text-align: center;
+align-items: center;
+padding-bottom:50px ;
+}
+
+p.choose{
+width: 100%;
+height: 90px;
+
+opacity: 1;
+top: 153px;
+left: 504px;
+font-family: Cairo;
+font-weight: 400 ;
+font-style: Regular;
+font-size: 48px !important;
+line-height: 48px;
+letter-spacing: 0%;
+text-align: center;
+color: #1F2937;
+
+
+
+ 
+}
+p.start{
+    width: 100%;
+height: 37;
+opacity: 1;
+top: 243px;
+left: 440px;
+font-family: Cairo;
+font-weight: 400;
+font-style: Regular;
+font-size: 20px !important;
+line-height: 28px;
+letter-spacing: 0%;
+text-align: center;
+color:#4B5563 ;
+margin-top: -20px;
+margin-bottom: 50px;
+margin: auto;
+}
+
+img.gift{
+    width: 128;
+height: 128;
+opacity: 1;
+top: 377px;
+left: 656px;
+border-radius: 9999px;
+border: 1px solid #E5E7EB;
+
+}
+
+div > div.discount{
+width: 100%;
+max-width: 271.234375px;
+height: 58;
+
+border-radius: 8px;
+border-width: 1px;
+ background: #DCFCE7;
+border: 1px solid #86EFAC;
+margin-right: 300px;
+margin-top: 50px;
+margin: 50px auto 0 auto;
+
+}
+
+p.get{
+   width: 246px;
+height: 30px;
+opacity: 1;
+top: -5.4px;
+padding-top: 15px;
+font-family: Cairo;
+font-weight: 400;
+font-style: Regular;
+font-size: 16px;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+color: #15803D;
+
+ 
+}
+
+section.plans-row {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap; /* يخليهم ينزلوا تحت بعض في الشاشات الصغيرة */
+  margin-top: 80px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.plan-col {
+  flex: 1 1 300px; /* يخلي الكارت ياخد حجم مناسب */
+  max-width: 350px;
+  display: flex;
+}
+
+.plan-card {
+  width: 100%;
+  max-width: 362px;
+  height: 473px;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card:hover {
+  transform: translateY(-10px);
+  max-width: 380.81px;
+
+}
+
+
+.free-plan {
+  background-color: white;
+  border: 2px solid #E5E7EB;
+  
+}
+
+
+
+.premium-plan {
+ background: linear-gradient(90deg, #6C5DD3 0%, #8B7EE8 100%);
+border: 1px solid #E5E7EB;
+box-shadow: 0px 20px 25px 0px #0000001A;
+
+box-shadow: 0px 8px 10px 0px #0000001A;
+color: #FFFFFF;
+
+}
+
+.pro-plan {
+  background-color: #FFFFFF;
+  border: 2px solid #E5E7EB;
+  color: #1F2937;
+}
+
+.plan-title {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.price-section {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.price {
+    width: 17px;
+height: 56px;
+opacity: 1;
+top: -17px;
+margin-left:5px;
+ font-family: Cairo;
+font-weight: 400;
+font-style: Regular;
+font-size: 30px;
+leading-trim: NONE;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+
+}
+
+.period {
+  font-size: 16px;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0 20px;
+  flex-grow: 1;
+}
+
+
+.features-list li {
+  margin-bottom: 12px;
+  position: relative;
+  padding-right: 30px; 
+}
+
+.features-list li::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  background-image: url("images/Frame (7).svg"); 
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+div.free{
+width: 100%;
+text-align: center;
+}
+.features-list li.not::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  background-image: url("images/Frame (8).svg"); 
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.premium-plan .features-list li:before {
+  color: white;
+}
+.subscribe-btn{
+       width: 100%;
+ max-width: 294.65625;
+height: 48px;
+opacity: 1;
+top: 351px;
+left: 34px;
+border-radius: 8px;
+font-family: Cairo;
+font-weight: 400;
+font-style: Regular;
+font-size: 16px;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+}
+
+.free-plan .subscribe-btn {
+
+
+background: #E5E7EB;
+border: 1px solid #E5E7EB;
+
+color: #374151;
+
+}
+
+
+.premium-plan .subscribe-btn{
+
+background: #FFFFFF;
+border: 1px solid #E5E7EB;
+color:#9333EA ;
+ 
+}
+
+.pro-plan .subscribe-btn{
+
+ background: #9333EA;
+ border: 1px solid #E5E7EB;
+color:#FFFFFF ;
+}
+.plan-card:hover  .subscribe-btn{
+ max-width: 313.61px;
+ height: 50.4px;
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+section.option{
+  width:100%;
+  margin-top:50px;
+  text-align: center;
+  
+  
+}
+
+section .privat{
+  width: 896px;
+height: auto;
+opacity: 1;
+top: 1392px;
+left: 272px;
+border-radius: 16px;
+background: linear-gradient(90deg, #DCFCE7 0%, #DBEAFE 100%);
+border: 1px solid #E5E7EB;
+margin: 30px auto 0 auto;
+padding-bottom: 30px;
+
+
+}
+
+p.offer{
+width: 207px;
+height: 45px;
+opacity: 1;
+left: 349.34px;
+font-family: Cairo;
+font-weight: 400;
+font-style: Regular;
+font-size: 24px;
+leading-trim: NONE;
+line-height: 32px;
+letter-spacing: 0%;
+text-align: center;
+color: #1F2937;
+margin: 20px auto 0 auto;
+}
+
+p.Free{
+  width: 588px;
+height: 33px;
+opacity: 1;
+top: 194.03px;
+left: 151.64px;
+font-family: Cairo;
+font-weight: 400;
+font-style: Regular;
+font-size: 18px;
+line-height: 28px;
+letter-spacing: 0%;
+text-align: center;
+color: #4B5563;
+margin: auto;
+
+}
+
+ div.expire-badge {
+width: 145.015625px;
+height: 40px;
+angle: 0 deg;
+opacity: 1;
+left: 360.25px;
+border-radius: 9999px;
+border: 1px solid #E5E7EB;
+background: #EF4444;
+margin: 20px auto 0 auto;
+padding-top: 8px;
+padding-right: 15px;
+color: white;
+font-family: Cairo;
+font-weight: 400;
+font-style: Regular;
+font-size: 16px;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+ display: inline-flex;
+  direction: rtl;
+
+
+
+} 
+img.fire-icon{
+  margin-right: 20px;
+}
+
+
+p.start,
+p.Free,
+p.offer,
+p.choose {
+  max-width: 100%;
+  width: 90%;
+  word-wrap: break-word;
+  white-space: normal;
+  margin: 0 auto;
+}
+
+/* allow dynamic height */
+
+
+@media (max-width: 992px) {
+  .Rectangle {
+    height: auto;
+    padding: 40px 20px;
+  }
+
+  p.choose {
+    font-size: 32px !important;
+    line-height: 40px;
+  }
+
+  p.start {
+    font-size: 16px !important;
+    line-height: 24px;
+    margin: 10px 0 30px 0;
+  }
+
+  img.gift {
+    width: 96px;
+    height: 96px;
+  }
+
+  .discount {
+    margin: 30px auto 0 auto !important;
+    max-width: 90%;
+  }
+
+  section.plans-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 10px;
+  }
+
+  .plan-col {
+    max-width: 100%;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .plan-card {
+    height: auto;
+  }
+
+  .plan-title {
+    font-size: 20px;
+  }
+
+  .price {
+    font-size: 26px;
+  }
+
+  .features-list {
+    padding: 0 10px;
+  }
+
+  .subscribe-btn {
+    font-size: 14px;
+    height: 45px;
+  }
+
+  section .privat {
+    width: 95%;
+    height: auto;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .offer {
+    font-size: 20px;
+  }
+
+  .Free {
+    font-size: 16px;
+    line-height: 24px;
+    margin-top: 10px;
+  }
+
+  .expire-badge {
+    font-size: 14px;
+    padding: 6px 10px;
+    height: auto;
+  }
+
+  .fire-icon {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  section.plans-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .plan-col {
+    width: 100%;
+    max-width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .plan-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+

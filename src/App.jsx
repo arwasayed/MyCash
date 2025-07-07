@@ -10,7 +10,7 @@ import ResetPassword from './components/ResetPassword/ResetPassword.jsx'
 import ResetPassword2 from './components/ResentPasswor2/ResetPassword2.jsx';
 import EmailConfirmation from './components/EmailConfirmation/EmailConfirmation.jsx';
 import EmailConfirm1 from './components/EmailConfirm1/EmailConfirm1.jsx';
-
+import Subscription from './components/subscription/subscription.jsx'
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -29,7 +29,8 @@ function App() {
           <Route path="/ResetPassword2/:token" element={<ResetPassword2/>}/>
           <Route path="/EmailConfirmation" element={<EmailConfirmation/>}/>
           <Route path="/EmailConfirm1" element={<EmailConfirm1/>}/>
-        </Routes>
+          <Route path="/subscription" element={<Subscription/>}/>
+         </Routes>
       </div>
       <Footer />
     </div>
