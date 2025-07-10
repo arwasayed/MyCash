@@ -1,0 +1,275 @@
+.plane-budget-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 2rem 1.5rem;
+  /* max-width: 650px; */
+  margin: 2rem auto;
+  font-family: 'Cairo', sans-serif;
+}
+
+.plane-budget-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #232323;
+}
+
+.plane-budget-subtitle {
+  text-align: center;
+  color: #8b94a9;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+}
+
+.plane-budget-img-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.plane-budget-img {
+  max-width: 180px;
+  max-height: 120px;
+}
+
+.plane-budget-form {
+  /* border: 2px solid #3fa9f5; */
+  border-radius: 8px;
+  padding: 1.5rem 1rem;
+  margin-bottom: 2rem;
+  background: #fafdff;
+}
+
+.plane-budget-form-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #232323;
+  margin-bottom: 1.2rem;
+  text-align: right;
+}
+
+.plane-budget-input-group {
+  margin-bottom: 1.2rem;
+  text-align: right;
+}
+
+.plane-budget-input-group label {
+  font-weight: 500;
+  color: #8b94a9;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.plane-budget-input {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  margin-top: 0.2rem;
+}
+
+.plane-budget-expenses-section {
+  margin-bottom: 1.2rem;
+}
+
+.plane-budget-expenses-title {
+  font-weight: 600;
+  color: #232323;
+  margin-bottom: 0.7rem;
+  text-align: right;
+}
+
+.plane-budget-expense-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+  direction: rtl;
+  background: #f7f9fb;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  padding: 0.5rem 0.7rem;
+}
+
+.plane-budget-remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem;
+  margin-left: 0.2rem;
+  color: #ff6f61;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plane-budget-category-select {
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  min-width: 120px;
+  flex: 1 1 0%;
+  background: #fff;
+}
+
+.plane-budget-expense-input {
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  width: 90px;
+  background: #fff;
+  margin-left: 0.5rem;
+}
+
+.plane-budget-add-btn {
+  background: #6C5DD3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.plane-budget-add-btn:hover {
+  background: #8f7cf8;
+}
+
+.plane-budget-progress-bar-wrapper {
+  margin: 1.2rem 0 1.5rem 0;
+  text-align: right;
+}
+
+.plane-budget-progress-label {
+  font-size: 1rem;
+  color: #3fa9f5;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.plane-budget-progress-bar-bg {
+  background: #e0e0e0;
+  border-radius: 8px;
+  height: 12px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.plane-budget-progress-bar-fill {
+  background: linear-gradient(90deg, #3fa9f5 0%, #6C5DD3 100%);
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+
+.plane-budget-progress-bar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+  font-size: 0.95rem;
+  color: #8b94a9;
+  padding: 0 0.5rem;
+  background: #f7f9fb;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.plane-budget-progress-label-right {
+  font-weight: 500;
+}
+
+.plane-budget-progress-label-left {
+  font-weight: 400;
+}
+
+.plane-budget-save-btn {
+  background: #20bf6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.7rem 0 0 0;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+.plane-budget-save-btn:hover {
+  background: #17a65c;
+}
+
+.plane-budget-summary-card {
+  background: linear-gradient(90deg, #6C5DD3 0%, #9333EA 100%);
+  border-radius: 16px;
+  color: #fff;
+  padding: 1.5rem 1rem;
+  margin-top: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 16px rgba(108,93,211,0.07);
+}
+
+.plane-budget-summary-icon {
+  background: #fff;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  box-shadow: 0 2px 16px rgba(108,93,211,0.10);
+}
+
+.plane-budget-summary-icon img {
+  width: 44px;
+  height: 44px;
+  margin: 0;
+}
+
+.plane-budget-summary-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.plane-budget-summary-desc {
+  font-size: 1rem;
+  color: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+  .plane-budget-container {
+    padding: 1rem 0.2rem;
+    max-width: 99vw;
+  }
+  .plane-budget-img {
+    max-width: 120px;
+    max-height: 80px;
+  }
+  .plane-budget-form {
+    padding: 1rem 0.3rem;
+  }
+  .plane-budget-summary-card {
+    padding: 1rem 0.3rem;
+  }
+} 

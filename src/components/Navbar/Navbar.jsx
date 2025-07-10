@@ -27,9 +27,9 @@ const Navbar = () => {
           <div className="flex-grow-1 d-flex justify-content-center">
             <ul className="navbar-nav flex-row gap-3 mb-2 mb-lg-0">
               <li className="nav-item">
-                <a className="nav-link" href="/home">
+                <Link className="nav-link" to="/home">
                   الصفحة الرئيسية
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">
@@ -42,15 +42,16 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link className="nav-link" to="/planebudget">
                   خطتي
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link className="nav-link" to="/reports">
                   التقارير
-                </a>
+                </Link>
               </li>
+
               <li className="nav-item">
                 <a className="nav-link" href="#">
                   الاشتراكات
@@ -60,9 +61,9 @@ const Navbar = () => {
           </div>
           {/* Auth links on the left */}
           <div className="d-flex align-items-center gap-2 ms-auto">
-            <a href="/login" className="auth-link">
+            <Link to="/login" className="auth-link">
               تسجيل الدخول
-            </a>
+            </Link>
             <span className="separator">|</span>
             <Link to="/register" className="auth-link">
               إنشاء حساب
@@ -138,14 +139,19 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link className="nav-link" to="/reports">
                   خطتي
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link className="nav-link" to="/reports">
                   التقارير
-                </a>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/planebudget">
+                  ظبط الميزانية
+                </Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">

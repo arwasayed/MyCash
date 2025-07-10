@@ -130,13 +130,15 @@
 }
 
 /* Features Section */
+
+/* Features Section */
 .features-section {
   background: #f8f9fa;
   padding: 6rem 2rem;
 }
 
 .features-container {
-  max-width: 1200px;
+  /* max-width: 1200px; */
   margin: 0 auto;
 }
 
@@ -151,6 +153,7 @@
   color: #333;
   margin-bottom: 1rem;
   font-family: 'Cairo', sans-serif;
+  text-align: center;
 }
 
 .features-subtitle {
@@ -158,22 +161,48 @@
   color: #666;
   font-weight: 400;
   font-family: 'Cairo', sans-serif;
+  text-align: center;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  gap: 0.7rem 0.3rem;
+}
+
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .features-section {
+    padding: 2.5rem 0.5rem;
+  }
+  .feature-card {
+    padding: 1.5rem 0.7rem;
+    max-width: 98vw;
+  }
 }
 
 .feature-card {
   background: white;
-  padding: 2.5rem 2rem;
+  padding: 2.2rem 1.2rem 2.7rem 1.2rem;
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   border: 1px solid #f0f0f0;
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .feature-card:hover {
@@ -235,6 +264,12 @@
   color: #666;
   line-height: 1.6;
   font-family: 'Cairo', sans-serif;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
 /* How It Works Section */
@@ -606,4 +641,26 @@
   .cta-subtitle {
     font-size: 1rem;
   }
+}
+
+.features-header p,
+.features-subtitle {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  width: auto !important;
+  max-width: none !important;
+  left: unset !important;
+  position: static !important;
+}
+
+.how-it-works-header p,
+.how-it-works-subtitle {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  width: auto !important;
+  max-width: none !important;
+  left: unset !important;
+  position: static !important;
 }
