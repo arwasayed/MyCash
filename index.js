@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const passport = require('passport'); 
-require('./config/passport');
+// const passport = require('passport'); 
+// require('./config/passport');
 const userRoutes = require('./Routes/user');
 const userSettingsRoutes = require('./Routes/userSettingsRoutes');
 const chatRoute = require("./Routes/chatRoute");
@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error(' MongoDB connection error:', err));
 
 const app = express();
-app.use(passport.initialize());
+// app.use(passport.initialize());
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use('/api/user', userRoutes);
