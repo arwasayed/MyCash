@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/userModel');
 const sendEmail = require('../utils/email');
-const passport = require('passport');
+// const passport = require('passport');
 const OAuth2Client = require ('google-auth-library');
 
 const sendResponse = (res, statusCode, status, data, message) => {
