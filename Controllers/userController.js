@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const User = require('../models/userModel');
 const sendEmail = require('../utils/email');
 const passport = require('passport');
+const OAuth2Client = require ('google-auth-library');
 
 const sendResponse = (res, statusCode, status, data, message) => {
   res.status(statusCode).json({ status, data, message });
@@ -195,76 +196,126 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+// Google Authentication
+exports.googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
 
-//googleLogin
-exports.googleLogin = passport.authenticate('google', {
-  scope: ['email', 'profile'],
-  session: false,
-  prompt: 'select_account'
-});
-
-
-//googleCallback
-exports.googleCallback = async (req, res, next) => {
-  passport.authenticate('google', {
-    session: false,
-    failureMessage: true
-  }, async (err, user, info) => {
-    try {
-      console.log('Google Auth Data:', { err, user, info });
-      if (err || !user || !user.emails || !user.emails[0]) {
-        console.error('Google Auth Failed:', {
-          error: err,
-          userData: user,
-          info
-        });
-        return sendResponse(res, 401, 'error', null, 'فشل المصادقة باستخدام جوجل');
-      }
-      const email = user.emails[0].value;
-      const nickname = user.displayName || `مستخدم${Math.floor(Math.random() * 10000)}`;
-      const avatar = user.photos?.[0]?.value || 'default-avatar.png';
-      let existingUser = await User.findOne({
-        $or: [
-          { email },
-          { googleId: user.id }
-        ]
-      });
-      if (!existingUser) {
-        existingUser = await User.create({
-          email,
-          nickname,
-          avatar,
-          provider: 'google',
-          googleId: user.id,
-          emailVerified: true,
-          role: 'user'
-        });
-        console.log('New Google User:', existingUser);
-      } else {
-        existingUser.avatar = avatar;
-        existingUser.googleId = user.id;
-        await existingUser.save();
-        console.log('Updated Google User:', existingUser);
-      }
-      const token = generateToken(existingUser._id);
-      sendResponse(res, 200, 'success', {
-        token,
-        user: {
-          _id: existingUser._id,
-          email: existingUser.email,
-          nickname: existingUser.nickname,
-          avatar: existingUser.avatar,
-          role: existingUser.role,
-          provider: existingUser.provider
-        }
-      }, 'تم تسجيل الدخول باستخدام جوجل بنجاح');
-
-    } catch (error) {
-      console.error('Google Callback Error:', {
-        message: error.message,
-        stack: error.stack
-      });
-      sendResponse(res, 500, 'error', null, 'حدث خطأ أثناء المصادقة باستخدام جوجل');
+    if (!credential) {
+      return sendResponse(res, 400, 'error', null, 'رمز Google مطلوب');
     }
-  })(req, res, next);
-};
+
+    // Verify the Google ID token
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, sub: googleId, name, picture } = payload;
+
+    // Check if the user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Register new user
+      user = await User.create({
+        email,
+        nickname: name || 'User',
+        googleId,
+        provider: 'google',
+        role: 'user',
+        emailVerified: true, // Google verified emails are considered verified
+        photo: picture
+      });
+    } else if (user.provider !== 'google') {
+      // User exists but didn't register with Google
+      return sendResponse(res, 400, 'error', null, 'هذا البريد الإلكتروني مسجل بالفعل بطريقة أخرى');
+    }
+
+    // Generate JWT token
+    const token = generateToken(user._id);
+
+    sendResponse(res, 200, 'success', {
+      token,
+      user
+    }, 'تم تسجيل الدخول بنجاح عبر Google');
+
+  } catch (err) {
+    console.error('Google auth error:', err);
+    sendResponse(res, 401, 'error', null, 'فشل المصادقة عبر Google');
+  }
+  };
+
+// //googleLogin
+// exports.googleLogin = passport.authenticate('google', {
+//   scope: ['email', 'profile'],
+//   session: false,
+//   prompt: 'select_account'
+// });
+
+
+// //googleCallback
+// exports.googleCallback = async (req, res, next) => {
+//   passport.authenticate('google', {
+//     session: false,
+//     failureMessage: true
+//   }, async (err, user, info) => {
+//     try {
+//       console.log('Google Auth Data:', { err, user, info });
+//       if (err || !user || !user.emails || !user.emails[0]) {
+//         console.error('Google Auth Failed:', {
+//           error: err,
+//           userData: user,
+//           info
+//         });
+//         return sendResponse(res, 401, 'error', null, 'فشل المصادقة باستخدام جوجل');
+//       }
+//       const email = user.emails[0].value;
+//       const nickname = user.displayName || `مستخدم${Math.floor(Math.random() * 10000)}`;
+//       const avatar = user.photos?.[0]?.value || 'default-avatar.png';
+//       let existingUser = await User.findOne({
+//         $or: [
+//           { email },
+//           { googleId: user.id }
+//         ]
+//       });
+//       if (!existingUser) {
+//         existingUser = await User.create({
+//           email,
+//           nickname,
+//           avatar,
+//           provider: 'google',
+//           googleId: user.id,
+//           emailVerified: true,
+//           role: 'user'
+//         });
+//         console.log('New Google User:', existingUser);
+//       } else {
+//         existingUser.avatar = avatar;
+//         existingUser.googleId = user.id;
+//         await existingUser.save();
+//         console.log('Updated Google User:', existingUser);
+//       }
+//       const token = generateToken(existingUser._id);
+//       sendResponse(res, 200, 'success', {
+//         token,
+//         user: {
+//           _id: existingUser._id,
+//           email: existingUser.email,
+//           nickname: existingUser.nickname,
+//           avatar: existingUser.avatar,
+//           role: existingUser.role,
+//           provider: existingUser.provider
+//         }
+//       }, 'تم تسجيل الدخول باستخدام جوجل بنجاح');
+
+//     } catch (error) {
+//       console.error('Google Callback Error:', {
+//         message: error.message,
+//         stack: error.stack
+//       });
+//       sendResponse(res, 500, 'error', null, 'حدث خطأ أثناء المصادقة باستخدام جوجل');
+//     }
+//   })(req, res, next);
+// };
