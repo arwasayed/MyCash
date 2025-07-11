@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
+// const passport = require('passport');
 const {
   signup,
   login,
   forgotPassword,
   resetPassword,
   verifyEmail,
-  googleCallback
+  googleAuth
+  // googleCallback
 } = require('../Controllers/userController');
 const { protect } = require('../middlewares/authMiddleware');
 
