@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/arwasayed/MyCash.git"
   },
-  "author": "",
+  "author": "tamtam",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/arwasayed/MyCash/issues"
@@ -23,9 +24,11 @@
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.1",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.2",
     "multer": "^2.0.1",
+    "node-cron": "^4.2.1",
     "nodemailer": "^7.0.3",
     "nodemon": "^3.1.10",
     "openai": "^5.8.3",
@@ -37,5 +40,5 @@
     "validator": "^13.15.15"
   },
   "keywords": [],
-  "description": ""
+  "description": "The back-end for the grad project in the ITI"
 }
