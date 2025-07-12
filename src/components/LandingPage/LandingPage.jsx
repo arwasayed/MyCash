@@ -83,7 +83,7 @@ const LandingPage = () => {
               <h3 className="feature-title">مساعد ذكي شخصي</h3>
               <p className="feature-description">
                 شات بوت ذكي يساعدك في تتبع مصروفاتك
-                <br />
+                {/* <br /> */}
                 وتحقيق أهدافك المالية
               </p>
             </div>

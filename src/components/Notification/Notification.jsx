@@ -39,6 +39,7 @@ const Notification = () => {
           title: 'تهانينا! تم تحقق أهدافك المالـية',
           message: 'لقد نجحت في توفير 5000 ريال، وجهت "رحلة النفقات الذكية". استمر في التحدي!',
           text: ' انجاز ',
+          time:'منذ ساعة'
         },
         {
           id: 2,
@@ -46,6 +47,7 @@ const Notification = () => {
           title: 'تحذير! تجاوزت حد الميزانية',
           message: 'لقد تجاوزت ميزانية "الترفيه" بمبلغ 300 ريال هذا الشهر. راجع مصروفاتك.',
           text: ' تحذير ',
+          time:'منذ ساعة وربع'
         },
         {
           id: 3,
@@ -53,6 +55,7 @@ const Notification = () => {
           title: 'اقتراح لتوفير المال',
           message: 'توفير 200 ريال شهريًا عبر تقليل طلبات التوصيل والطبخ المنزلي في المثال.',
           text: ' اقتراح ',
+          time:'منذ ساعة ونص'
         },
         {
           id: 4,
@@ -60,6 +63,7 @@ const Notification = () => {
           title: 'ميزة جديدة مفتوحة!',
           message: 'حصلت على شارة "المدخر المحترف" لتوفير أول 1000 ريال في التطبيق.',
           text: ' انجاز ',
+          time:'منذ ساعتين'
         },
         {
           id: 5,
@@ -67,6 +71,7 @@ const Notification = () => {
           title: 'تذكير بمراجعة الميزانية الشهرية',
           message: 'قد حان وقت مراجعة ميزانيتك وتحديث أهدافك المالية للشهر القادم.',
           text: ' تذكير ',
+          time:'منذ ساعتين'
         },
       ]);
       setLoading(false);
@@ -75,7 +80,7 @@ const Notification = () => {
 
 return (
     <Container fluid className="notification-container d-flex justify-content-center align-items-center ">
-      <Row className=" notification mt-5" >
+      <Row className=" notification mt-4" style={{marginTop: '50px auto 0 auto'}} >
        
           <Col xs="auto" className="text-center text-md-end">
           <h2 className="notification-title">الإشعارات</h2>
@@ -118,38 +123,48 @@ return (
       ) : (
         <>
           {notifications.map((notif) => (
-            <Card key={notif.id} className="mb-3 notif" style={getVariant(notif.type)}>
-              <Card.Body>
-                <div className="d-flex align-items-start">
-                  <div className="fs-4">{getIcon(notif.type)}</div>
-                  <div className="mx-3">
-                    <Card.Title className="mb-1"style={{
-  fontFamily: 'Cairo',
-  fontWeight: 400,
-  fontStyle: 'normal',
-  fontSize: '16px',
-  lineHeight: '24px',
-  letterSpacing: '0'
-}}>
-  {notif.title}</Card.Title>
-                    <Card.Text className="mb-1" style={{
-  fontFamily: 'Cairo, sans-serif',
-  fontWeight: 400,
-  fontStyle: 'normal',
-  fontSize: '16px',
-  lineHeight: '24px',
-  letterSpacing: '0px',
-  left:"260px",
-  color:'#7B88A8'
+           <Card key={notif.id} className="mb-3 notif" style={getVariant(notif.type)}>
+  <Card.Body>
+    <div className="d-flex align-items-start">
+      <div className="fs-4">{getIcon(notif.type)}</div>
+      <div className="mx-3 w-100">
 
-}}
->{notif.message}</Card.Text>
-<span className={`custom-badge ${notif.type}`}>{notif.text}</span>
+        {/* العنوان والوقت */}
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <Card.Title className="mb-0" style={{
+            fontFamily: 'Cairo',
+            fontWeight: 400,
+            fontSize: '16px',
+            lineHeight: '24px'
+          }}>
+            {notif.title}
+          </Card.Title>
+          <small style={{ color: '#999', fontSize: '12px' }}>
+            {notif.time}
+          </small>
+        </div>
 
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
+        {/* الرسالة */}
+        <Card.Text className="mb-2" style={{
+          fontFamily: 'Cairo',
+          fontWeight: 400,
+          fontSize: '16px',
+          lineHeight: '24px',
+          color: '#7B88A8'
+        }}>
+          {notif.message}
+        </Card.Text>
+
+        {/* البادج */}
+        <div className="text-end">
+          <span className={`custom-badge ${notif.type}`}>{notif.text}</span>
+        </div>
+
+      </div>
+    </div>
+  </Card.Body>
+</Card>
+
           ))}
           <div className="text-center">
             <Button variant="" className="mt-2 load" >
