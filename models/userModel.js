@@ -89,16 +89,14 @@ const userSchema = new mongoose.Schema({
     maxlength: [30, 'Nickname cannot exceed 30 characters'],
     match: [/^[a-zA-Z0-9_\- ]+$/, 'Nickname can only contain letters, numbers, spaces, hyphens and underscores']
   },
- // In your userModel.js
 avatar: {
   type: String,
-  // Either remove the validation or make it more flexible
+  default: 'default-avatar.png', // صورة افتراضية
   validate: {
     validator: function(v) {
-      // Allow URLs or specific file extensions
       return /\.(jpg|jpeg|png|gif|webp)$|^https?:\/\//i.test(v);
     },
-    message: props => `${props.value} is not a valid image URL or file!`
+    message: 'يجب أن تكون الصورة بصيغة صالحة (JPG, PNG, GIF) أو رابط URL'
   }
 
     
@@ -219,5 +217,34 @@ userSchema.methods.createEmailVerifyToken = function() {
   this.emailVerifyExpire = Date.now() + 24 * 60 * 60 * 1000;
   return verifyToken;
 };
+
+userSchema.add({
+  subscription: {
+    type: {
+      type: String,
+      default: 'Free'
+    },
+    status: {
+      type: String, 
+      default: 'inactive'
+    },
+    startDate: Date,
+    endDate: Date,
+    paymentMethod: String
+  }
+});
+
+
+userSchema.virtual("subscribe").set(function (plan) {
+  const now = new Date();
+  this.subscription = {
+    type: plan.type,
+    status: "active",
+    startDate: now,
+    endDate: new Date(now.getTime() + plan.durationDays * 24 * 60 * 60 * 1000),
+    paymentMethod: plan.paymentMethod || "VISA",
+  };
+});
+
 
 module.exports = mongoose.model('User', userSchema);
