@@ -1,0 +1,274 @@
+.account-container {
+  height: auto;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 50px;
+  direction: rtl;
+}
+
+/* ضبط عرض الحاويات الأساسية */
+.account-container > .profile,
+.account-container > .budget,
+.account-container > section.achivements,
+.account-container > .setting,
+.account-container > div.d-flex.flex-wrap.justify-content-center {
+  max-width: 896px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* الملف الشخصي */
+.profile {
+  width: 100%;
+  max-width: 926px;
+  height: 154px;
+  opacity: 1;
+  border-radius: 20px;
+  box-shadow: 0px 4px 2px 0px #00000040;
+  margin: 30px auto 0 auto;
+  padding: 30px;
+  border: none;
+}
+
+/* الشارة */
+.badge {
+  width: 123.5px;
+  height: 28px;
+  opacity: 1;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #FACC15 0%, #CA8A04 100%);
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  line-height: 20px;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* بطاقة الميزانية */
+.budget {
+  width: 100%;
+  max-width: 896px;
+  height: auto; /* خلي الارتفاع تلقائي عشان الريسبونسيف */
+  opacity: 1;
+  border-radius: 16px;
+  background: #FFFFFF;
+  border: none;
+  box-shadow: 0px 4px 6px 0px #0000000D;
+  margin: 20px auto 0 auto;
+  padding: 30px;
+}
+
+/* المسافات بين أعمدة الميزانية لتجنب التداخل */
+.budget .row > .col-md-6 {
+  margin-bottom: 20px;
+}
+
+/* عنوان الميزانية */
+h5.monthy {
+  width: 100%;
+  height: 37px;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  line-height: 28px;
+  color: #000000;
+  opacity: 1;
+  margin-bottom: 15px;
+}
+
+/* لابل الفورم */
+form label.now {
+  width: 97px;
+  height: 30px;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 16px;
+  color: #333333;
+}
+
+/* زر تحديث الميزانية */
+button.update {
+  width: 100%;
+  max-width: 412px;
+  height: 48px;
+  opacity: 1;
+  border-radius: 8px;
+  background: #6C5DD3 !important;
+  border: 1px solid #E5E7EB;
+  margin-top: 10px;
+}
+
+/* الجانب الأيسر في الميزانية */
+.hala {
+  width: 100%;
+  max-width: 412px;
+  height: auto;
+  opacity: 1;
+  border-radius: 12px;
+  background: #F5F7FA;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 16px;
+  line-height: 24px;
+  color: #333333;
+  text-align: center;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+/* نص المفتاح */
+p.key {
+  width: 100%;
+  max-width: 314px;
+  font-family: Inter;
+  font-weight: 400;
+  font-style: Italic;
+  font-size: 16px;
+  line-height: 24px;
+  color: #7B88A8;
+  text-align: center;
+  margin: 20px auto 0 auto;
+}
+
+/* المبالغ */
+span.mablagh {
+  width: 72px;
+  height: 30px;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 16px;
+  line-height: 24px;
+  color: inherit;
+}
+
+span.almasruf {
+  color: #FF6B6B;
+}
+
+span.almutabaqaa {
+  color: #00C48C;
+}
+
+/* العنوان في الإعدادات */
+.setting {
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  color: #333333;
+  margin-top: 40px !important; /* زيادة المسافة فوقه لمنع التداخل */
+  text-align: center;
+}
+
+/* عناوين وأوصاف الخيارات */
+div.title {
+  width: 66px;
+  height: 30px;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 16px;
+  line-height: 24px;
+  color: #333333;
+}
+
+div.subtitle {
+  width: 80px;
+  height: 26px;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  line-height: 20px;
+  color: #7B88A8;
+}
+
+/* قسم الإنجازات */
+section.achivements {
+  width: 100%;
+  max-width: 896px;
+  height: auto;
+  opacity: 1;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #6C5DD3 0%, #00C48C 100%);
+  border: 1px solid #E5E7EB;
+  box-shadow: 0px 4px 6px 0px #0000000D;
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px 0;
+}
+
+div.achivement {
+  width: 100%;
+  max-width: 848px;
+  height: auto;
+  margin: 0 auto;
+  padding: 0 15px;
+  border: none;
+}
+
+p.month {
+  width: 100%;
+  max-width: 150px;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  line-height: 28px;
+  color: #FFFFFF;
+  margin: 5px auto 0 auto;
+}
+
+section > div .points {
+  width: 100%;
+  max-width: 848px;
+  height: auto;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 5px auto 0 auto;
+  padding: 10px 0;
+  color: white;
+}
+
+div .challengs {
+  width: 100%;
+  max-width: 414px;
+  height: 70px;
+  opacity: 1;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #E5E7EB;
+  margin: 30px auto 0 auto;
+  font-family: Cairo;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 30px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #6C5DD3;
+  padding-top: 15px;
+}
+
+.budget .row > .col-md-6 {
+  margin-bottom: 20px;
+}
+
+.budget h5.monthy {
+  width: 100%;
+}

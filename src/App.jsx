@@ -10,7 +10,10 @@ import ResetPassword from './components/ResetPassword/ResetPassword.jsx'
 import ResetPassword2 from './components/ResentPasswor2/ResetPassword2.jsx';
 import EmailConfirmation from './components/EmailConfirmation/EmailConfirmation.jsx';
 import EmailConfirm1 from './components/EmailConfirm1/EmailConfirm1.jsx';
-import Subscription from './components/subscription/subscription.jsx'
+import Subscription from './components/subscription/subscription.jsx';
+import Account from './components/Account/Account.jsx';
+import Notification from './components/Notification/Notification.jsx'
+
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -30,6 +33,9 @@ function App() {
           <Route path="/EmailConfirmation" element={<EmailConfirmation/>}/>
           <Route path="/EmailConfirm1" element={<EmailConfirm1/>}/>
           <Route path="/subscription" element={<Subscription/>}/>
+          <Route path="/account" element={<Account/>}/>
+          <Route path="/notification" element={<Notification/>}/>
+
          </Routes>
       </div>
       <Footer />

@@ -109,7 +109,7 @@ section.plans-row {
   display: flex;
   justify-content: center;
   gap: 30px;
-  flex-wrap: wrap; /* يخليهم ينزلوا تحت بعض في الشاشات الصغيرة */
+  flex-wrap: wrap;
   margin-top: 80px;
   padding: 20px;
   width: 100%;
@@ -119,7 +119,7 @@ section.plans-row {
 }
 
 .plan-col {
-  flex: 1 1 300px; /* يخلي الكارت ياخد حجم مناسب */
+  flex: 1 1 300px; 
   max-width: 350px;
   display: flex;
 }
@@ -364,7 +364,6 @@ margin: auto;
  div.expire-badge {
 width: 145.015625px;
 height: 40px;
-angle: 0 deg;
 opacity: 1;
 left: 360.25px;
 border-radius: 9999px;

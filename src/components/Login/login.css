@@ -33,6 +33,7 @@ left: 857px;
   background: #FFFFFF;
   border: none;
   padding: 60px 40px;
+  margin-top: 60px;
 }
 .login-form-box  form {
   display: flex;
@@ -43,7 +44,7 @@ left: 857px;
 /* Header */
 .login-header {
   text-align: center;
-  margin-bottom: 20px;
+
 }
 
 .login-title {
