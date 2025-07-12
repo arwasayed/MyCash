@@ -8,7 +8,7 @@ const {
   resetPassword,
   verifyEmail,
   googleCallback
-} = require('../controllers/userController');
+} = require('../Controllers/userController');
 const { protect } = require('../middlewares/authMiddleware');
 
 

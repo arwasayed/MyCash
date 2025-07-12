@@ -132,7 +132,7 @@ exports.forgotPassword = async (req, res) => {
     }
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
-    const resetUrl = `${process.env.BASE_URL}/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_BASE_URL}/ResetPassword2/${resetToken}`;
     const message = `
     عزيزي ${user.nickname || 'المستخدم'}،
     لقد طلبت إعادة تعيين كلمة المرور لحسابك في ${process.env.APP_NAME}.
