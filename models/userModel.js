@@ -218,4 +218,33 @@ userSchema.methods.createEmailVerifyToken = function() {
   return verifyToken;
 };
 
+userSchema.add({
+  subscription: {
+    type: {
+      type: String,
+      default: 'Free'
+    },
+    status: {
+      type: String, 
+      default: 'inactive'
+    },
+    startDate: Date,
+    endDate: Date,
+    paymentMethod: String
+  }
+});
+
+
+userSchema.virtual("subscribe").set(function (plan) {
+  const now = new Date();
+  this.subscription = {
+    type: plan.type,
+    status: "active",
+    startDate: now,
+    endDate: new Date(now.getTime() + plan.durationDays * 24 * 60 * 60 * 1000),
+    paymentMethod: plan.paymentMethod || "mock",
+  };
+});
+
+
 module.exports = mongoose.model('User', userSchema);
