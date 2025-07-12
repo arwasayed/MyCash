@@ -242,7 +242,7 @@ userSchema.virtual("subscribe").set(function (plan) {
     status: "active",
     startDate: now,
     endDate: new Date(now.getTime() + plan.durationDays * 24 * 60 * 60 * 1000),
-    paymentMethod: plan.paymentMethod || "mock",
+    paymentMethod: plan.paymentMethod || "VISA",
   };
 });
 

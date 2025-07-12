@@ -3,17 +3,17 @@ const PLANS = {
       type: 'Free',
       price: 0,
       durationDays: 30,
-      features: ['Basic saving goals'],
+      features: ['Basic saving goals and challenges.'],
     },
-    Premium: {
-      type: 'Premium',
-      price: 50,
-      durationDays: 30,
-      features: ['Saving goals', 'Challenges', 'Badges'],
+    Annual: {
+      type: 'Annual',
+      price: 500,
+      durationDays: 365,
+      features: ['ChatBot'],
     }, 
-    Pro: {
-        type: 'Pro',
-        price: 100,
+    Monthly: {
+        type: 'Monthly',
+        price: 50,
         durationDays: 30,
         features: ['ChatBot'],
       },
