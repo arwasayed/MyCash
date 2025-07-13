@@ -11,7 +11,11 @@ const incomeSchema = new mongoose.Schema({
     default: "monthly"
   },
   description: { type: String },
+  received_date: { type: Date, default: Date.now },
+  balance_after: { type: Number, default: 0 },
   timestamp: { type: Date, default: Date.now }
 });
 
+// NO PRE-SAVE HOOKS - Balance will be calculated in controller
 module.exports = mongoose.model("Income", incomeSchema);
+
