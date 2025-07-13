@@ -1,6 +1,8 @@
 // services/financeService.js
 const Income = require("../models/Income");
 const Expense = require("../models/Expense");
+const { createNotification } = require('../Controllers/notification');
+
 async function getUserSummary(user_id) {
     const income = await Income.findOne({ user_id }).sort({ timestamp: -1 });
     const expenses = await Expense.find({ user_id });
@@ -31,9 +33,9 @@ async function getUserSummary(user_id) {
       expenses_by_category: categories,
       remaining_income: remaining >= 0 ? remaining : 0
     };
-  }
-  
-  function filterExpenses(expenses, category, startDate, endDate) {
+}
+
+function filterExpenses(expenses, category, startDate, endDate) {
     let filtered = [...expenses];
   
     if (category) {
@@ -50,6 +52,29 @@ async function getUserSummary(user_id) {
     }
   
     return filtered;
+}
+
+async function checkOverspending(user_id) {
+  const summary = await getUserSummary(user_id);
+  
+  if (!summary.income || summary.message) return false;
+  
+  const remainingPercentage = (summary.remaining_income / summary.income) * 100;
+  
+  if (remainingPercentage <= 20) {
+    await createNotification(
+      user_id,
+      `⚠️ تنبيه! لديك فقط ${Math.round(remainingPercentage)}% من دخلك المتبقي (${summary.remaining_income} ${summary.currency})`,
+      'finance'
+    );
+    return true;
   }
   
-  module.exports = { getUserSummary, filterExpenses };
+  return false;
+}
+
+module.exports = {
+  getUserSummary,
+  filterExpenses,
+  checkOverspending
+};
