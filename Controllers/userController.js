@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
       email,
       password,
       nickname: nickname || 'User',
-      role: 'user',
+      role: 'admin',
       emailVerified: false 
     });
     const verifyToken = newUser.createEmailVerifyToken();
