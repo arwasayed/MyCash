@@ -1,179 +1,246 @@
 import React, { useState, useEffect } from 'react';
 import './Notification.css';
-import { Container, Row, Col, Image ,Button,Card,Badge,Spinner} from 'react-bootstrap';
-
+import { Container, Row, Col, Image, Button, Card, Spinner } from 'react-bootstrap';
 
 const getIcon = (type) => {
   switch (type) {
-    case 'success': return <img src="Notification/div (1).svg"/>;
-    case 'danger': return <img src="Notification/div (2).svg"/>;
-    case 'info': return <img src="Notification/div (3).svg"/>;
-    case 'reminder': return <img src="Notification/div (5).svg"/>;
-    default: return <img src="Notification/div (5).svg"/>;
+    case 'goal': return <img src="Notification/div (1).svg" alt="goal" />;
+    case 'challenge': return <img src="Notification/div (2).svg" alt="challenge" />;
+    case 'badge': return <img src="Notification/div (3).svg" alt="badge" />;
+    case 'finance': return <img src="Notification/div (5).svg" alt="finance" />;
+    default: return <img src="Notification/div (5).svg" alt="default" />;
   }
 };
 
 const getVariant = (type) => {
   switch (type) {
-    case 'success': return { border: '1px solid #BBF7D0' };
-    case 'danger': return { border: '1px solid #FECACA' };
-    case 'info': return { border: '1px solid #BFDBFE' };
-    case 'reminder': return { border: '1px solid #E9D5FF' };
+    case 'goal': return { border: '1px solid #BBF7D0' };
+    case 'challenge': return { border: '1px solid #FECACA' };
+    case 'badge': return { border: '1px solid #BFDBFE' };
+    case 'finance': return { border: '1px solid #E9D5FF' };
     default: return {};
   }
 };
 
+const typeTextMap = {
+  goal: 'هدف',
+  challenge: 'تحدى',
+  badge: 'شارة',
+  finance: 'مالى',
+};
 
 const Notification = () => {
-   const [notifications, setNotifications] = useState([]);
+  const [allNotifications, setAllNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filterType, setFilterType] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(5);
 
-  //backend
- useEffect(() => {
-    setLoading(true);
-     setTimeout(() => {
-      setNotifications([
-        {
-          id: 1,
-          type: 'success',
-          title: 'تهانينا! تم تحقق أهدافك المالـية',
-          message: 'لقد نجحت في توفير 5000 ريال، وجهت "رحلة النفقات الذكية". استمر في التحدي!',
-          text: ' انجاز ',
-          time:'منذ ساعة'
-        },
-        {
-          id: 2,
-          type: 'danger',
-          title: 'تحذير! تجاوزت حد الميزانية',
-          message: 'لقد تجاوزت ميزانية "الترفيه" بمبلغ 300 ريال هذا الشهر. راجع مصروفاتك.',
-          text: ' تحذير ',
-          time:'منذ ساعة وربع'
-        },
-        {
-          id: 3,
-          type: 'info',
-          title: 'اقتراح لتوفير المال',
-          message: 'توفير 200 ريال شهريًا عبر تقليل طلبات التوصيل والطبخ المنزلي في المثال.',
-          text: ' اقتراح ',
-          time:'منذ ساعة ونص'
-        },
-        {
-          id: 4,
-          type: 'success',
-          title: 'ميزة جديدة مفتوحة!',
-          message: 'حصلت على شارة "المدخر المحترف" لتوفير أول 1000 ريال في التطبيق.',
-          text: ' انجاز ',
-          time:'منذ ساعتين'
-        },
-        {
-          id: 5,
-          type: 'reminder',
-          title: 'تذكير بمراجعة الميزانية الشهرية',
-          message: 'قد حان وقت مراجعة ميزانيتك وتحديث أهدافك المالية للشهر القادم.',
-          text: ' تذكير ',
-          time:'منذ ساعتين'
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('⚠️ لم يتم العثور على توكن! الرجاء تسجيل الدخول أولاً.');
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await fetch('http://localhost:3000/api/notifications', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 401) {
+          alert('⚠️ غير مصرح. الرجاء تسجيل الدخول مجددًا.');
+          setLoading(false);
+          return;
+        }
+
+        const data = await response.json();
+        if (data.success) {
+          setAllNotifications(
+            data.data.map((notif) => ({
+              id: notif._id,
+              type: notif.type,
+              title: notif.title || notif.message || 'بدون عنوان',
+              message: notif.message,
+              text: typeTextMap[notif.type] || 'تذكير',
+              time: new Date(notif.createdAt).toLocaleTimeString('ar-EG', {
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+            }))
+          );
+        } else {
+          alert('حدث خطأ أثناء جلب الإشعارات');
+        }
+      } catch (err) {
+        console.error('خطأ في جلب الإشعارات:', err);
+        alert('حدث خطأ في الاتصال بالخادم');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
   }, []);
 
-return (
-    <Container fluid className="notification-container d-flex justify-content-center align-items-center ">
-      <Row className=" notification mt-4" style={{marginTop: '50px auto 0 auto'}} >
-       
-          <Col xs="auto" className="text-center text-md-end">
-          <h2 className="notification-title">الإشعارات</h2>
+  const filteredNotifications =
+    filterType === 'all'
+      ? allNotifications
+      : allNotifications.filter((notif) => notif.type === filterType);
+
+  // فقط الإشعارات المرئية حسب visibleCount
+  const visibleNotifications = filteredNotifications.slice(0, visibleCount);
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 5);
+  };
+
+//test
+
+//   const handleSendTestNotification = async () => {
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       alert("⚠️ لم يتم العثور على توكن! الرجاء تسجيل الدخول أولاً.");
+//       return;
+//     }
+
+//     try {
+//       const res = await fetch("http://localhost:3000/api/notifications/test", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({
+//           message: "📢 هذا إشعار تجريبي تم إرساله بنجاح!",
+//           type: "goal",
+//         }),
+//       });
+
+//       const data = await res.json();
+//       if (data.success) {
+//         alert("✅ تم إرسال الإشعار!");
+//       } else {
+//         alert("❌ فشل في الإرسال: " + (data.message || 'خطأ غير معروف'));
+//       }
+//     } catch (err) {
+//       console.error("Send Notification Error:", err);
+//       alert("⚠️ حصل خطأ أثناء الإرسال");
+//     }
+// };
+
+  return (
+    <Container fluid className="notification-container d-flex justify-content-center align-items-center">
+      <Row className="notification mt-4">
+        <Col xs="auto" className="text-center text-md-end">
+            <h2 className="notification-title">الإشعارات</h2>
           <p className="notification-subtext">تابع آخر التحديثات والتنبيهات المهمة</p>
         </Col>
         <Col xs="auto">
-          <Image
-            src="/Notification/div.svg" 
-            alt="Robot"
-            className="robot-image"
-            fluid
-          />
+          <Image src="/Notification/div.svg" alt="Robot" className="robot-image" fluid />
         </Col>
+      </Row>
+
      
-      </Row>
-
-
-      <Row className='search'>
-        <Col>
-        <Button className='bt all'>الكل</Button>
-        </Col>
-          <Col>
-        <Button className='bt all'>الإنجازات</Button>
-        </Col>
-          <Col>
-        <Button className='bt all'>التحذيرات</Button>
-        </Col>
-          <Col>
-        <Button className='bt all'>الاقتراحات</Button>
-        </Col>
-      </Row>
-
-
-
-        <div className="container mt-4">
-      {loading ? (
-        <div className="text-center py-5">
-          <Spinner animation="border" variant="primary" />
-        </div>
-      ) : (
-        <>
-          {notifications.map((notif) => (
-           <Card key={notif.id} className="mb-3 notif" style={getVariant(notif.type)}>
-  <Card.Body>
-    <div className="d-flex align-items-start">
-      <div className="fs-4">{getIcon(notif.type)}</div>
-      <div className="mx-3 w-100">
-
-        {/* العنوان والوقت */}
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <Card.Title className="mb-0" style={{
-            fontFamily: 'Cairo',
-            fontWeight: 400,
-            fontSize: '16px',
-            lineHeight: '24px'
-          }}>
-            {notif.title}
-          </Card.Title>
-          <small style={{ color: '#999', fontSize: '12px' }}>
-            {notif.time}
-          </small>
-        </div>
-
-        {/* الرسالة */}
-        <Card.Text className="mb-2" style={{
-          fontFamily: 'Cairo',
-          fontWeight: 400,
-          fontSize: '16px',
-          lineHeight: '24px',
-          color: '#7B88A8'
-        }}>
-          {notif.message}
-        </Card.Text>
-
-        {/* البادج */}
-        <div className="text-end">
-          <span className={`custom-badge ${notif.type}`}>{notif.text}</span>
-        </div>
-
-      </div>
-    </div>
-  </Card.Body>
-</Card>
-
-          ))}
-          <div className="text-center">
-            <Button variant="" className="mt-2 load" >
-              تحميل المزيد من الإشعارات
+      <Row className="search mt-3">
+        {['all', 'goal', 'challenge', 'badge', 'finance'].map((type) => (
+          <Col key={type} xs="auto" className="p-1">
+            <Button
+              className={`bt all ${filterType === type ? 'active' : ''}`}
+              onClick={() => {
+                setFilterType(type);
+                setVisibleCount(5); // عند تغيير الفلتر نرجع لعرض أول 5 فقط
+              }}
+              style={filterType === type ? { background: '#6C5DD3', color: 'white' } : {}}
+            >
+              {{
+                all: 'الكل',
+                goal: 'الاهداف',
+                challenge: 'التحديات',
+                badge: 'الشارات',
+                finance: 'الماليات',
+              }[type]}
             </Button>
+          </Col>
+        ))}
+      </Row>
+
+      {/* قائمة الإشعارات */}
+      <div className="container mt-4">
+        {loading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" variant="primary" />
           </div>
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            {visibleNotifications.length === 0 ? (
+              <p className="text-center none">لا توجد إشعارات</p>
+            ) : (
+              visibleNotifications.map((notif) => (
+                <Card key={notif.id} className="mb-3 notif" style={getVariant(notif.type)}>
+                  <Card.Body>
+                   <div className="d-flex flex-column flex-md-row align-items-start">
+  <div className="fs-4 mb-2 mb-md-0">{getIcon(notif.type)}</div>
+  <div className="mx-md-3 w-100">
+
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <Card.Title
+                            className="mb-0"
+                            style={{
+                              fontFamily: 'Cairo',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                            }}
+                          >
+                            {notif.title}
+                          </Card.Title>
+                          <small style={{ color: '#999', fontSize: '12px' }}>{notif.time}</small>
+                        </div>
+
+                        <Card.Text
+                          className="mb-2"
+                          style={{
+                            fontFamily: 'Cairo',
+                            fontWeight: 400,
+                            fontSize: '16px',
+                            lineHeight: '24px',
+                            color: '#7B88A8',
+                          }}
+                        >
+                          {notif.message}
+                        </Card.Text>
+
+                        <div className="text-end">
+                          <span className={`custom-badge ${notif.type}`}>{notif.text}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              ))
+            )}
+
+            {visibleCount < filteredNotifications.length && (
+              <div className="text-center">
+                <Button variant="primary" className="mt-2 load" onClick={handleLoadMore}>
+                  تحميل المزيد من الإشعارات
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+
+      {/* <div className="text-center mt-4">
+        <Button variant="success" onClick={handleSendTestNotification}>
+          إرسال إشعار تجريبي
+        </Button>
+      </div> */}
     </Container>
   );
 };

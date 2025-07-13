@@ -15,6 +15,7 @@ import Account from './components/Account/Account.jsx';
 import Notification from './components/Notification/Notification.jsx';
 import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
+import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx"
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -32,13 +33,16 @@ function App() {
 
           <Route path="/ResetPassword" element={<ResetPassword/>}/>
           <Route path="/ResetPassword2/:token" element={<ResetPassword2/>}/>
-          <Route path="/EmailConfirmation" element={<EmailConfirmation/>}/>
+<Route path="/EmailConfirmation/:token" element={<EmailConfirmation />} /><Route path="/verify-email/:token" element={<VerifyEmail />} />
+
+          
           <Route path="/EmailConfirm1" element={<EmailConfirm1/>}/>
           <Route path="/subscription" element={<Subscription/>}/>
           <Route path="/account" element={<Account/>}/>
           <Route path="/notification" element={<Notification/>}/>
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
+
         </Routes>
       </div>
       <Footer />

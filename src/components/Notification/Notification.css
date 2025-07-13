@@ -62,15 +62,19 @@ color: #7B88A8;
 }
 
 .search{
-width: 500px;
+width: 550px;
 height: 40px;
 opacity: 1;
 top: 379px;
 left: 471px;
-margin-top: 50px;
+margin: 50px auto 0 auto !important;
+
 
 
 }
+
+
+
 .bt{
 width: 97.25px;
 height: 40px;
@@ -82,7 +86,6 @@ font-family: Cairo;
 font-weight: 400;
 font-style: Regular;
 font-size: 16px;
-leading-trim: NONE;
 line-height: 100%;
 letter-spacing: 0%;
 text-align: center;
@@ -110,7 +113,7 @@ text-align: center;
 color: #FFFFFF;
 }
 
-.bt:active{
+.bt.active{
     width: 100px;
 height: 40px;
 opacity: 1;
@@ -128,6 +131,13 @@ text-align: center;
 color: #FFFFFF;
 }
 
+
+.non{
+  width: 50px;
+  margin: 50px auto 0 auto;
+
+}
+
 div.container{
   width: 832px;
 left: 297px;
@@ -138,7 +148,6 @@ gap: 22px;
 
 .notif{
   width: 832px;
-height: 160px;
 
 opacity: 1;
 border-radius: 12px;
@@ -166,22 +175,22 @@ opacity: 1;
 border-radius: 9999px;
 }
 
-.custom-badge.success {
+.custom-badge.goal {
   background-color: #BBF7D0 !important;
   color: #166534 !important;
 }
 
-.custom-badge.danger {
+.custom-badge.challenge {
   background-color: #FECACA !important;
   color: #7F1D1D !important;
 }
 
-.custom-badge.info {
+.custom-badge.badge {
   background-color: #BFDBFE !important;
   color: #1E3A8A !important;
 }
 
-.custom-badge.reminder {
+.custom-badge.finance {
   background-color: #E9D5FF !important;
   color: #6B21A8 !important;
 }
@@ -194,9 +203,104 @@ left: 600px;
 
 border-radius: 8px;
 color:#333333;
-background-color: #F5F7FA;
+background-color: #eef2f7;
 border: none;
 }
 .load:hover{
   background-color: #E9D5FF;
+}
+
+
+@media (max-width: 992px) {
+  .notification {
+    width: 95% !important;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+  }
+
+  .robot-image {
+    width: 100px;
+    margin-top: 0;
+  }
+
+  h2.notification-title,
+  p.notification-subtext {
+    text-align: center;
+    width: 100%;
+  }
+
+  .search {
+    width: 100% !important;
+    flex-wrap: wrap;
+    justify-content: center !important;
+  }
+
+  .bt {
+    width: 90px !important;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .bt.active,
+  .bt:hover {
+    width: 90px !important;
+    font-size: 14px;
+  }
+
+  div.container,
+  .notif {
+    width: 95% !important;
+  }
+
+  .custom-badge {
+    font-size: 13px;
+    width: auto;
+    height: auto;
+    padding: 4px 10px;
+  }
+
+  .load {
+    width: 90%;
+  }
+   .search {
+    margin-bottom: 30px !important;
+  }
+  .notif {
+  width: 100% !important;
+  height: auto !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+}
+
+@media (max-width: 576px) {
+  h2.notification-title {
+    font-size: 24px !important;
+  }
+
+  p.notification-subtext {
+    font-size: 14px !important;
+  }
+
+  .bt {
+    font-size: 12px !important;
+  }
+
+  .notif {
+    padding: 10px;
+  }
+
+  .custom-badge {
+    font-size: 12px;
+  }
+
+  .robot-image {
+    width: 80px;
+  }
+  .search {
+    margin-bottom: 40px !important;
+  }
 }

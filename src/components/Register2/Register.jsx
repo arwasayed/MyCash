@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Register.css";
 import { Container, Form, Button, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import UserIcon from "../../../public/Register2/icons/Frame.svg";
 import MailIcon from "../../../public/Register2/icons/Frame (1).svg";
 import PassIcon from "../../../public/Register2/icons/Frame (2).svg";
@@ -13,10 +13,56 @@ const SignupSection = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
+
+  // تحميل مكتبة Google Sign-In
+  useEffect(() => {
+    if (window.google) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleSignUp,
+      });
+
+      window.google.accounts.id.renderButton(
+        document.getElementById("googleSignUpButton"),
+        {
+          theme: "outline",
+          size: "large",
+          text: "signup_with",
+          shape: "pill",
+          logo_alignment: "left",
+        }
+      );
+    }
+  }, []);
+
+  const handleGoogleSignUp = async (response) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/user/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential, mode: "register" }),
+      });
+      const data = await res.json();
+      console.log("Google Sign-Up response:", data); // تسجيل الاستجابة
+      if (data.status === "success") {
+        setSuccess(data.message);
+        // لا نحفظ التوكن هنا لأن التفعيل مطلوب
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("حدث خطأ أثناء التسجيل بجوجل. حاول مرة أخرى.");
+      console.error("Google Sign-Up error:", err);
+    }
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
@@ -38,18 +84,22 @@ const SignupSection = () => {
           nickname: fullName,
         }),
       });
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(
-          `HTTP error! Status: ${response.status}, Response: ${text}`
-        );
-      }
       const data = await response.json();
-      setSuccess(data.message);
+      console.log("Signup response:", data); // تسجيل الاستجابة
+      if (data.status === "success") {
+        setSuccess(data.message);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      } else {
+        setError(data.message || "فشل التسجيل. حاول مرة أخرى.");
+      }
     } catch (err) {
-      setError(err.message);
+      setError("حدث خطأ أثناء التسجيل. حاول مرة أخرى.");
+      console.error("Signup error:", err);
     }
   };
+
   return (
     <Container fluid className="responsive-container">
       <div className="custom-div content-wrapper">
@@ -72,7 +122,7 @@ const SignupSection = () => {
               />
               <img
                 src={UserIcon}
-                alt="lock"
+                alt="user"
                 style={{
                   position: "absolute",
                   right: 10,
@@ -83,8 +133,6 @@ const SignupSection = () => {
                   pointerEvents: "none",
                 }}
               />
-
-              <br />
             </Form.Group>
 
             <Form.Group className="mb-3 position-relative input-with-icon icon">
@@ -97,7 +145,7 @@ const SignupSection = () => {
               />
               <img
                 src={MailIcon}
-                alt="lock"
+                alt="mail"
                 style={{
                   position: "absolute",
                   right: 10,
@@ -120,7 +168,6 @@ const SignupSection = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   style={{ paddingLeft: 40, paddingRight: 40 }}
                 />
-                {/* Lock icon (always visible, right side) */}
                 <img
                   src={PassIcon}
                   alt="lock"
@@ -134,7 +181,6 @@ const SignupSection = () => {
                     pointerEvents: "none",
                   }}
                 />
-                {/* Show/hide icon (eye), clickable, left side */}
                 <img
                   src={AppearPassIcon}
                   alt="show/hide password"
@@ -162,7 +208,6 @@ const SignupSection = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   style={{ paddingLeft: 40, paddingRight: 40 }}
                 />
-                {/* Lock icon (always visible, right side) */}
                 <img
                   src={PassIcon}
                   alt="lock"
@@ -176,7 +221,6 @@ const SignupSection = () => {
                     pointerEvents: "none",
                   }}
                 />
-                {/* Show/hide icon (eye), clickable, left side */}
                 <img
                   src={AppearPassIcon}
                   alt="show/hide confirm password"
@@ -207,43 +251,47 @@ const SignupSection = () => {
                   </span>
                 }
               />
-              <br />
             </Form.Group>
 
-            {message && (
-              <div className="custom-alert success">
+            {success && (
+              <Alert variant="success">
                 <span className="alert-icon">✅</span>
-                <span className="alert-text">{message}</span>
-              </div>
+                <span className="alert-text">{success}</span>
+              </Alert>
             )}
 
             {error && (
-              <div className="custom-alert error">
+              <Alert variant="danger">
                 <span className="alert-icon">❌</span>
                 <span className="alert-text">{error}</span>
-              </div>
+              </Alert>
             )}
 
             <Button variant="primary" className="register-button" type="submit">
               <p>← إنشاء حساب جديد</p>
             </Button>
-          </Form>
-          <div>
-            <Button variant="primary" className="Google-button" type="submit">
-              <p>
-                {" "}
-                <img src="/images/devicon_google (1).svg" /> Google تسجيل
-                باستخدام{" "}
-              </p>
-            </Button>
-          </div>
-          <p className="login-text">
-            تسجيل الدخول
-            <Link to="/login" className="login-link">
-              {" "}
+
+            <div id="googleSignUpButton">
+              <Button
+                variant="primary"
+                className="Google-button"
+                type="button"
+                onClick={() => window.google.accounts.id.prompt()}
+              >
+                <p>
+                  <img src="/images/devicon_google (1).svg" alt="Google icon" /> تسجيل
+                  باستخدام Google
+                </p>
+              </Button>
+            </div>
+
+            <p className="login-text">
+              <Link to="/login" className="login-link">
+                تسجيل الدخول
+              </Link>{" "}
               لديك حساب بالفعل؟
-            </Link>
-          </p>
+            </p>
+          </Form>
         </div>
 
         <div className="welcome-content">
