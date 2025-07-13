@@ -8,7 +8,8 @@ const {
   getCurrentBalance,
   calculateNewBalance,
   getExpenseDetails,
-  getIncomeDetails 
+  getIncomeDetails,
+  checkOverspending
 } = require("../services/financeService");
 
 const { processFinancialDataForRAG } = require("./chatController");
@@ -95,16 +96,15 @@ async function addExpense(req, res) {
     // Update RAG system
     await processFinancialDataForRAG(user_id);
 
+    // Check for overspending after adding expense
+    await checkOverspending(user_id);
+
     console.log(`=== END ADD EXPENSE REQUEST ===\n`);
 
     res.status(201).json({
       ...expense.toObject(),
       message: `تم تسجيل مصروف بقيمة ${amount} ${balanceInfo.currency} على ${description || category}. رصيدك الحالي: ${expense.balance_after} ${balanceInfo.currency}`
     });
-    // التحقق من الإنفاق الزائد بعد إضافة المصروف
-    await checkOverspending(user_id);
-
-    res.status(201).json(expense);
   } catch (err) {
     console.error("Error adding expense:", err.message);
     res.status(500).json({ error: "Server error" });
@@ -207,6 +207,11 @@ async function updateExpense(req, res) {
     // Update RAG with new financial data
     await processFinancialDataForRAG(expense.user_id);
 
+    // Check for overspending if amount was updated
+    if (updates.amount) {
+      await checkOverspending(expense.user_id);
+    }
+
     res.json({
       ...updated.toObject(),
       message: "تم تحديث المصروف بنجاح. ملاحظة: قد يؤثر هذا على الرصيد المحسوب."
@@ -216,7 +221,6 @@ async function updateExpense(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
-
 
 async function getSummary(req, res) {
   const { user_id } = req.query;
@@ -242,7 +246,7 @@ async function getBalance(req, res) {
   try {
     const balance = await getCurrentBalance(user_id);
     
-    res.json({
+    res.json({            
       user_id,
       current_balance: balance.current_balance,
       currency: balance.currency,
@@ -255,7 +259,6 @@ async function getBalance(req, res) {
   }
 }
 
-// Get detailed financial report
 async function getFinancialReport(req, res) {
   const { user_id } = req.query;
   try {
