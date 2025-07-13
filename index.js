@@ -13,6 +13,7 @@ const challengeRoutes = require("./Routes/challenge");
 const badgeRoutes= require("./Routes/badge");
 const subscriptionRoutes = require("./Routes/subscription");
 const notificationRoutes= require("./Routes/notification");
+const { dailyFinanceCheck } = require('./services/scheduler');
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log(' Connected to MongoDB'))
@@ -44,4 +45,5 @@ app.listen(PORT, async() =>{
   } catch (err) {
     console.warn("Failed to initialize RAG service:", err.message);
   }
+   setInterval(dailyFinanceCheck, 24 * 60 * 60 * 1000);
 });
