@@ -84,19 +84,25 @@ function filterExpenses(expenses, category, startDate, endDate) {
 async function checkOverspending(user_id) {
   const summary = await getUserSummary(user_id);
   
-  if (!summary.income) return false;
+  // حساب الدخل المتبقي بعد المصروفات
+  const remaining_income = summary.total_income_received - summary.total_expenses_made;
   
-  const remainingPercentage = (summary.remaining_income / summary.income) * 100;
+  if (summary.total_income_received <= 0) return false;
+  
+  const remainingPercentage = (remaining_income / summary.total_income_received) * 100;
   
   if (remainingPercentage <= 20) {
     await createNotification(
       user_id,
-      `⚠️ خلي بالك من فلوسك! كدة هنشحت آخر الشهر! (متبقي ${summary.remaining_income} ${summary.currency} - ${Math.round(remainingPercentage)}%)`,
+      `⚠️ خلي بالك من فلوسك! كدة هنشحت آخر الشهر! (متبقي ${remaining_income} ${summary.currency} - ${Math.round(remainingPercentage)}%)`,
       'finance'
     );
     return true;
   }
+  
+  return false;
 }
+
 
 async function calculateNewBalance(user_id, amount, isIncome = true) {
   try {
@@ -233,7 +239,7 @@ async function getUserSummary(user_id) {
       { $match: { user_id } },
       { $group: { _id: "$category", total: { $sum: "$amount" } } }
     ]);
-    
+   
     const categorySummary = {};
     expensesByCategory.forEach(cat => {
       categorySummary[cat._id] = cat.total;
@@ -297,24 +303,6 @@ async function generateExpenseReport(user_id) {
 }
 
 
-function filterExpenses(expenses, category, startDate, endDate) {
-  let filtered = [...expenses];
-
-  if (category) {
-    filtered = filtered.filter(e => e.category === category);
-  }
-
-  if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    filtered = filtered.filter(e => {
-      const d = new Date(e.date);
-      return d >= start && d <= end;
-    });
-  }
-
-  return filtered;
-}
 
 module.exports = { 
   getUserSummary, 
@@ -324,5 +312,6 @@ module.exports = {
   getTransactionHistory,
   getExpenseDetails,
   getIncomeDetails,
-  generateExpenseReport
+  generateExpenseReport,
+  checkOverspending
 };
