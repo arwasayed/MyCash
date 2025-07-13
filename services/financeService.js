@@ -57,14 +57,14 @@ function filterExpenses(expenses, category, startDate, endDate) {
 async function checkOverspending(user_id) {
   const summary = await getUserSummary(user_id);
   
-  if (!summary.income || summary.message) return false;
+  if (!summary.income) return false;
   
   const remainingPercentage = (summary.remaining_income / summary.income) * 100;
   
   if (remainingPercentage <= 20) {
     await createNotification(
       user_id,
-      `⚠️ تنبيه! لديك فقط ${Math.round(remainingPercentage)}% من دخلك المتبقي (${summary.remaining_income} ${summary.currency})`,
+      `⚠️ خلي بالك من فلوسك! كدة هنشحت آخر الشهر! (متبقي ${summary.remaining_income} ${summary.currency} - ${Math.round(remainingPercentage)}%)`,
       'finance'
     );
     return true;
