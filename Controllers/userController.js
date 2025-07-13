@@ -1,3 +1,4 @@
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -5,6 +6,13 @@ const User = require('../models/userModel');
 const sendEmail = require('../utils/email');
 // const passport = require('passport');
 // const OAuth2Client = require ('google-auth-library');
+
+
+
+
+//client token
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const sendResponse = (res, statusCode, status, data, message) => {
   res.status(statusCode).json({ status, data, message });
@@ -196,16 +204,69 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// Google Authentication
+// // Google Authentication
+// exports.googleAuth = async (req, res) => {
+//   try {
+//     const { credential } = req.body;
+
+//     if (!credential) {
+//       return sendResponse(res, 400, 'error', null, 'رمز Google مطلوب');
+//     }
+
+//     // Verify the Google ID token
+//     const ticket = await client.verifyIdToken({
+//       idToken: credential,
+//       audience: process.env.GOOGLE_CLIENT_ID,
+//     });
+
+//     const payload = ticket.getPayload();
+//     const { email, sub: googleId, name, picture } = payload;
+
+//     // Check if the user exists
+//     let user = await User.findOne({ email });
+
+//     if (!user) {
+//       // Register new user
+//       user = await User.create({
+//         email,
+//         nickname: name || 'User',
+//         googleId,
+//         provider: 'google',
+//         role: 'user',
+//         emailVerified: true, // Google verified emails are considered verified
+//         photo: picture
+//       });
+//     } else if (user.provider !== 'google') {
+//       // User exists but didn't register with Google
+//       return sendResponse(res, 400, 'error', null, 'هذا البريد الإلكتروني مسجل بالفعل بطريقة أخرى');
+//     }
+
+//     // Generate JWT token
+//     const token = generateToken(user._id);
+
+//     sendResponse(res, 200, 'success', {
+//       token,
+//       user
+//     }, 'تم تسجيل الدخول بنجاح عبر Google');
+
+//   } catch (err) {
+//     console.error('Google auth error:', err);
+//     sendResponse(res, 401, 'error', null, 'فشل المصادقة عبر Google');
+//   }
+//   };
+
+
+
+
+// Google Authentication (Login or Register)
 exports.googleAuth = async (req, res) => {
   try {
-    const { credential } = req.body;
+    const { credential, mode } = req.body; // ← أضفنا mode (login | register)
 
     if (!credential) {
       return sendResponse(res, 400, 'error', null, 'رمز Google مطلوب');
     }
 
-    // Verify the Google ID token
     const ticket = await client.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -214,38 +275,48 @@ exports.googleAuth = async (req, res) => {
     const payload = ticket.getPayload();
     const { email, sub: googleId, name, picture } = payload;
 
-    // Check if the user exists
     let user = await User.findOne({ email });
 
-    if (!user) {
-      // Register new user
+    if (mode === 'login') {
+      if (!user) {
+        return sendResponse(res, 404, 'error', null, 'هذا البريد الإلكتروني غير مسجل. يرجى التسجيل أولاً.');
+      }
+      if (user.provider !== 'google') {
+        return sendResponse(res, 400, 'error', null, 'هذا البريد الإلكتروني مسجل بطريقة أخرى. سجل دخولك بنفس الطريقة.');
+      }
+    }
+
+    if (mode === 'register') {
+      if (user) {
+        return sendResponse(res, 400, 'error', null, 'البريد الإلكتروني مسجل بالفعل');
+      }
+
       user = await User.create({
         email,
         nickname: name || 'User',
         googleId,
         provider: 'google',
-        role: 'user',
-        emailVerified: true, // Google verified emails are considered verified
-        photo: picture
+        emailVerified: true,
+        photo: picture,
+        role: 'user'
       });
-    } else if (user.provider !== 'google') {
-      // User exists but didn't register with Google
-      return sendResponse(res, 400, 'error', null, 'هذا البريد الإلكتروني مسجل بالفعل بطريقة أخرى');
     }
 
-    // Generate JWT token
     const token = generateToken(user._id);
 
     sendResponse(res, 200, 'success', {
       token,
       user
-    }, 'تم تسجيل الدخول بنجاح عبر Google');
+    }, mode === 'login' ? 'تم تسجيل الدخول بنجاح عبر Google' : 'تم إنشاء الحساب بنجاح عبر Google');
 
   } catch (err) {
     console.error('Google auth error:', err);
     sendResponse(res, 401, 'error', null, 'فشل المصادقة عبر Google');
   }
-  };
+};
+
+
+
 
 // //googleLogin
 // exports.googleLogin = passport.authenticate('google', {

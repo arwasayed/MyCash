@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-// const passport = require('passport');
+const passport = require('passport');
 const {
   signup,
   login,
@@ -10,16 +10,19 @@ const {
   googleAuth
   // googleCallback
 } = require('../Controllers/userController');
+const userController = require('../Controllers/userController');
+
 const { protect } = require('../middlewares/authMiddleware');
 
 
-router.post('/signup', signup);
+router.post('/signup',signup);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:token', resetPassword);
 router.get('/verify-email/:token', verifyEmail);
 
-router.post('/google', googleAuth);
+router.post('/google', userController.googleAuth);
+
 
 // //google
 // router.get('/auth/google',
