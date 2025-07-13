@@ -3,7 +3,7 @@
 const Income = require("../models/Income");
 const Expense = require("../models/Expense");
 const { v4: uuidv4 } = require("uuid");
-const { getUserSummary } = require("../services/financeService");
+const { getUserSummary, checkOverspending } = require("../services/financeService");
 
 async function addIncome(req, res) {
   try {
@@ -37,6 +37,9 @@ async function addExpense(req, res) {
       description,
       date
     });
+
+    // التحقق من الإنفاق الزائد بعد إضافة المصروف
+    await checkOverspending(user_id);
 
     res.status(201).json(expense);
   } catch (err) {
@@ -79,6 +82,12 @@ async function updateExpense(req, res) {
   const updates = req.body;
   try {
     const updated = await Expense.findOneAndUpdate({ id }, updates, { new: true });
+
+    // التحقق من الإنفاق الزائد بعد تعديل المصروف
+    if (updates.amount) {
+      await checkOverspending(updated.user_id);
+    }
+
     res.json(updated);
   } catch (err) {
     console.error("Error updating expense:", err.message);
