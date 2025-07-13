@@ -15,7 +15,7 @@ exports.createSavingGoal = catchAsync(async (req, res, next) => {
   });
 
   if (exists) {
-    const errObj = new Error("You already have a goal with this title");
+    const errObj = new Error("الهدف موجود شوف غيره.");
     errObj.statusCode = 400;
     throw errObj;
   }
@@ -53,7 +53,7 @@ exports.updateSavingGoal = catchAsync(async (req, res, next) => {
   await goal.save();
 
   if (goal.status === "completed") {
-    await awardBadgeIfEligible(req.user._id, "First Goal Achieved");
+    await awardBadgeIfEligible(req.user._id, goal.title, 'goal');
   }
 
   res.status(201).json({ success: true, data: goal });

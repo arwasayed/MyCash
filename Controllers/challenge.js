@@ -5,6 +5,8 @@ const UserChallenge = require("../models/UserChallenge");
 const Challenge = require("../models/Challenge");
 const { challengeSchema } = require('../validation/challenge.validation');
 const cron = require("node-cron");
+const { createNotification } = require("../Controllers/notification");
+const User = require("../models/userModel");
 
 exports.joinChallenge = catchAsync(async (req, res) => {
   const exists = await UserChallenge.findOne({
@@ -45,7 +47,7 @@ exports.completeChallenge = catchAsync(async (req, res) => {
   uc.completedAt = new Date();
   await uc.save();
 
-  await awardBadgeIfEligible(req.user._id, "Challenge Hero");
+  await awardBadgeIfEligible(req.user._id, challenge.title, "challenge");
 
   res.json({
     success: true,
@@ -81,6 +83,16 @@ exports.createChallenge = catchAsync(async (req, res) => {
     rewardXP: req.body.rewardXP
   });
 
+  const users = await User.find({}, '_id');
+
+  for (const user of users) {
+    await createNotification(
+      user._id,
+      `وسع وسع للتحدى الجديد: ${challenge.title}`,
+      'challenge'
+    );
+  }
+
   res.status(201).json({
     success: true,
     data: challenge
@@ -90,18 +102,41 @@ exports.createChallenge = catchAsync(async (req, res) => {
 
 
 cron.schedule("0 0 * * *", async () => {
-  await SavingGoal.updateMany(
-    { deadline: { $lt: new Date() }, status: "active" },
-    { status: "expired" }
-  );
+  const now = new Date();
 
-  await UserChallenge.updateMany(
-    {
-      startedAt: { $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-      status: "in_progress",
-    },
-    { status: "failed" }
-  );
+  ////////////////////////////////////////////////////
+  const expiredGoals = await SavingGoal.find({
+    deadline: { $lt: now },
+    status: "active"
+  });
+
+  for (const goal of expiredGoals) {
+    goal.status = "expired";
+    await goal.save();
+
+    await createNotification(
+      goal.userId,
+      `للأسف انتهت صلاحيه  "${goal.title}" يا حزين.`,
+      "goal"
+    );
+  }
+  ////////////////////////////////////////////////////////
+  const expiredChallenges = await UserChallenge.find({
+    startedAt: { $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+    status: "in_progress"
+  });
+
+  for (const uc of expiredChallenges) {
+    uc.status = "failed";
+    uc.completedAt = new Date();
+    await uc.save();
+
+    await createNotification(
+      uc.userId,
+      `فشلت فى التحدى.`,
+      "challenge"
+    );
+  }
 
   console.log("Daily check: expired outdated goals/challenges");
 });

@@ -12,6 +12,7 @@ const savingGoalRoutes = require("./Routes/savingGoal");
 const challengeRoutes = require("./Routes/challenge");
 const badgeRoutes= require("./Routes/badge");
 const subscriptionRoutes = require("./Routes/subscription");
+const notificationRoutes= require("./Routes/notification");
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log(' Connected to MongoDB'))
@@ -34,6 +35,7 @@ app.use("/api/saving-goals", savingGoalRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/badges", badgeRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
+app.use("/api/notifications", notificationRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async() =>{
   console.log(`🚀 Server running on http://localhost:${PORT}`);
