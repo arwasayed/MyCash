@@ -15,9 +15,14 @@ import Account from './components/Account/Account.jsx';
 import Notification from './components/Notification/Notification.jsx';
 import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
+<<<<<<< HEAD
 import Game from "./components/Game/Game.jsx";
 import AssistantPage from "./components/Assistant/AssistantPage.jsx";
 import GoalsPage from "./components/Goals/GoalsPage.jsx";
+=======
+import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx"
+import Rename from "./components/Rename/Rename.jsx";
+>>>>>>> 00f9e5ece98b7a33584b33b93ab1a2c398f63e2d
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -35,16 +40,22 @@ function App() {
 
           <Route path="/ResetPassword" element={<ResetPassword/>}/>
           <Route path="/ResetPassword2/:token" element={<ResetPassword2/>}/>
-          <Route path="/EmailConfirmation" element={<EmailConfirmation/>}/>
+<Route path="/EmailConfirmation/:token" element={<EmailConfirmation />} /><Route path="/verify-email/:token" element={<VerifyEmail />} />
+
+          
           <Route path="/EmailConfirm1" element={<EmailConfirm1/>}/>
           <Route path="/subscription" element={<Subscription/>}/>
           <Route path="/account" element={<Account/>}/>
           <Route path="/notification" element={<Notification/>}/>
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
+<<<<<<< HEAD
           <Route path="/game" element={<Game />} />
           <Route path="/assistant" element={<AssistantPage />} />
           <Route path="/goals" element={<GoalsPage />} />
+=======
+<Route path="/rename" element={<Rename/>}/>
+>>>>>>> 00f9e5ece98b7a33584b33b93ab1a2c398f63e2d
         </Routes>
       </div>
       <Footer />

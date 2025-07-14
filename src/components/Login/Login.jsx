@@ -1,14 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Container, Form, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
-import { Container, Form, Button, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [success, setSuccess] = useState("");
+
+  const navigate = useNavigate();
+
+  // تحميل مكتبة Google Sign-In
+useEffect(() => {
+  if (window.google) {
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogleSignIn,
+    });
+
+    window.google?.accounts.id.renderButton(
+      document.getElementById("googleSignInButton"),
+      { theme: "outline",
+    size: "large", 
+    text: "signin_with",
+    shape: "pill", 
+    logo_alignment: "left"}
+    );
+  }
+  }, []);
+
+  const handleGoogleSignIn = async (response) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/user/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential, mode: "login"}),
+       
+      });
+      const data = await res.json();
+
+      if (data.status === "success") {
+        setSuccess(data.message);
+        localStorage.setItem("token", data.token);
+        navigate("/home"); 
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("حدث خطأ أثناء تسجيل الدخول بجوجل. حاول مرة أخرى.");
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,6 +68,7 @@ const Login = () => {
       if (data.status === "success") {
         setSuccess(data.message);
         localStorage.setItem("token", data.token);
+        navigate("/home"); 
       } else {
         setError(data.message);
       }
@@ -97,10 +140,11 @@ const Login = () => {
                 </Link>
               </div>
             </div>
-            {message && (
+
+            {success && (
               <div className="custom-alert success">
                 <span className="alert-icon">✅</span>
-                <span className="alert-text">{message}</span>
+                <span className="alert-text">{success}</span>
               </div>
             )}
 
@@ -114,17 +158,22 @@ const Login = () => {
             <Button variant="primary" className="login-button" type="submit">
               <p>تسجيل الدخول</p>
             </Button>
-          </Form>
 
-          <div>
-            <Button variant="primary" className="Google-button" type="submit">
-              <p>
-                {" "}
-                تسجيل باستخدام Google
-                <img src="/images/devicon_google (1).svg" />{" "}
-              </p>
-            </Button>
-          </div>
+          <div id="googleSignInButton">
+  <Button
+    variant="primary"
+    className="Google-button"
+    type="button"  
+    onClick={() => window.google.accounts.id.prompt()} 
+  >
+    <p>
+      تسجيل باستخدام Google
+      <img src="/images/devicon_google (1).svg" alt="Google icon" />
+    </p>
+  </Button>
+</div>
+
+          </Form>
 
           <span className="newaccount">
             <Link to="/register" className="login-link">

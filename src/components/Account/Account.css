@@ -12,7 +12,6 @@
   direction: rtl;
 }
 
-/* ضبط عرض الحاويات الأساسية */
 .account-container > .profile,
 .account-container > .budget,
 .account-container > section.achivements,
@@ -24,7 +23,6 @@
   margin-right: auto;
 }
 
-/* الملف الشخصي */
 .profile {
   width: 100%;
   max-width: 926px;
@@ -37,7 +35,7 @@
   border: none;
 }
 
-/* الشارة */
+
 .badge {
   width: 123.5px;
   height: 28px;
@@ -55,11 +53,10 @@
   justify-content: center;
 }
 
-/* بطاقة الميزانية */
 .budget {
   width: 100%;
   max-width: 896px;
-  height: auto; /* خلي الارتفاع تلقائي عشان الريسبونسيف */
+  height: auto; 
   opacity: 1;
   border-radius: 16px;
   background: #FFFFFF;
@@ -69,12 +66,10 @@
   padding: 30px;
 }
 
-/* المسافات بين أعمدة الميزانية لتجنب التداخل */
 .budget .row > .col-md-6 {
   margin-bottom: 20px;
 }
 
-/* عنوان الميزانية */
 h5.monthy {
   width: 100%;
   height: 37px;
@@ -88,7 +83,6 @@ h5.monthy {
   margin-bottom: 15px;
 }
 
-/* لابل الفورم */
 form label.now {
   width: 97px;
   height: 30px;
@@ -130,7 +124,6 @@ button.update {
   margin: 0 auto;
 }
 
-/* نص المفتاح */
 p.key {
   width: 100%;
   max-width: 314px;
@@ -144,7 +137,6 @@ p.key {
   margin: 20px auto 0 auto;
 }
 
-/* المبالغ */
 span.mablagh {
   width: 72px;
   height: 30px;
@@ -164,18 +156,16 @@ span.almutabaqaa {
   color: #00C48C;
 }
 
-/* العنوان في الإعدادات */
 .setting {
   font-family: Cairo;
   font-weight: 400;
   font-style: Regular;
   font-size: 20px;
   color: #333333;
-  margin-top: 40px !important; /* زيادة المسافة فوقه لمنع التداخل */
+  margin-top: 40px !important; 
   text-align: center;
 }
 
-/* عناوين وأوصاف الخيارات */
 div.title {
   width: 66px;
   height: 30px;
@@ -198,7 +188,6 @@ div.subtitle {
   color: #7B88A8;
 }
 
-/* قسم الإنجازات */
 section.achivements {
   width: 100%;
   max-width: 896px;
