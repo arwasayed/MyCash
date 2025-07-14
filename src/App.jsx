@@ -16,6 +16,7 @@ import Notification from './components/Notification/Notification.jsx';
 import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx"
+import Rename from "./components/Rename/Rename.jsx";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -42,7 +43,7 @@ function App() {
           <Route path="/notification" element={<Notification/>}/>
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
-
+<Route path="/rename" element={<Rename/>}/>
         </Routes>
       </div>
       <Footer />

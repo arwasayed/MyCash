@@ -12,7 +12,7 @@ const Account = () => {
 
   const options = [
     { icon: <FaGlobe />, title: 'تغيير اللغة', subtitle: 'العربية / English' },
-    { icon: <FaMoon />, title: 'الوضع الليلي', subtitle: 'تفعيل / إلغاء' },
+    { icon: <FaMoon />, title: ' تغيير الاسم', subtitle: 'تفعيل / إلغاء' },
     { icon: <FaLock />, title: 'تغيير كلمة السر', subtitle: 'حماية الحساب' },
     { icon: <FaSignOutAlt />, title: 'تسجيل الخروج', subtitle: 'إنهاء الجلسة' },
   ];
@@ -82,7 +82,7 @@ const Account = () => {
               <Form.Control
                 plaintext
                 readOnly
-                defaultValue="يناير 2024"
+                defaultValue="   يناير 2024 "
                 style={{ backgroundColor: 'transparent', border: '1px solid #E5E7EB', paddingLeft: 0 }}
               />
             </Form.Group>
