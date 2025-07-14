@@ -249,7 +249,7 @@ const SignupSection = () => {
         <div className="welcome-content">
           <div className="welcome-gradient">
             <img
-              src="/public/Register2/images/img.svg"
+              src="/images/img.jpg"
               alt="Welcome illustration"
               className="welcome-image"
             />

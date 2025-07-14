@@ -36,6 +36,7 @@
   color: #666;
   line-height: 1.6;
   font-family: 'Cairo', sans-serif;
+  text-align: right !important;
 }
 
 .footer-links {

@@ -1,0 +1,154 @@
+/* Goals Page Custom Styles */
+.goals-page {
+  direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.goal-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #6f42c1;
+  margin: 0;
+}
+
+.page-description {
+  color: #6c757d;
+  text-align: right;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+.goal-card {
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.goal-card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.calendar-icon {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  color: #6c757d;
+}
+
+.completed-icon {
+  width: 64px;
+  height: 64px;
+  background-color: #d1e7dd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Goal color backgrounds */
+.bg-purple-bg {
+  background-color: rgba(111, 66, 193, 0.1);
+}
+
+.bg-blue-bg {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.bg-green-bg {
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.bg-orange-bg {
+  background-color: rgba(253, 126, 20, 0.1);
+}
+
+.bg-red-bg {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Custom button colors */
+.btn-purple {
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+  color: white;
+}
+
+.btn-purple:hover {
+  background-color: #5a32a3;
+  border-color: #5a32a3;
+  color: white;
+}
+
+.text-purple {
+  color: #6f42c1 !important;
+}
+
+/* Progress bar colors */
+.progress-bar.bg-purple {
+  background-color: #6f42c1;
+}
+
+.progress-bar.bg-blue {
+  background-color: #0d6efd;
+}
+
+.progress-bar.bg-green {
+  background-color: #198754;
+}
+
+.progress-bar.bg-orange {
+  background-color: #fd7e14;
+}
+
+.progress-bar.bg-red {
+  background-color: #dc3545;
+}
+
+/* Form controls */
+.form-control {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .goal-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .d-flex.gap-2 {
+    flex-direction: column;
+  }
+  
+  .d-flex.gap-2 .btn {
+    margin-bottom: 0.5rem;
+  }
+} 

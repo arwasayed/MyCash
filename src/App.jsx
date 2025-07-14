@@ -15,6 +15,9 @@ import Account from './components/Account/Account.jsx';
 import Notification from './components/Notification/Notification.jsx';
 import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
+import Game from "./components/Game/Game.jsx";
+import AssistantPage from "./components/Assistant/AssistantPage.jsx";
+import GoalsPage from "./components/Goals/GoalsPage.jsx";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -39,6 +42,9 @@ function App() {
           <Route path="/notification" element={<Notification/>}/>
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
+          <Route path="/game" element={<Game />} />
+          <Route path="/assistant" element={<AssistantPage />} />
+          <Route path="/goals" element={<GoalsPage />} />
         </Routes>
       </div>
       <Footer />
