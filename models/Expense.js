@@ -8,9 +8,12 @@ const expenseSchema = new mongoose.Schema({
   description: { type: String },
   date: { type: Date, default: Date.now },
   balance_after: { type: Number, default: 0 },
-  timestamp: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now },
+  deleted: { type: Boolean, default: false },
+  deleted_at: { type: Date },
+  updated_at: { type: Date }
 });
 
-// NO PRE-SAVE HOOKS - Balance will be calculated in controller
+
 module.exports = mongoose.model("Expense", expenseSchema);
 

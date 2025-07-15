@@ -14,6 +14,61 @@ const {
 
 const { processFinancialDataForRAG } = require("./chatController");
 
+// Helper function to recalculate all balances after modification
+async function recalculateAllBalances(user_id) {
+  try {
+    console.log(`\n=== RECALCULATING ALL BALANCES FOR USER: ${user_id} ===`);
+    
+    // Get ALL transactions for this user and sort by timestamp
+    const allIncomes = await Income.find({ user_id }).sort({ timestamp: 1 });
+    const allExpenses = await Expense.find({ user_id, deleted: { $ne: true } }).sort({ timestamp: 1 });
+    
+    // Combine all transactions and sort by timestamp (oldest first)
+    const allTransactions = [
+      ...allIncomes.map(income => ({
+        ...income.toObject(),
+        type: 'income',
+        model: Income
+      })),
+      ...allExpenses.map(expense => ({
+        ...expense.toObject(),
+        type: 'expense',
+        model: Expense
+      }))
+    ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    
+    console.log(`Found ${allTransactions.length} total transactions to recalculate`);
+    
+    let runningBalance = 0;
+    
+    // Recalculate balance for each transaction in chronological order
+    for (let i = 0; i < allTransactions.length; i++) {
+      const transaction = allTransactions[i];
+      
+      if (transaction.type === 'income') {
+        runningBalance += transaction.amount;
+      } else {
+        runningBalance -= transaction.amount;
+      }
+      
+      // Update the balance_after field in the database
+      await transaction.model.findOneAndUpdate(
+        { id: transaction.id },
+        { balance_after: runningBalance },
+        { new: true }
+      );
+      
+      console.log(`Updated ${transaction.type} ${transaction.id}: balance_after = ${runningBalance}`);
+    }
+    
+    console.log(`=== FINISHED RECALCULATING ALL BALANCES ===\n`);
+    return runningBalance;
+    
+  } catch (error) {
+    console.error("Error recalculating balances:", error);
+    throw error;
+  }
+}
 
 async function addIncome(req, res) {
   try {
@@ -115,10 +170,16 @@ async function getExpenses(req, res) {
   const { user_id, category, start_date, end_date, limit = 20 } = req.query;
 
   try {
-    let query = { user_id };
+    console.log(`\n=== GET EXPENSES REQUEST ===`);
+    console.log(`User: ${user_id}, Category: ${category}, Limit: ${limit}`);
     
+    let query = { user_id, deleted: { $ne: true } };
+    
+    // FIXED: Arabic category search with case-insensitive regex
     if (category) {
-      query.category = category;
+      // Use regex for partial matching and case-insensitive search
+      query.category = { $regex: new RegExp(category, 'i') };
+      console.log(`Searching for category: ${category} (case-insensitive)`);
     }
     
     if (start_date && end_date) {
@@ -126,12 +187,17 @@ async function getExpenses(req, res) {
         $gte: new Date(start_date),
         $lte: new Date(end_date)
       };
+      console.log(`Date range: ${start_date} to ${end_date}`);
     }
+
+    console.log(`Final query:`, JSON.stringify(query, null, 2));
 
     const expenses = await Expense.find(query)
       .sort({ timestamp: -1 })
       .limit(parseInt(limit))
       .lean();
+
+    console.log(`Found ${expenses.length} expenses`);
 
     // Format expenses with additional details
     const formattedExpenses = expenses.map(expense => ({
@@ -147,10 +213,17 @@ async function getExpenses(req, res) {
       })
     }));
 
+    console.log(`=== END GET EXPENSES REQUEST ===\n`);
+
     res.json({ 
       expenses: formattedExpenses,
       total_count: formattedExpenses.length,
-      total_amount: formattedExpenses.reduce((sum, exp) => sum + exp.amount, 0)
+      total_amount: formattedExpenses.reduce((sum, exp) => sum + exp.amount, 0),
+      search_criteria: {
+        user_id,
+        category: category || 'all',
+        date_range: start_date && end_date ? `${start_date} to ${end_date}` : 'all'
+      }
     });
   } catch (err) {
     console.error("Error fetching expenses:", err.message);
@@ -161,25 +234,41 @@ async function getExpenses(req, res) {
 async function deleteExpense(req, res) {
   const { id } = req.params;
   try {
+    console.log(`\n=== DELETE EXPENSE REQUEST ===`);
+    console.log(`Expense ID: ${id}`);
+    
     const expense = await Expense.findOne({ id });
     
     if (!expense) {
+      console.log(`Expense not found: ${id}`);
       return res.status(404).json({ error: "Expense not found" });
     }
 
-    // Note: Deleting an expense would require recalculating all subsequent balances
-    // For simplicity, we'll mark it as deleted but keep the record
-    await Expense.findOneAndUpdate({ id }, { 
-      deleted: true, 
-      deleted_at: new Date() 
-    });
+    console.log(`Found expense: ${expense.amount} ${expense.category} for user ${expense.user_id}`);
+
+    // FIXED: Actually delete the expense from database
+    await Expense.findOneAndDelete({ id });
+    console.log(`Expense deleted from database`);
+
+    // FIXED: Recalculate all balances after deletion
+    const newBalance = await recalculateAllBalances(expense.user_id);
+    console.log(`New balance after recalculation: ${newBalance}`);
 
     // Update RAG with new financial data
     await processFinancialDataForRAG(expense.user_id);
 
+    console.log(`=== END DELETE EXPENSE REQUEST ===\n`);
+
     res.json({ 
       success: true,
-      message: "تم حذف المصروف بنجاح. ملاحظة: قد يؤثر هذا على الرصيد المحسوب."
+      message: `تم حذف المصروف بنجاح. رصيدك الحالي: ${newBalance} جنيه`,
+      deleted_expense: {
+        id: expense.id,
+        amount: expense.amount,
+        category: expense.category,
+        description: expense.description
+      },
+      new_balance: newBalance
     });
   } catch (err) {
     console.error("Error deleting expense:", err.message);
@@ -191,18 +280,58 @@ async function updateExpense(req, res) {
   const { id } = req.params;
   const updates = req.body;
   try {
+    console.log(`\n=== UPDATE EXPENSE REQUEST ===`);
+    console.log(`Expense ID: ${id}`);
+    console.log(`Updates:`, JSON.stringify(updates, null, 2));
+    
     const expense = await Expense.findOne({ id });
     
     if (!expense) {
+      console.log(`Expense not found: ${id}`);
       return res.status(404).json({ error: "Expense not found" });
     }
 
-    // Note: Updating an expense would require recalculating all subsequent balances
-    // For simplicity, we'll update the record but note the balance impact
-    const updated = await Expense.findOneAndUpdate({ id }, {
-      ...updates,
-      updated_at: new Date()
-    }, { new: true });
+    console.log(`Found expense: ${expense.amount} ${expense.category} for user ${expense.user_id}`);
+
+    // FIXED: Validate new amount if being updated
+    if (updates.amount && updates.amount !== expense.amount) {
+      console.log(`Amount changing from ${expense.amount} to ${updates.amount}`);
+      
+      // Calculate what the balance would be if we remove the old expense and add the new one
+      const currentBalance = await getCurrentBalance(expense.user_id);
+      const balanceWithoutOldExpense = currentBalance.current_balance + expense.amount;
+      const balanceWithNewExpense = balanceWithoutOldExpense - updates.amount;
+      
+      console.log(`Current balance: ${currentBalance.current_balance}`);
+      console.log(`Balance without old expense: ${balanceWithoutOldExpense}`);
+      console.log(`Balance with new expense: ${balanceWithNewExpense}`);
+      
+      if (balanceWithNewExpense < 0) {
+        console.log(`Insufficient balance for update`);
+        return res.status(400).json({ 
+          error: `لا يمكن تحديث المصروف. الرصيد المتاح ${balanceWithoutOldExpense} جنيه غير كافي للمبلغ الجديد ${updates.amount} جنيه`,
+          current_balance: currentBalance.current_balance,
+          available_after_removal: balanceWithoutOldExpense,
+          requested_amount: updates.amount
+        });
+      }
+    }
+
+    // FIXED: Update the expense in database
+    const updated = await Expense.findOneAndUpdate(
+      { id }, 
+      {
+        ...updates,
+        updated_at: new Date()
+      }, 
+      { new: true }
+    );
+
+    console.log(`Expense updated in database`);
+
+    // FIXED: Recalculate all balances after update
+    const newBalance = await recalculateAllBalances(expense.user_id);
+    console.log(`New balance after recalculation: ${newBalance}`);
 
     // Update RAG with new financial data
     await processFinancialDataForRAG(expense.user_id);
@@ -212,9 +341,14 @@ async function updateExpense(req, res) {
       await checkOverspending(expense.user_id);
     }
 
+    console.log(`=== END UPDATE EXPENSE REQUEST ===\n`);
+
     res.json({
       ...updated.toObject(),
-      message: "تم تحديث المصروف بنجاح. ملاحظة: قد يؤثر هذا على الرصيد المحسوب."
+      message: `تم تحديث المصروف بنجاح. رصيدك الحالي: ${newBalance} جنيه`,
+      old_amount: expense.amount,
+      new_amount: updated.amount,
+      new_balance: newBalance
     });
   } catch (err) {
     console.error("Error updating expense:", err.message);
