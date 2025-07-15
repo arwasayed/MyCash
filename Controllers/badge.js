@@ -3,7 +3,6 @@ const UserBadge = require('../models/UserBadge');
 const Badge = require('../models/Badge');
 const { badgeSchema } = require('../validation/badge.validation');
 
-
 exports.createBadge = catchAsync(async (req, res) => {
   const { error } = badgeSchema.validate(req.body);
   if (error) throw { statusCode: 400, message: error.details[0].message };
@@ -11,7 +10,8 @@ exports.createBadge = catchAsync(async (req, res) => {
   const badge = await Badge.create({
     title: req.body.title,
     description: req.body.description,
-    iconUrl: req.body.iconUrl
+    iconUrl: req.body.iconUrl,
+    challengeId: req.body.challengeId
   });
 
   res.status(201).json({
@@ -46,25 +46,31 @@ exports.deleteBadge = catchAsync(async (req, res) => {
 });
 
 
+exports.updateBadge = catchAsync(async (req, res) => {
+  const { error } = badgeSchema.validate(req.body);
+  if (error) { throw { statusCode: 400, message: error.details[0].message }; }
 
-exports.awardBadgeIfEligible = async (userId, badgeTitle) => {
-  const badge = await Badge.findOne({ title: badgeTitle });
+  const badge = await Badge.findByIdAndUpdate(
+    req.params.id,
+    {
+      title: req.body.title,
+      description: req.body.description,
+      iconUrl: req.body.iconUrl,
+      challengeId: req.body.challengeId,
+    },
+    { new: true, runValidators: true }
+  );
+
   if (!badge) {
-    console.log(`Badge not found: ${badgeTitle}`);
-    return;
+    return res.status(404).json({
+      success: false,
+      message: "Badge not found",
+    });
   }
 
-  const already = await UserBadge.findOne({ userId, badgeId: badge._id });
-  if (already) {
-    console.log(`User ${userId} already has badge: ${badgeTitle}`);
-    return;
-  }
-
-  await UserBadge.create({
-    userId,
-    badgeId: badge._id,
-    unlockedAt: new Date()
+  res.json({
+    success: true,
+    message: "Badge updated successfully",
+    data: badge,
   });
-
-  console.log(`Badge awarded: ${badgeTitle} to user ${userId}`);
-};
+});

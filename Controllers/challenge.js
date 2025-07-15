@@ -7,6 +7,7 @@ const { challengeSchema } = require('../validation/challenge.validation');
 const cron = require("node-cron");
 const { createNotification } = require("../Controllers/notification");
 const User = require("../models/userModel");
+const Badge = require('../models/Badge');
 
 exports.joinChallenge = catchAsync(async (req, res) => {
   const exists = await UserChallenge.findOne({
@@ -48,6 +49,11 @@ exports.completeChallenge = catchAsync(async (req, res) => {
   await uc.save();
 
   await awardBadgeIfEligible(req.user._id, challenge.title, "challenge");
+  const badge = await Badge.findOne({challengeId:challenge._id});
+  if (badge){
+    await awardBadgeIfEligible(req.user._id, badge.title, "badge");
+  }
+  
 
   res.json({
     success: true,
@@ -70,6 +76,63 @@ exports.getActiveChallenges = catchAsync(async (req, res) => {
     data: active
   });
 });
+
+
+exports.getAllChallenges = catchAsync(async (req, res) => {
+  const challenges = await Challenge.find();
+  res.status(200).json({
+    success: true,
+    data: challenges
+  });
+});
+
+
+exports.updateChallenge = catchAsync(async (req, res) => {
+  const { error } = challengeSchema.validate(req.body);
+  if (error) throw { statusCode: 400, message: error.details[0].message };
+
+  const challenge = await Challenge.findByIdAndUpdate(
+    req.params.id,
+    {
+      title: req.body.title,
+      description: req.body.description,
+      rewardXP: req.body.rewardXP,
+    },
+    { new: true, runValidators: true }
+  );
+
+  if (!challenge) {
+    return res.status(404).json({
+      success: false,
+      message: "Challenge not found"
+    });
+  }
+
+  res.json({
+    success: true,
+    message: "Challenge updated successfully",
+    data: challenge
+  });
+});
+
+
+exports.deleteChallenge = catchAsync(async (req, res) => {
+  const challenge = await Challenge.findByIdAndDelete(req.params.id);
+  if (!challenge) {
+    return res.status(404).json({
+      success: false,
+      message: "Challenge not found"
+    });
+  }
+
+  await UserChallenge.deleteMany({ challengeId: req.params.id });
+  await Badge.deleteOne({ challengeId: req.params.id });
+
+  res.json({
+    success: true,
+    message: "Challenge deleted successfully"
+  });
+})
 
 
 

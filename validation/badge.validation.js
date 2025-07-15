@@ -9,7 +9,9 @@ exports.badgeSchema = Joi.object({
     description: Joi.string()
       .required(),
   
-    icon: Joi.string()
-      .uri()
+      iconUrl: Joi.string()
+      .uri(),
+      challengeId: Joi.string()
+      .required(),
   });
   
