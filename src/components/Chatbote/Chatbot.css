@@ -1,0 +1,302 @@
+.chat-container {
+  height: auto;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 5vh;
+  direction: rtl;
+}
+
+.helper-image {
+  width: 100%;
+  max-width: 90px;
+  height: auto;
+  opacity: 1;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  margin: 50px auto 0 auto;
+}
+
+.instructions {
+  width: 100%;
+  max-width: 814px;
+  height: auto;
+  opacity: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.instruction {
+  width: auto;
+  min-width: 120px;
+  height: 30px;
+  padding: 7px 20px;
+  opacity: 1;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #00000017;
+  font-family: Cairo, sans-serif;
+  font-weight: 400;
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 100%;
+  text-align: center;
+}
+
+div.chat {
+  width: 100%;
+  max-width: 920px;
+  height: auto;          /* ارتفاع ديناميكي حسب المحتوى */
+  max-height: 800px;     /* أقصى ارتفاع */
+  opacity: 1;
+  border-radius: 12px;
+  background: #ffffff;
+  margin-top: 30px;
+  border: 1px solid #00000017;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  overflow-x: hidden;    /* منع السكرول الأفقي */
+}
+
+.messages-container {
+  flex: 1;              /* يحتل المساحة المتاحة */
+  height: auto;         /* ارتفاع يتغير حسب المحتوى */
+  max-height: 600px;    /* أقصى ارتفاع */
+  overflow-y: auto;     /* سكرول عمودي عند تجاوز الحد */
+  overflow-x: hidden;   /* منع السكرول الأفقي */
+  padding-bottom: 10px;
+}
+
+/* رسائل المستخدم */
+.user-chat {
+  width: auto;
+  max-width: 80%;       /* أقصى عرض */
+  min-width: 100px;     /* أدنى عرض */
+  height: auto;
+  opacity: 1;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 16px;
+  background: #6c5dd3;
+  border: 1px solid #e5e7eb;
+  font-family: Cairo, sans-serif;
+  font-weight: 400;
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 1.4;
+  color: #ffffff;
+  padding: 10px 15px;
+  white-space: normal;        /* يسمح بتفكيك النص */
+  word-break: break-word;     /* تفكيك النصوص الطويلة */
+  overflow-wrap: break-word;  /* ضمان التفكيك */
+}
+
+
+.ai-chat {
+  width: 800px;
+  max-width: 80%;
+  height: auto;
+  background: #f1f1f1;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  font-family: Cairo, sans-serif;
+  font-weight: 400;
+  font-size: clamp(14px, 3vw, 16px);
+  color: #333333;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 10px !;
+  margin-left: 130px;
+}
+
+.message-col {
+  max-width: 80%;
+  width: auto;
+}
+
+.enter-chat {
+  width: 100%;
+  max-width: 100%;
+  height: 54px;
+  opacity: 1;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #0000003b;
+  font-family: Cairo, sans-serif;
+  font-size: clamp(14px, 3vw, 16px);
+}
+
+.enter-text {
+  margin-top: 10px !important;
+  width: 100%;
+  max-width: 800px;
+  position: sticky; /* تثبيت الحقل عند الأسفل */
+  bottom: 0;
+  background: #ffffff;
+  padding: 10px 0;
+  z-index: 10; /* فوق الرسائل */
+}
+
+.attach-image {
+  height: 28px;
+  width: 28px;
+  margin: 0 6px;
+  border: none;
+}
+
+.send-btn {
+  margin-left: 10px;
+}
+
+.robot-image {
+  width: 100%;
+  max-width: 130px;
+  height: auto;
+  margin-top: -15px;
+}
+
+h2.chat-title {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  opacity: 1;
+  font-family: Cairo, sans-serif;
+  font-weight: 400;
+  font-size: clamp(24px, 5vw, 30px);
+  line-height: 36px;
+  color: #333333;
+  margin: 10px auto 0;
+  text-align: center;
+}
+
+p.chat-subtext {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  opacity: 1;
+  font-family: Cairo, sans-serif;
+  font-weight: 400;
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 24px;
+  color: #7b88a8;
+  text-align: center;
+  margin: 10px auto 0;
+}
+
+/* Media Queries للتصميم المتجاوب */
+@media (max-width: 768px) {
+  .chat-container {
+    padding: 10px;
+    margin-top: 2vh;
+  }
+
+  .helper-image {
+    max-width: 70px;
+  }
+
+  .instructions {
+    max-width: 100%;
+    gap: 5px;
+  }
+
+  .instruction {
+    min-width: 100px;
+    padding: 5px 10px;
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+
+  div.chat {
+    max-height: 500px;
+    padding: 10px;
+    overflow-x: hidden;
+  }
+
+  .messages-container {
+    overflow-x: hidden;
+  }
+
+  .user-chat {
+    max-width: 90%;
+    min-width: 80px;
+    padding: 8px 12px;
+  }
+
+  .message-col {
+    max-width: 90%;
+  }
+
+  .enter-chat {
+    max-width: 100%;
+    height: 48px;
+  }
+
+  .enter-text {
+    padding: 5px 0;
+  }
+
+  h2.chat-title {
+    font-size: clamp(20px, 4vw, 26px);
+    max-width: 100%;
+  }
+
+  p.chat-subtext {
+    max-width: 100%;
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+}
+
+@media (max-width: 576px) {
+  .helper-image {
+    max-width: 50px;
+  }
+
+  .instructions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .instruction {
+    width: 80%;
+    text-align: center;
+  }
+
+  div.chat {
+    max-height: 400px;
+    overflow-x: hidden;
+  }
+
+  .messages-container {
+    overflow-x: hidden;
+  }
+
+  .user-chat {
+    max-width: 95%;
+    min-width: 60px;
+  }
+
+  .message-col {
+    max-width: 95%;
+  }
+
+  .enter-text {
+    padding: 5px 10px;
+  }
+
+  .send-btn {
+    margin-left: 5px;
+  }
+
+  .attach-image {
+    height: 24px;
+    width: 24px;
+  }
+}

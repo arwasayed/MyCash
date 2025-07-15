@@ -32,14 +32,14 @@ const Navbar = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                 <Link className="nav-link" to="/chatbot">
                   المساعد الذكي
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                  <a className="nav-link" href="#">
                   أهدافي
-                </a>
+                  </a>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/planebudget">
@@ -53,9 +53,9 @@ const Navbar = () => {
               </li>
 
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link className="nav-link" to="/subscription">
                   الاشتراكات
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -129,9 +129,9 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+               <Link className="nav-link" to="/chatbot">
                   المساعد الذكي
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">

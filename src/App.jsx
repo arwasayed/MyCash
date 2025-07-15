@@ -17,6 +17,8 @@ import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx"
 import Rename from "./components/Rename/Rename.jsx";
+import Chatbot from "./components/Chatbote/Chatbot.jsx"
+import Payment from "./components/Payment/Payment.jsx"
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -44,6 +46,9 @@ function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
 <Route path="/rename" element={<Rename/>}/>
+
+<Route path="/chatbot" element={<Chatbot/>}/>
+<Route path="/payment" element={<Payment/>}/>
         </Routes>
       </div>
       <Footer />

@@ -43,15 +43,16 @@ const SignupSection = () => {
     try {
       const res = await fetch("http://localhost:3000/api/user/google", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" , Authorization: `Bearer ${localStorage.getItem("token") || ""}`,},
         body: JSON.stringify({ credential: response.credential, mode: "register" }),
       });
       const data = await res.json();
       console.log("Google Sign-Up response:", data); // تسجيل الاستجابة
       if (data.status === "success") {
         setSuccess(data.message);
-        // لا نحفظ التوكن هنا لأن التفعيل مطلوب
-        setTimeout(() => {
+if (data.data?.token) {
+    localStorage.setItem("token", data.data.token);
+  }        setTimeout(() => {
           navigate("/login");
         }, 3000);
       } else {
@@ -76,7 +77,7 @@ const SignupSection = () => {
     try {
       const response = await fetch("http://localhost:3000/api/user/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" , Authorization: `Bearer ${localStorage.getItem("token") || ""}`,},
         body: JSON.stringify({
           email,
           password,
@@ -88,6 +89,9 @@ const SignupSection = () => {
       console.log("Signup response:", data); // تسجيل الاستجابة
       if (data.status === "success") {
         setSuccess(data.message);
+        if (data.data?.token) {
+    localStorage.setItem("token", data.data.token);
+  }
         setTimeout(() => {
           navigate("/login");
         }, 3000);
