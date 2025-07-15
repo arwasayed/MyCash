@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./Register.css";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import UserIcon from "../../../public/Register2/icons/Frame.svg";
-import MailIcon from "../../../public/Register2/icons/Frame (1).svg";
-import PassIcon from "../../../public/Register2/icons/Frame (2).svg";
-import AppearPassIcon from "../../../public/Register2/icons/AppearPass.svg";
+import UserIcon from "/Register2/icons/Frame.svg";
+import MailIcon from "/Register2/icons/Frame (1).svg";
+import PassIcon from "/Register2/icons/Frame (2).svg";
+import AppearPassIcon from "/Register2/icons/AppearPass.svg";
 
 const SignupSection = () => {
   const [fullName, setFullName] = useState("");
@@ -43,16 +43,23 @@ const SignupSection = () => {
     try {
       const res = await fetch("http://localhost:3000/api/user/google", {
         method: "POST",
-        headers: { "Content-Type": "application/json" , Authorization: `Bearer ${localStorage.getItem("token") || ""}`,},
-        body: JSON.stringify({ credential: response.credential, mode: "register" }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
+        body: JSON.stringify({
+          credential: response.credential,
+          mode: "register",
+        }),
       });
       const data = await res.json();
       console.log("Google Sign-Up response:", data); // تسجيل الاستجابة
       if (data.status === "success") {
         setSuccess(data.message);
-if (data.data?.token) {
-    localStorage.setItem("token", data.data.token);
-  }        setTimeout(() => {
+        if (data.data?.token) {
+          localStorage.setItem("token", data.data.token);
+        }
+        setTimeout(() => {
           navigate("/login");
         }, 3000);
       } else {
@@ -77,7 +84,10 @@ if (data.data?.token) {
     try {
       const response = await fetch("http://localhost:3000/api/user/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" , Authorization: `Bearer ${localStorage.getItem("token") || ""}`,},
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
         body: JSON.stringify({
           email,
           password,
@@ -90,8 +100,8 @@ if (data.data?.token) {
       if (data.status === "success") {
         setSuccess(data.message);
         if (data.data?.token) {
-    localStorage.setItem("token", data.data.token);
-  }
+          localStorage.setItem("token", data.data.token);
+        }
         setTimeout(() => {
           navigate("/login");
         }, 3000);
@@ -283,8 +293,8 @@ if (data.data?.token) {
                 onClick={() => window.google.accounts.id.prompt()}
               >
                 <p>
-                  <img src="/images/devicon_google (1).svg" alt="Google icon" /> تسجيل
-                  باستخدام Google
+                  <img src="/images/devicon_google (1).svg" alt="Google icon" />{" "}
+                  تسجيل باستخدام Google
                 </p>
               </Button>
             </div>

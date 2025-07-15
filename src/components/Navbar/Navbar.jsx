@@ -13,7 +13,10 @@ const Navbar = () => {
         className="navbar navbar-expand-lg bg-white shadow-sm fixed-top d-none d-lg-flex"
         dir="rtl"
       >
-        <div className="container-fluid d-flex align-items-center" style={{ direction: "rtl" }}>
+        <div
+          className="container-fluid d-flex align-items-center"
+          style={{ direction: "rtl" }}
+        >
           {/* Brand at far right */}
           <Link
             to="/"
@@ -26,36 +29,28 @@ const Navbar = () => {
           >
             ماي كاش
           </Link>
-<<<<<<< HEAD
-
           {/* Centered nav links */}
           <div className="flex-grow-1 d-flex justify-content-center">
             <ul className="navbar-nav flex-row gap-4">
-              <li className="nav-item"><Link className="nav-link" to="/home">الصفحة الرئيسية</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/assistant">المساعد الذكي</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/goals">أهدافي</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/game">الألعاب</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/planebudget">خطتي</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/reports">التقارير</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/subscription">الاشتراكات</Link></li>
-=======
-          {/* Nav links centered */}
-          <div className="flex-grow-1 d-flex justify-content-center">
-            <ul className="navbar-nav flex-row gap-3 mb-2 mb-lg-0">
               <li className="nav-item">
                 <Link className="nav-link" to="/home">
                   الصفحة الرئيسية
                 </Link>
               </li>
               <li className="nav-item">
-                 <Link className="nav-link" to="/chatbot">
+                <Link className="nav-link" to="/assistant">
                   المساعد الذكي
                 </Link>
               </li>
               <li className="nav-item">
-                  <a className="nav-link" href="#">
+                <Link className="nav-link" to="/goals">
                   أهدافي
-                  </a>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/game">
+                  الألعاب
+                </Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/planebudget">
@@ -67,24 +62,32 @@ const Navbar = () => {
                   التقارير
                 </Link>
               </li>
-
               <li className="nav-item">
                 <Link className="nav-link" to="/subscription">
                   الاشتراكات
                 </Link>
               </li>
->>>>>>> 858bd3ebb9abd17741101104e0803407a1e9aa65
             </ul>
           </div>
 
           {/* Auth links at far left */}
           {!isAuthenticated ? (
             <div className="d-flex align-items-center ms-auto">
-              <Link to="/login" className="auth-link" style={{ color: "#6c5dd3" }}>
+              <Link
+                to="/login"
+                className="auth-link"
+                style={{ color: "#6c5dd3" }}
+              >
                 تسجيل الدخول
               </Link>
-              <span className="separator mx-2" style={{ color: "#6c5dd3" }}>|</span>
-              <Link to="/register" className="auth-link" style={{ color: "#6c5dd3" }}>
+              <span className="separator mx-2" style={{ color: "#6c5dd3" }}>
+                |
+              </span>
+              <Link
+                to="/register"
+                className="auth-link"
+                style={{ color: "#6c5dd3" }}
+              >
                 إنشاء حساب
               </Link>
             </div>
@@ -95,9 +98,15 @@ const Navbar = () => {
                 alt="User"
                 style={{ width: 32, height: 32, borderRadius: "50%" }}
               />
-              <span className="icon-notification" title="الإشعارات">🔔</span>
-              <span className="icon-globe" title="اللغة">🌐</span>
-              <span className="icon-settings" title="الإعدادات">⚙️</span>
+              <span className="icon-notification" title="الإشعارات">
+                🔔
+              </span>
+              <span className="icon-globe" title="اللغة">
+                🌐
+              </span>
+              <span className="icon-settings" title="الإعدادات">
+                ⚙️
+              </span>
             </div>
           )}
         </div>
@@ -160,11 +169,7 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-<<<<<<< HEAD
                 <Link className="nav-link" to="/assistant">
-=======
-               <Link className="nav-link" to="/chatbot">
->>>>>>> 858bd3ebb9abd17741101104e0803407a1e9aa65
                   المساعد الذكي
                 </Link>
               </li>
@@ -179,7 +184,7 @@ const Navbar = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/reports">
+                <Link className="nav-link" to="/planebudget">
                   خطتي
                 </Link>
               </li>
@@ -216,9 +221,15 @@ const Navbar = () => {
                   alt="User"
                   style={{ width: 32, height: 32, borderRadius: "50%" }}
                 />
-                <span className="icon-notification" title="الإشعارات">🔔</span>
-                <span className="icon-globe" title="اللغة">🌐</span>
-                <span className="icon-settings" title="الإعدادات">⚙️</span>
+                <span className="icon-notification" title="الإشعارات">
+                  🔔
+                </span>
+                <span className="icon-globe" title="اللغة">
+                  🌐
+                </span>
+                <span className="icon-settings" title="الإعدادات">
+                  ⚙️
+                </span>
               </div>
             )}
           </div>
