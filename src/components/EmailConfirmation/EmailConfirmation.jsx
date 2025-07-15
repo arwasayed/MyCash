@@ -5,7 +5,7 @@ import "./EmailConfirmation.css";
 
 const EmailConfirmation = () => {
   const navigate = useNavigate();
-  const { token: paramToken } = useParams(); // استخراج التوكن من المسار
+  const { token: paramToken } = useParams(); 
   const location = useLocation();
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
@@ -17,10 +17,9 @@ const EmailConfirmation = () => {
 
     const verifyEmail = async () => {
       const params = new URLSearchParams(location.search);
-      const queryToken = params.get("token"); // استخراج التوكن من query parameters
-      const token = paramToken || queryToken; // استخدام paramToken إذا وُجد، وإلا queryToken
-      console.log("URL received:", location.pathname + location.search); // تسجيل الرابط الكامل
-      console.log("Token from URL:", token); // تسجيل التوكن
+      const queryToken = params.get("token"); 
+      const token = paramToken || queryToken; 
+      console.log("URL received:", location.pathname + location.search); 
 
       if (!token) {
         setStatus("error");
@@ -35,12 +34,12 @@ const EmailConfirmation = () => {
           headers: { "Content-Type": "application/json" },
         });
         const data = await response.json();
-        console.log("Backend response:", data); // تسجيل استجابة الـ backend
+        console.log("Backend response:", data);
 
 if (data.status === "success") {
   setStatus("success");
   setMessage("تم تفعيل حسابك بنجاح! 🎉 جاري توجيهك إلى الصفحة الرئيسية...");
-  localStorage.setItem("token", data.data?.token); // انتبه هنا
+  localStorage.setItem("token", data.data?.token); 
   setTimeout(() => {
     navigate("/home", { replace: true });
   }, 3000);
@@ -60,7 +59,7 @@ if (data.status === "success") {
   }, [paramToken, location.search, navigate]);
 
   const handleStart = () => {
-    navigate("/login");
+    navigate("/home");
   };
 
   return (

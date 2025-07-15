@@ -20,6 +20,8 @@ import AssistantPage from "./components/Assistant/AssistantPage.jsx";
 import GoalsPage from "./components/Goals/GoalsPage.jsx";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx";
 import Rename from "./components/Rename/Rename.jsx";
+import Chatbot from "./components/Chatbote/Chatbot.jsx";
+import Payment from "./components/Payment/Payment.jsx";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -49,9 +51,6 @@ function App() {
           <Route path="/notification" element={<Notification />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/assistant" element={<AssistantPage />} />
-          <Route path="/goals" element={<GoalsPage />} />
           <Route path="/rename" element={<Rename />} />
         </Routes>
       </div>

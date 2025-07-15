@@ -26,6 +26,7 @@ const Navbar = () => {
           >
             ماي كاش
           </Link>
+<<<<<<< HEAD
 
           {/* Centered nav links */}
           <div className="flex-grow-1 d-flex justify-content-center">
@@ -37,6 +38,42 @@ const Navbar = () => {
               <li className="nav-item"><Link className="nav-link" to="/planebudget">خطتي</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/reports">التقارير</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/subscription">الاشتراكات</Link></li>
+=======
+          {/* Nav links centered */}
+          <div className="flex-grow-1 d-flex justify-content-center">
+            <ul className="navbar-nav flex-row gap-3 mb-2 mb-lg-0">
+              <li className="nav-item">
+                <Link className="nav-link" to="/home">
+                  الصفحة الرئيسية
+                </Link>
+              </li>
+              <li className="nav-item">
+                 <Link className="nav-link" to="/chatbot">
+                  المساعد الذكي
+                </Link>
+              </li>
+              <li className="nav-item">
+                  <a className="nav-link" href="#">
+                  أهدافي
+                  </a>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/planebudget">
+                  خطتي
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/reports">
+                  التقارير
+                </Link>
+              </li>
+
+              <li className="nav-item">
+                <Link className="nav-link" to="/subscription">
+                  الاشتراكات
+                </Link>
+              </li>
+>>>>>>> 858bd3ebb9abd17741101104e0803407a1e9aa65
             </ul>
           </div>
 
@@ -123,7 +160,11 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
+<<<<<<< HEAD
                 <Link className="nav-link" to="/assistant">
+=======
+               <Link className="nav-link" to="/chatbot">
+>>>>>>> 858bd3ebb9abd17741101104e0803407a1e9aa65
                   المساعد الذكي
                 </Link>
               </li>

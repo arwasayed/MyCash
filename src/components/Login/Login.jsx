@@ -34,7 +34,7 @@ useEffect(() => {
     try {
       const res = await fetch("http://localhost:3000/api/user/google", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json"},
         body: JSON.stringify({ credential: response.credential, mode: "login"}),
        
       });
@@ -42,7 +42,7 @@ useEffect(() => {
 
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token",data.data.token);
         navigate("/home"); 
       } else {
         setError(data.message);
@@ -67,7 +67,7 @@ useEffect(() => {
 
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.data.token);
         navigate("/home"); 
       } else {
         setError(data.message);
