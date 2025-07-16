@@ -13,6 +13,8 @@ const challengeRoutes = require("./Routes/challenge");
 const badgeRoutes= require("./Routes/badge");
 const subscriptionRoutes = require("./Routes/subscription");
 const notificationRoutes= require("./Routes/notification");
+const path = require('path');
+
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log(' Connected to MongoDB'))
@@ -29,6 +31,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ status: 'error', message: 'Something went wrong!' });
 });
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api", chatRoute);
 app.use("/api", expenseRoute); 
 app.use("/api/saving-goals", savingGoalRoutes);

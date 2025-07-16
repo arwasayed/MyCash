@@ -87,7 +87,7 @@ const userSchema = new mongoose.Schema({
     default: 'User',
     minlength: [2, 'Nickname must be at least 2 characters'],
     maxlength: [30, 'Nickname cannot exceed 30 characters'],
-    match: [/^[a-zA-Z0-9_\- ]+$/, 'Nickname can only contain letters, numbers, spaces, hyphens and underscores']
+match: [/^[\u0600-\u06FFa-zA-Z0-9_\- ]+$/, 'Nickname can only contain Arabic or English letters, numbers, spaces, hyphens and underscores']
   },
 avatar: {
   type: String,
@@ -159,7 +159,9 @@ avatar: {
 });
 
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password') || this.provider !== 'local') return next();
+  // if (!this.isModified('password') || this.provider !== 'local') return next();
+  if (!this.isModified('password')) return next();
+
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
@@ -188,17 +190,20 @@ userSchema.methods.updateLastLogin = async function() {
 };
 
 userSchema.methods.comparePassword = async function(candidatePassword) {
-  if (this.provider !== 'local') {
-    throw new Error('Compare password is only available for local users');
-  }
+  // if (this.provider !== 'local') {
+  //   throw new Error('Compare password is only available for local users');
+  // }
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 userSchema.methods.createPasswordResetToken = function() {
-  if (this.provider !== 'local') {
-    throw new Error('Password reset is only available for local users');
-  }
+
+
+  // if (this.provider !== 'local') {
+  //   throw new Error('Password reset is only available for local users');
+  // }
   
+
   const resetToken = crypto.randomBytes(32).toString('hex');
   this.resetPasswordToken = crypto
     .createHash('sha256')

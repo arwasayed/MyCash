@@ -19,8 +19,8 @@ async function initializeRAG() {
 
 async function sendMessage(req, res) {
   try {
-    const { user_id, message } = req.body;
-
+const { message } = req.body;
+const user_id = req.user?.id;
     if (!user_id || !message) {
       return res.status(400).json({ error: "Missing user_id or message" });
     }

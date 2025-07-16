@@ -39,13 +39,12 @@ exports.signup = async (req, res) => {
       email,
       password,
       nickname: nickname || 'User',
-      role: 'admin',
+      role: 'user',
       emailVerified: false 
     });
     const verifyToken = newUser.createEmailVerifyToken();
     await newUser.save({ validateBeforeSave: false });
-    const verifyUrl = `${process.env.BASE_URL}/verify-email/${verifyToken}`;
-    const message = `
+const verifyUrl = `${process.env.FRONTEND_BASE_URL}/EmailConfirmation/${verifyToken}`;    const message = `
       عزيزي ${newUser.nickname || 'المستخدم'}،
       شكراً لتسجيلك في ${process.env.APP_NAME}!
       يرجى النقر على الرابط التالي لتفعيل حسابك:
@@ -261,7 +260,7 @@ exports.resetPassword = async (req, res) => {
 // Google Authentication (Login or Register)
 exports.googleAuth = async (req, res) => {
   try {
-    const { credential, mode } = req.body; // ← أضفنا mode (login | register)
+    const { credential, mode } = req.body;
 
     if (!credential) {
       return sendResponse(res, 400, 'error', null, 'رمز Google مطلوب');
@@ -284,37 +283,57 @@ exports.googleAuth = async (req, res) => {
       if (user.provider !== 'google') {
         return sendResponse(res, 400, 'error', null, 'هذا البريد الإلكتروني مسجل بطريقة أخرى. سجل دخولك بنفس الطريقة.');
       }
-    }
-
-    if (mode === 'register') {
+      if (!user.emailVerified) {
+        return sendResponse(res, 403, 'error', null, 'الحساب غير مفعل. يرجى تفعيل حسابك عبر الرابط المرسل إلى بريدك الإلكتروني.');
+      }
+      const token = generateToken(user._id);
+      sendResponse(res, 200, 'success', { token, user }, 'تم تسجيل الدخول بنجاح عبر Google');
+    } else if (mode === 'register') {
       if (user) {
         return sendResponse(res, 400, 'error', null, 'البريد الإلكتروني مسجل بالفعل');
       }
+      //
+const randomPassword = crypto.randomBytes(8).toString('hex'); // 16 حرف عشوائي
 
       user = await User.create({
         email,
         nickname: name || 'User',
         googleId,
         provider: 'google',
-        emailVerified: true,
+        //
+         password: randomPassword,
+        emailVerified: false, // طلب تفعيل البريد
         photo: picture,
         role: 'user'
       });
+
+      const verifyToken = user.createEmailVerifyToken();
+      await user.save({ validateBeforeSave: false });
+
+      const verifyUrl = `${process.env.FRONTEND_BASE_URL}/EmailConfirmation/${verifyToken}`;
+      const message = `
+        عزيزي ${user.nickname || 'المستخدم'}،
+        شكراً لتسجيلك في ${process.env.APP_NAME}!
+        يرجى النقر على الرابط التالي لتفعيل حسابك:
+        ${verifyUrl}
+        الرابط صالح لمدة 24 ساعة.
+        فريق ${process.env.APP_NAME}
+      `;
+      await sendEmail({
+        email: user.email,
+        subject: `تفعيل الحساب - ${process.env.APP_NAME}`,
+        message
+      });
+
+      sendResponse(res, 201, 'success', { user }, 'تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك عبر الرابط المرسل إلى بريدك الإلكتروني.');
+    } else {
+      return sendResponse(res, 400, 'error', null, 'وضع غير صالح. يرجى تحديد "login" أو "register".');
     }
-
-    const token = generateToken(user._id);
-
-    sendResponse(res, 200, 'success', {
-      token,
-      user
-    }, mode === 'login' ? 'تم تسجيل الدخول بنجاح عبر Google' : 'تم إنشاء الحساب بنجاح عبر Google');
-
   } catch (err) {
     console.error('Google auth error:', err);
     sendResponse(res, 401, 'error', null, 'فشل المصادقة عبر Google');
   }
 };
-
 
 
 

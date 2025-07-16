@@ -69,7 +69,7 @@ const handleMulterError = (err, req, res, next) => {
 router.get('/me', protect, getMe);
 router.patch('/update-me', protect, updateMe);
 router.patch('/update-avatar', protect, upload.single('avatar'), handleMulterError, updateAvatar);
-router.post('/change-password', protect, onlyForLocal, changePassword);
+router.post('/change-password', protect, changePassword);
 router.post('/logout', protect, logout);
 router.delete('/delete-account', protect, deleteAccount);
 
