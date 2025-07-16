@@ -2,6 +2,9 @@ import React from "react";
 import "./Navbar.css";
 import { Link } from "react-router-dom";
 
+// يمكنك استبدال هذا المتغير لاحقاً بـ context أو redux أو أي نظام مصادقة
+const isAuthenticated = false; // غيّر إلى true لتجربة شكل Navbar بعد الدخول
+
 const Navbar = () => {
   return (
     <>
@@ -10,8 +13,11 @@ const Navbar = () => {
         className="navbar navbar-expand-lg bg-white shadow-sm fixed-top d-none d-lg-flex"
         dir="rtl"
       >
-        <div className="container d-flex align-items-center">
-          {/* Brand on the right */}
+        <div
+          className="container-fluid d-flex align-items-center"
+          style={{ direction: "rtl" }}
+        >
+          {/* Brand at far right */}
           <Link
             to="/"
             className="navbar-brand fw-bold"
@@ -23,23 +29,28 @@ const Navbar = () => {
           >
             ماي كاش
           </Link>
-          {/* Nav links centered */}
+          {/* Centered nav links */}
           <div className="flex-grow-1 d-flex justify-content-center">
-            <ul className="navbar-nav flex-row gap-3 mb-2 mb-lg-0">
+            <ul className="navbar-nav flex-row gap-4">
               <li className="nav-item">
                 <Link className="nav-link" to="/home">
                   الصفحة الرئيسية
                 </Link>
               </li>
               <li className="nav-item">
-                 <Link className="nav-link" to="/chatbot">
+                <Link className="nav-link" to="/chatbot">
                   المساعد الذكي
                 </Link>
               </li>
               <li className="nav-item">
-                  <a className="nav-link" href="#">
+                <Link className="nav-link" to="/goals">
                   أهدافي
-                  </a>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/game">
+                  الألعاب
+                </Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/planebudget">
@@ -51,7 +62,6 @@ const Navbar = () => {
                   التقارير
                 </Link>
               </li>
-
               <li className="nav-item">
                 <Link className="nav-link" to="/subscription">
                   الاشتراكات
@@ -59,16 +69,46 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-          {/* Auth links on the left */}
-          <div className="d-flex align-items-center gap-2 ms-auto">
-            <Link to="/login" className="auth-link">
-              تسجيل الدخول
-            </Link>
-            <span className="separator">|</span>
-            <Link to="/register" className="auth-link">
-              إنشاء حساب
-            </Link>
-          </div>
+
+          {/* Auth links at far left */}
+          {!isAuthenticated ? (
+            <div className="d-flex align-items-center ms-auto">
+              <Link
+                to="/login"
+                className="auth-link"
+                style={{ color: "#6c5dd3" }}
+              >
+                تسجيل الدخول
+              </Link>
+              <span className="separator mx-2" style={{ color: "#6c5dd3" }}>
+                |
+              </span>
+              <Link
+                to="/register"
+                className="auth-link"
+                style={{ color: "#6c5dd3" }}
+              >
+                إنشاء حساب
+              </Link>
+            </div>
+          ) : (
+            <div className="d-flex align-items-center gap-3 ms-auto">
+              <img
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="User"
+                style={{ width: 32, height: 32, borderRadius: "50%" }}
+              />
+              <span className="icon-notification" title="الإشعارات">
+                🔔
+              </span>
+              <span className="icon-globe" title="اللغة">
+                🌐
+              </span>
+              <span className="icon-settings" title="الإعدادات">
+                ⚙️
+              </span>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -129,17 +169,22 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-               <Link className="nav-link" to="/chatbot">
+                <Link className="nav-link" to="/chatbot">
                   المساعد الذكي
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link className="nav-link" to="/goals">
                   أهدافي
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/reports">
+                <Link className="nav-link" to="/game">
+                  الألعاب
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/planebudget">
                   خطتي
                 </Link>
               </li>
@@ -159,15 +204,34 @@ const Navbar = () => {
                 </a>
               </li>
             </ul>
-            <div className="d-flex align-items-center gap-2 justify-content-center">
-              <a href="/login" className="auth-link">
-                تسجيل الدخول
-              </a>
-              <span className="separator">|</span>
-              <Link to="/register" className="auth-link">
-                إنشاء حساب
-              </Link>
-            </div>
+            {!isAuthenticated ? (
+              <div className="d-flex align-items-center gap-2 justify-content-center">
+                <a href="/login" className="auth-link">
+                  تسجيل الدخول
+                </a>
+                <span className="separator">|</span>
+                <Link to="/register" className="auth-link">
+                  إنشاء حساب
+                </Link>
+              </div>
+            ) : (
+              <div className="d-flex align-items-center gap-3 justify-content-center mt-3">
+                <img
+                  src="https://randomuser.me/api/portraits/men/32.jpg"
+                  alt="User"
+                  style={{ width: 32, height: 32, borderRadius: "50%" }}
+                />
+                <span className="icon-notification" title="الإشعارات">
+                  🔔
+                </span>
+                <span className="icon-globe" title="اللغة">
+                  🌐
+                </span>
+                <span className="icon-settings" title="الإعدادات">
+                  ⚙️
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </nav>

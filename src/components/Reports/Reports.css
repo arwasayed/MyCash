@@ -78,6 +78,8 @@ body, .reports-section {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
 }
 
 .reports-filter .btn-primary span {
@@ -85,7 +87,7 @@ body, .reports-section {
 }
 
 .reports-filter .row {
-  align-items: flex-end;
+  align-items: end !important;
 }
 
 .btn-download {
@@ -281,6 +283,14 @@ body, .reports-section {
 .btn-green:hover {
   background: #17a65c;
   color: #fff;
+}
+
+.container {
+  width: 90%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 @media (max-width: 768px) {

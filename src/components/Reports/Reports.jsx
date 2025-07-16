@@ -204,7 +204,7 @@ const Reports = () => {
           </div>
         </div>
       </div>
-      <div className="container mb-4">
+      <div className=" mb-4">
         <div className="reports-filter card">
           <div className="row align-items-end gy-3">
             <div className="col-12 mb-3 text-center">
@@ -212,6 +212,7 @@ const Reports = () => {
                 فلتر التقارير
               </span>
             </div>
+            
             <div className="col-md-3 col-12">
               <label className="form-label">الفترة الزمنية</label>
               <select className="form-select">
@@ -220,6 +221,7 @@ const Reports = () => {
                 <option>هذا العام</option>
               </select>
             </div>
+            
             <div className="col-md-3 col-12">
               <label className="form-label">التصنيف</label>
               <select className="form-select">
@@ -236,18 +238,16 @@ const Reports = () => {
                 <option>بطاقة</option>
               </select>
             </div>
-            <div className="col-md-3 col-12 d-flex align-items-end justify-content-center justify-content-md-start">
+            <div className="col-md-3 col-12 d-flex align-items-end justify-content-center justify-content-md-start h-100">
               <button className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
                 تطبيق الفلتر
-                <FilterIcon
-                  style={{ color: "#fff", width: "18px", height: "18px" }}
-                />
+                <FilterIcon style={{ color: "#fff", width: "18px", height: "18px" }} />
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div className="container mb-4">
+      <div className="mb-4">
         <div className="row reports-charts-row g-4">
           <div className="col-md-6">
             <div className="card h-100 p-0">
@@ -378,7 +378,7 @@ const Reports = () => {
       {/* Quick Stats Section */}
       <div className="quick-stats-section py-5">
         <h3 className="quick-stats-title text-center mb-4">إحصائيات سريعة</h3>
-        <div className="container">
+        <div className="mb-4">
           <div className="row g-4 justify-content-center">
             {/* Card 1 */}
             <div className="col-12 col-md-3">

@@ -24,7 +24,7 @@
 .register-form {
   width: 100%;
   max-width: 650px;
-  min-height: 800px;
+  /* min-height: 800px; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -177,7 +177,11 @@ color: #6C5DD3 !important;
 .welcome-content {
   width: 100%;
   max-width: 650px;
-  height: 800px;
+  min-height: 500px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .register-form .form-group {
   margin-bottom: 1.5rem !important;
@@ -185,6 +189,7 @@ color: #6C5DD3 !important;
 
 .welcome-gradient {
   width: 100%;
+  min-height: 450px;
   height: 100%;
   border: none;
   display: flex;
@@ -192,12 +197,14 @@ color: #6C5DD3 !important;
   align-items: center;
   padding: 40px;
 }
-
 .welcome-image {
-  width: 100%;
-  height: auto;
-  max-height: 100%;
-  object-fit: contain;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 450px !important;
+  display: block !important;
+  object-fit: contain !important;
+  filter: none !important;
 }
 
 

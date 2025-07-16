@@ -11,11 +11,14 @@ import ResetPassword2 from "./components/ResentPasswor2/ResetPassword2.jsx";
 import EmailConfirmation from "./components/EmailConfirmation/EmailConfirmation.jsx";
 import EmailConfirm1 from "./components/EmailConfirm1/EmailConfirm1.jsx";
 import Subscription from "./components/subscription/subscription.jsx";
-import Account from './components/Account/Account.jsx';
-import Notification from './components/Notification/Notification.jsx';
+import Account from "./components/Account/Account.jsx";
+import Notification from "./components/Notification/Notification.jsx";
 import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
-import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx"
+import Game from "./components/Game/Game.jsx";
+import AssistantPage from "./components/Assistant/AssistantPage.jsx";
+import GoalsPage from "./components/Goals/GoalsPage.jsx";
+import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx";
 import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
@@ -46,11 +49,10 @@ function App() {
 <Route path="/EmailConfirmation/:token" element={<EmailConfirmation />} />
 <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
-          
-          <Route path="/EmailConfirm1" element={<EmailConfirm1/>}/>
-          <Route path="/subscription" element={<Subscription/>}/>
-          <Route path="/account" element={<Account/>}/>
-          <Route path="/notification" element={<Notification/>}/>
+          <Route path="/EmailConfirm1" element={<EmailConfirm1 />} />
+          <Route path="/subscription" element={<Subscription />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/notification" element={<Notification />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
 <Route path="/rename" element={<Rename/>}/>
