@@ -42,7 +42,8 @@ useEffect(() => {
 
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token",data.data.token);
+        // localStorage.setItem("token",data.data.token);
+        localStorage.setItem("token", `Bearer ${data.token}`);
         navigate("/home"); 
       } else {
         setError(data.message);
@@ -67,7 +68,8 @@ useEffect(() => {
 
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token", data.data.token);
+        // localStorage.setItem("token", data.data.token);
+        localStorage.setItem("token", `Bearer ${data.token}`);
         navigate("/home"); 
       } else {
         setError(data.message);
