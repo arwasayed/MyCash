@@ -18,6 +18,7 @@ const path = require('path');
 const { dailyFinanceCheck } = require('./services/scheduler');
 
 const paymentRoutes = require('./Routes/paymentRoute');
+const dailyTasksRoutes = require('./Routes/dailyTasks');
 
 
 
@@ -47,6 +48,7 @@ app.use("/api/challenges", challengeRoutes);
 app.use("/api/badges", badgeRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use('/api/daily-tasks', dailyTasksRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async() =>{

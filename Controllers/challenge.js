@@ -60,6 +60,10 @@ exports.completeChallenge = catchAsync(async (req, res) => {
   uc.completedAt = new Date();
   await uc.save();
 
+  const user = await User.findById(req.user._id);
+  user.points = (user.points || 0) + challenge.rewardXP;
+  await user.save();
+
   await awardBadgeIfEligible(req.user._id, challenge.title, "challenge");
   const badge = await Badge.findOne({ challengeId: challenge._id });
   if (badge) {
