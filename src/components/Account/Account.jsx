@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Card, Badge, Image, Form, Button, ProgressBar } from 'react-bootstrap';
-import { FaCrown, FaCamera, FaPiggyBank, FaMoon, FaGlobe, FaLock, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FaCrown, FaCamera, FaPiggyBank, FaMoon, FaGlobe, FaLock, FaSignOutAlt, FaCog, FaTimes } from 'react-icons/fa';
 
 import "./Account.css";
 
@@ -10,26 +10,380 @@ const Account = () => {
   const remaining = totalBudget - spent;
   const percentage = (spent / totalBudget) * 100;
 
+  // States لإدارة البيانات
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [showLanguageForm, setShowLanguageForm] = useState(false);
+  const [showNameForm, setShowNameForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [nickname, setNickname] = useState("ساره محمود");
+  const [language, setLanguage] = useState("العربية");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [avatar, setAvatar] = useState("/default-avatar.png");
+  const fileInputRef = useRef(null);
+
+  // استرجاع الصورة المحفوظة عند التحميل
+  useEffect(() => {
+    const savedAvatar = localStorage.getItem('userAvatar');
+    if (savedAvatar) setAvatar(savedAvatar);
+  }, []);
+
   const options = [
-    { icon: <FaGlobe />, title: 'تغيير اللغة', subtitle: 'العربية / English' },
-    { icon: <FaMoon />, title: ' تغيير الاسم', subtitle: 'تفعيل / إلغاء' },
-    { icon: <FaLock />, title: 'تغيير كلمة السر', subtitle: 'حماية الحساب' },
-    { icon: <FaSignOutAlt />, title: 'تسجيل الخروج', subtitle: 'إنهاء الجلسة' },
+    { 
+      icon: <FaGlobe />, 
+      title: 'تغيير اللغة', 
+      subtitle: 'العربية / English',
+      action: () => {
+        setShowLanguageForm(true);
+        setError("");
+        setSuccess("");
+      }
+    },
+    { 
+      icon: <FaMoon />, 
+      title: 'تغيير الاسم', 
+      subtitle: 'تفعيل / إلغاء',
+      action: () => {
+        setShowNameForm(true);
+        setError("");
+        setSuccess("");
+      }
+    },
+    { 
+      icon: <FaLock />, 
+      title: 'تغيير كلمة السر', 
+      subtitle: 'حماية الحساب',
+      action: () => {
+        setShowPasswordForm(true);
+        setError("");
+        setSuccess("");
+      }
+    },
+    { 
+      icon: <FaSignOutAlt />, 
+      title: 'تسجيل الخروج', 
+      subtitle: 'إنهاء الجلسة',
+      action: handleLogout
+    },
   ];
+
+  // دالة رفع الصورة (تخزين محلي فقط)
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // التحقق من أن الملف صورة
+    if (!file.type.match('image.*')) {
+      setError("الملف يجب أن يكون صورة");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setAvatar(e.target.result);
+      localStorage.setItem('userAvatar', e.target.result); // حفظ في localStorage
+      setIsLoading(false);
+      setSuccess("تم تحديث الصورة بنجاح");
+      setTimeout(() => setSuccess(""), 3000);
+    };
+    reader.onerror = () => {
+      setError("حدث خطأ أثناء تحميل الصورة");
+      setIsLoading(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // دالة تسجيل الخروج
+  async function handleLogout() {
+    setIsLoading(true);
+    setError("");
+    
+    try {
+      const token = localStorage.getItem("token");
+      await fetch("http://localhost:3000/api/user/settings/logout", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem('userAvatar'); // حذف الصورة المحفوظة
+      window.location.href = "/login";
+      
+    } catch (err) {
+      localStorage.removeItem("token");
+      localStorage.removeItem('userAvatar');
+      window.location.href = "/login";
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // دالة تغيير كلمة المرور
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
+    if (newPassword !== confirmPassword) {
+      setError("كلمة المرور الجديدة غير متطابقة");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3000/api/user/settings/change-password", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          currentPassword,
+          newPassword
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setSuccess("تم تغيير كلمة المرور بنجاح");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setTimeout(() => setShowPasswordForm(false), 2000);
+      } else {
+        setError(data.message || "حدث خطأ أثناء تغيير كلمة المرور");
+      }
+    } catch (err) {
+      setError("حدث خطأ أثناء الاتصال بالخادم");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // دالة تغيير اللغة
+  const handleChangeLanguage = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3000/api/user/settings/update-me", {
+        method: "PATCH",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ language }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setSuccess("تم تغيير اللغة بنجاح");
+        setTimeout(() => setShowLanguageForm(false), 2000);
+      } else {
+        setError(data.message || "حدث خطأ أثناء تغيير اللغة");
+      }
+    } catch (err) {
+      setError("حدث خطأ أثناء الاتصال بالخادم");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // دالة تغيير الاسم
+  const handleChangeName = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
+    if (!nickname.trim()) {
+      setError("الاسم لا يمكن أن يكون فارغًا");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3000/api/user/settings/update-me", {
+        method: "PATCH",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ nickname }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setSuccess("تم تغيير الاسم بنجاح");
+        setTimeout(() => setShowNameForm(false), 2000);
+      } else {
+        setError(data.message || "حدث خطأ أثناء تغيير الاسم");
+      }
+    } catch (err) {
+      setError("حدث خطأ أثناء الاتصال بالخادم");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Container fluid className="account-container d-flex justify-content-center align-items-center py-4" style={{ direction: 'rtl' }}>
+      {/* نماذج الإعدادات */}
+      {showPasswordForm && (
+        <div className="password-form-container">
+          <div className="password-form">
+            <div className="form-header">
+              <h5>تغيير كلمة المرور</h5>
+              <button 
+                onClick={() => setShowPasswordForm(false)}
+                className="close-btn"
+                disabled={isLoading}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="form-body">
+              {success && <div className="alert alert-success">{success}</div>}
+              {error && <div className="alert alert-danger">{error}</div>}
+              <Form onSubmit={handleChangePassword}>
+                <Form.Group className="mb-3">
+                  <Form.Label>كلمة المرور الحالية</Form.Label>
+                  <Form.Control
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>كلمة المرور الجديدة</Form.Label>
+                  <Form.Control
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>تأكيد كلمة المرور الجديدة</Form.Label>
+                  <Form.Control
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="w-100 mt-3" disabled={isLoading}>
+                  {isLoading ? 'جاري التحميل...' : 'تغيير كلمة المرور'}
+                </Button>
+              </Form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLanguageForm && (
+        <div className="password-form-container">
+          <div className="password-form">
+            <div className="form-header">
+              <h5>تغيير اللغة</h5>
+              <button onClick={() => setShowLanguageForm(false)} className="close-btn" disabled={isLoading}>
+                <FaTimes />
+              </button>
+            </div>
+            <div className="form-body">
+              {success && <div className="alert alert-success">{success}</div>}
+              {error && <div className="alert alert-danger">{error}</div>}
+              <Form onSubmit={handleChangeLanguage}>
+                <Form.Group className="mb-3">
+                  <Form.Label>اختر اللغة</Form.Label>
+                  <Form.Select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  >
+                    <option value="العربية">العربية</option>
+                    <option value="English">English</option>
+                  </Form.Select>
+                </Form.Group>
+                <Button variant="primary" type="submit" className="w-100 mt-3" disabled={isLoading}>
+                  {isLoading ? 'جاري التحميل...' : 'حفظ التغييرات'}
+                </Button>
+              </Form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showNameForm && (
+        <div className="password-form-container">
+          <div className="password-form">
+            <div className="form-header">
+              <h5>تغيير الاسم</h5>
+              <button onClick={() => setShowNameForm(false)} className="close-btn" disabled={isLoading}>
+                <FaTimes />
+              </button>
+            </div>
+            <div className="form-body">
+              {success && <div className="alert alert-success">{success}</div>}
+              {error && <div className="alert alert-danger">{error}</div>}
+              <Form onSubmit={handleChangeName}>
+                <Form.Group className="mb-3">
+                  <Form.Label>الاسم الجديد</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="w-100 mt-3" disabled={isLoading}>
+                  {isLoading ? 'جاري التحميل...' : 'حفظ التغييرات'}
+                </Button>
+              </Form>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Profile Card */}
       <Card className="profile" style={{ maxWidth: '926px', width: '95%' }}>
         <Row className="align-items-center">
           <Col xs="auto">
             <div style={{ position: 'relative', width: '60px', height: '60px' }}>
               <Image
-                src="./jklj"
+                src={avatar}
                 roundedCircle
                 width={60}
                 height={60}
                 style={{ objectFit: 'cover' }}
+                onError={(e) => {
+                  e.target.src = "/default-avatar.png";
+                }}
               />
               <div
                 style={{
@@ -39,15 +393,25 @@ const Account = () => {
                   borderRadius: "50%",
                   padding: "5px",
                   cursor: "pointer",
+                  backgroundColor: '#6C5DD3'
                 }}
+                onClick={() => !isLoading && fileInputRef.current.click()}
               >
-                <FaCamera size={12} />
+                <FaCamera size={12} color="white" />
               </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleAvatarChange}
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={isLoading}
+              />
             </div>
           </Col>
 
           <Col>
-            <div className="fw-semibold">ساره محمود</div>
+            <div className="fw-semibold">{nickname}</div>
             <div className="text-muted small">sara.mahmoud@email.com</div>
             <Badge bg="warning" text="white" className="mt-1 d-inline-flex align-items-center">
               <FaCrown className="ms-1" />
@@ -146,7 +510,7 @@ const Account = () => {
         className="d-flex flex-wrap justify-content-center"
         style={{ gap: '20px', maxWidth: '896px', width: '95%', margin: '0 auto' }}
       >
-        {options.slice(0, 4).map((opt, idx) => (
+        {options.map((opt, idx) => (
           <div key={idx} style={{ flex: '1 1 416px', maxWidth: '416px' }}>
             <Button
               variant="light"
@@ -158,7 +522,8 @@ const Account = () => {
                 width: '100%',
                 height: '76px'
               }}
-              onClick={() => { }}
+              onClick={opt.action || (() => {})}
+              disabled={isLoading && opt.title === 'تسجيل الخروج'}
             >
               <div
                 className="m-1"
