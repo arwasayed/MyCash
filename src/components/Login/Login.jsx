@@ -40,10 +40,11 @@ useEffect(() => {
       });
       const data = await res.json();
 
-      if (data.status === "success") {
+      if (data.status == "success") {
         setSuccess(data.message);
         // localStorage.setItem("token",data.data.token);
-        localStorage.setItem("token", `Bearer ${data.token}`);
+        localStorage.setItem("token", `Bearer ${data.data.token}`);
+        // console.log(data.data.token)
         navigate("/home"); 
       } else {
         setError(data.message);
@@ -69,7 +70,9 @@ useEffect(() => {
       if (data.status === "success") {
         setSuccess(data.message);
         // localStorage.setItem("token", data.data.token);
-        localStorage.setItem("token", `Bearer ${data.token}`);
+        localStorage.setItem("token", `Bearer ${data.data.token}`);
+        localStorage.setItem("user",  JSON.stringify(data.data.user));
+        // console.log(data.data.token)
         navigate("/home"); 
       } else {
         setError(data.message);
