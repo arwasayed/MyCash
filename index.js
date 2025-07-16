@@ -16,6 +16,11 @@ const subscriptionRoutes = require("./Routes/subscription");
 const notificationRoutes= require("./Routes/notification");
 const { dailyFinanceCheck } = require('./services/scheduler');
 
+const paymentRoutes = require('./Routes/paymentRoute');
+
+
+
+
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log(' Connected to MongoDB'))
   .catch(err => console.error(' MongoDB connection error:', err));
@@ -33,6 +38,7 @@ app.use((err, req, res, next) => {
 
 app.use("/api", chatRoute);
 app.use("/api", expenseRoute); 
+app.use("/api", paymentRoutes);
 
 app.use("/api/saving-goals", savingGoalRoutes);
 app.use("/api/challenges", challengeRoutes);
