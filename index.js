@@ -8,12 +8,18 @@ const userRoutes = require('./Routes/user');
 const userSettingsRoutes = require('./Routes/userSettingsRoutes');
 const chatRoute = require("./Routes/chatRoute");
 const expenseRoute = require("./Routes/expenseRoute");
+
 const savingGoalRoutes = require("./Routes/savingGoal");
 const challengeRoutes = require("./Routes/challenge");
 const badgeRoutes= require("./Routes/badge");
 const subscriptionRoutes = require("./Routes/subscription");
 const notificationRoutes= require("./Routes/notification");
 const path = require('path');
+const { dailyFinanceCheck } = require('./services/scheduler');
+
+const paymentRoutes = require('./Routes/paymentRoute');
+
+
 
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -34,11 +40,14 @@ app.use((err, req, res, next) => {
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api", chatRoute);
 app.use("/api", expenseRoute); 
+app.use("/api", paymentRoutes);
+
 app.use("/api/saving-goals", savingGoalRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/badges", badgeRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/notifications", notificationRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async() =>{
   console.log(`🚀 Server running on http://localhost:${PORT}`);
@@ -47,4 +56,5 @@ app.listen(PORT, async() =>{
   } catch (err) {
     console.warn("Failed to initialize RAG service:", err.message);
   }
+   setInterval(dailyFinanceCheck, 24 * 60 * 60 * 1000);
 });

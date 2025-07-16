@@ -8,7 +8,9 @@ const {
   getExpenses,
   deleteExpense,
   updateExpense,
-  getSummary
+  getSummary,
+  getBalance,
+  getFinancialReport
 } = require("../Controllers/expenseController");
 const { protect } = require('../middlewares/authMiddleware');
 
@@ -21,5 +23,7 @@ router.delete("/expense/:id",protect, deleteExpense);
 router.put("/expense/:id",protect, updateExpense);
 // Summary
 router.get("/summary",protect, getSummary);
+router.get("/balance", protect, getBalance); // NEW: Get current balance
+router.get("/financial-report", protect, getFinancialReport); 
 
 module.exports = router;

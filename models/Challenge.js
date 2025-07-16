@@ -1,31 +1,40 @@
-const mongoose=require('mongoose');
+const mongoose = require("mongoose");
 
-const ChallengeSchema = new mongoose.Schema({
-    title: { 
-      type: String, 
-      required: true, 
-      minlength: 3, 
-      maxlength: 100 
+const ChallengeSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      minlength: 3,
+      maxlength: 100,
     },
-    description: { 
-      type: String, 
-      required: true, 
-      minlength: 5 
+    description: {
+      type: String,
+      required: true,
+      minlength: 5,
     },
-    durationDays: { 
-      type: Number, 
-      min: 1 
+    durationDays: {
+      type: Number,
+      min: 1,
     },
-    rewardXP: { 
-      type: Number, 
-      required: true, 
-      min: 0 
+    rewardXP: {
+      type: Number,
+      required: true,
+      min: 0,
     },
-    isActive: { 
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isPersonalized: { 
       type: Boolean, 
-      default: true 
-    }
-  }, { timestamps: true });
-  
-  module.exports = mongoose.model('Challenge', ChallengeSchema);
-  
+      default: false 
+    },
+    userId: { 
+      type: mongoose.Schema.Types.ObjectId, ref: "User" 
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Challenge", ChallengeSchema);
