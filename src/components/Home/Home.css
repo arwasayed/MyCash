@@ -505,3 +505,9 @@
   margin-bottom: 0.7rem;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.10);
 } 
+
+
+.cta-btn {
+  text-decoration: none;
+  /* existing styles */
+}
