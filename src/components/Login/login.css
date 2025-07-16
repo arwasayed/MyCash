@@ -109,8 +109,12 @@ left: 857px;
 .login-button p{
   width: 100%;
   text-align: center;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
+.login-button p {
+  color: #FFFFFF !important;
+}
+
 
 .newaccount{
     width: 100%;

@@ -43,6 +43,7 @@ useEffect(() => {
       if (data.status === "success") {
         setSuccess(data.message);
         localStorage.setItem("token",data.data.token);
+         localStorage.setItem("user", JSON.stringify(data.data.user));
         navigate("/home"); 
       } else {
         setError(data.message);
@@ -68,6 +69,7 @@ useEffect(() => {
       if (data.status === "success") {
         setSuccess(data.message);
         localStorage.setItem("token", data.data.token);
+         localStorage.setItem("user", JSON.stringify(data.data.user));
         navigate("/home"); 
       } else {
         setError(data.message);
@@ -155,7 +157,7 @@ useEffect(() => {
               </div>
             )}
 
-            <Button variant="primary" className="login-button" type="submit">
+            <Button variant="primary" className="login-button text-white" type="submit">
               <p>تسجيل الدخول</p>
             </Button>
 

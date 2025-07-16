@@ -17,8 +17,15 @@ import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx"
 import Rename from "./components/Rename/Rename.jsx";
-import Chatbot from "./components/Chatbote/Chatbot.jsx"
-import Payment from "./components/Payment/Payment.jsx"
+import Chatbot from "./components/Chatbote/Chatbot.jsx";
+import Payment from "./components/Payment/Payment.jsx";
+
+
+
+
+//Admin
+import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
+import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -36,7 +43,8 @@ function App() {
 
           <Route path="/ResetPassword" element={<ResetPassword/>}/>
           <Route path="/ResetPassword2/:token" element={<ResetPassword2/>}/>
-<Route path="/EmailConfirmation/:token" element={<EmailConfirmation />} /><Route path="/verify-email/:token" element={<VerifyEmail />} />
+<Route path="/EmailConfirmation/:token" element={<EmailConfirmation />} />
+<Route path="/verify-email/:token" element={<VerifyEmail />} />
 
           
           <Route path="/EmailConfirm1" element={<EmailConfirm1/>}/>
@@ -49,6 +57,13 @@ function App() {
 
 <Route path="/chatbot" element={<Chatbot/>}/>
 <Route path="/payment" element={<Payment/>}/>
+
+
+
+
+{/* Admin */}
+<Route path="/challenge" element={<ChallengesPage/>}/>
+<Route path="/task" element={<ChallengesSection/>}/>
         </Routes>
       </div>
       <Footer />
