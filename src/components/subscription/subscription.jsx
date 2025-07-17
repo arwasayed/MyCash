@@ -60,7 +60,7 @@ const Subscription = () => {
               </div>
               <Card.Title className="plan-title">مميز</Card.Title>
               <div className="price-section">
-                <span className="price">29</span>
+                <span className="price">50</span>
                 <span className="period">جنيه/شهر</span>
               </div>
               <ul className="features-list">
@@ -70,7 +70,7 @@ const Subscription = () => {
                 <li>مساعد ذكي متطور</li>
                 <li>خصومات حصرية</li>
               </ul>
-              <Button variant="light" className="subscribe-btn" onClick={() => handleSubscribe("Premium", 29)}>
+              <Button variant="light" className="subscribe-btn" onClick={() => handleSubscribe("Monthly", 50)}>
                 اشترك الآن
               </Button>
             </Card.Body>
@@ -86,8 +86,8 @@ const Subscription = () => {
               </div>
               <Card.Title className="plan-title">احترافي</Card.Title>
               <div className="price-section">
-                <span className="price">59</span>
-                <span className="period">جنيه/شهر</span>
+                <span className="price">500</span>
+                <span className="period">جنيه/سنة</span>
               </div>
               <ul className="features-list">
                 <li>جميع مميزات الباقة المميزة</li>
@@ -96,7 +96,7 @@ const Subscription = () => {
                 <li>تنبيهات ذكية متقدمة</li>
                 <li>دعم فني أولوية</li>
               </ul>
-              <Button variant="primary" className="subscribe-btn" onClick={() => handleSubscribe("Pro", 59)}>
+              <Button variant="primary" className="subscribe-btn" onClick={() => handleSubscribe("Annual", 500)}>
                 اشترك الآن
               </Button>
             </Card.Body>

@@ -23,19 +23,14 @@ import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
 
-import ChangePassword from "./components/ChangePassword/ChangePassword.jsx"
- 
-
-
-
 
 //Admin
 
-import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
-import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
 
 // import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
+
 // import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
+
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -67,18 +62,12 @@ function App() {
 <Route path="/chatbot" element={<Chatbot/>}/>
 <Route path="/payment" element={<Payment/>}/>
 
-<Route path="/changePass" element={<ChangePassword/>}/>
-
-
 
 
 
 {/* Admin */}
-
-<Route path="/challenge" element={<ChallengesPage/>}/>
-<Route path="/task" element={<ChallengesSection/>}/>
-
-
+{/* <Route path="/challenge" element={<ChallengesPage/>}/> */}
+{/* <Route path="/task" element={<ChallengesSection/>}/> */}
         </Routes>
       </div>
       <Footer />

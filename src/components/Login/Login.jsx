@@ -42,7 +42,7 @@ useEffect(() => {
 
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token",data.data.token);
+        localStorage.setItem("token",`Bearer ${data.data.token}`);
          localStorage.setItem("user", JSON.stringify(data.data.user));
         navigate("/home"); 
       } else {
@@ -68,7 +68,7 @@ useEffect(() => {
 
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("token",`Bearer ${data.data.token}`);
          localStorage.setItem("user", JSON.stringify(data.data.user));
         navigate("/home"); 
       } else {

@@ -12,7 +12,7 @@ const Rename = () => {
       try {
         const res = await axios.get('/api/user/settings/me', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            Authorization: ` ${localStorage.getItem('token')}`
           }
         });
         setUser(res.data.data.user);
@@ -29,7 +29,7 @@ const Rename = () => {
         nickname: newName
       }, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: ` ${localStorage.getItem('token')}`
         }
       });
       setUser(res.data.data.user); 

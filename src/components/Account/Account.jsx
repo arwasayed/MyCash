@@ -32,7 +32,7 @@ const Account = () => {
         throw new Error('لم يتم العثور على رمز التوثيق');
       }
       const response = await axios.post('/api/user/settings/logout', null, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `${token}` }
       });
       if (response.status === 200) {
         localStorage.removeItem('token'); 
@@ -61,11 +61,11 @@ const Account = () => {
       if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
 
       const summaryRes = await axios.get('/api/summary', { 
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: ` ${token}` },
         params: { user_id: userId }
       });
       const balanceRes = await axios.get('/api/balance', { 
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: ` ${token}` },
         params: { user_id: userId }
       });
 
@@ -89,7 +89,7 @@ const Account = () => {
         if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
 
         const response = await axios.get('/api/user/settings/me', {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: ` ${token}` },
         });
 
         setUser({
@@ -133,7 +133,7 @@ const Account = () => {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: ` ${token}`,
             'Content-Type': 'multipart/form-data',
           },
         }

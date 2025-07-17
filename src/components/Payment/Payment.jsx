@@ -6,90 +6,112 @@ import axios from "axios";
 import "./Payment.css";
 
 const Payment = () => {
-  const [selectedCountry, setSelectedCountry] = useState("مصر");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [clientSecret, setClientSecret] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const stripe = useStripe();
-  const elements = useElements();
-  const navigate = useNavigate();
-  const { state } = useLocation();
-
-  const amount = state?.amount || 45;
-  const planType = state?.planType || "Monthly";
-
-  useEffect(() => {
-    const createPaymentIntent = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.post(
-          `http://localhost:3000/api/payment/create`,
-          {
-            amount: amount * 100,
-            currency: "EGP",
-            planType,
-          },
-          {
-            headers: {
-              Authorization: `${token}`,
+    const [selectedCountry, setSelectedCountry] = useState("مصر");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [clientSecret, setClientSecret] = useState("");
+    const [loading, setLoading] = useState(false);
+  
+    const stripe = useStripe();
+    const elements = useElements();
+    const navigate = useNavigate();
+    const { state } = useLocation();
+    const [cardholderName, setCardholderName] = useState("");
+    const [addressLine1, setAddressLine1] = useState("");
+    const [addressLine2, setAddressLine2] = useState("");
+    const [city, setCity] = useState("");
+    const [governorate, setGovernorate] = useState("");
+  
+    const amount = state?.amount || 50;
+    const planType = state?.planType || "Monthly";
+    const countryNameToCode = {
+      "مصر": "EG",
+      "السعودية": "SA",
+      "الإمارات": "AE",
+      "الكويت": "KW"
+    };
+    
+  
+    useEffect(() => {
+      const createPaymentIntent = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const res = await axios.post(
+            `http://localhost:3000/api/payment/create`,
+            {
+              amount: amount * 100,
+              currency: "EGP",
+              planType,
             },
+            {
+              headers: {
+                Authorization: `${token}`,
+              },
+            }
+          );
+          setClientSecret(res.data.clientSecret);
+        } catch (err) {
+          console.error(err);
+          setErrorMsg("فشل في بدء عملية الدفع");
+        }
+      };
+  
+      createPaymentIntent();
+    }, [amount, planType]);
+  
+    const handlePayment = async () => {
+      setLoading(true);
+      setErrorMsg("");
+  
+      try {
+        const cardElement = elements.getElement(CardElement);
+        const { error, paymentMethod } = await stripe.createPaymentMethod({
+          type: "card",
+          card: cardElement,
+          billing_details: {
+            name: cardholderName,        
+            address: {
+              country: countryNameToCode[selectedCountry] || "EG",  
+              line1: addressLine1,       
+              line2: addressLine2,      
+              city: city,               
+              state: governorate,        
+            }
           }
+        });
+  
+        if (error) {
+          setErrorMsg(error.message);
+          setLoading(false);
+          return;
+        }
+  
+        const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: paymentMethod.id,
+        });
+  
+        if (confirmError || paymentIntent.status !== "succeeded") {
+          setErrorMsg("فشل تأكيد الدفع");
+          setLoading(false);
+          return;
+        }
+  
+        // Confirm on server
+        const token = localStorage.getItem("token");
+        await axios.post(
+          `http://localhost:3000/api/payment/confirm`,
+          { paymentIntentId: paymentIntent.id },
+          { headers: { Authorization: `${token}` } }
         );
-        setClientSecret(res.data.clientSecret);
+  
+        alert("تم الدفع بنجاح");
+        navigate("/home");
       } catch (err) {
         console.error(err);
-        setErrorMsg("فشل في بدء عملية الدفع");
+        setErrorMsg("حدث خطأ أثناء الدفع");
+      } finally {
+        setLoading(false);
       }
     };
-
-    createPaymentIntent();
-  }, [amount, planType]);
-
-  const handlePayment = async () => {
-    setLoading(true);
-    setErrorMsg("");
-
-    try {
-      const cardElement = elements.getElement(CardElement);
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: "card",
-        card: cardElement,
-      });
-
-      if (error) {
-        setErrorMsg(error.message);
-        setLoading(false);
-        return;
-      }
-
-      const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: paymentMethod.id,
-      });
-
-      if (confirmError || paymentIntent.status !== "succeeded") {
-        setErrorMsg("فشل تأكيد الدفع");
-        setLoading(false);
-        return;
-      }
-
-      // Confirm on server
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `http://localhost:3000/api/payment/confirm`,
-        { paymentIntentId: paymentIntent.id },
-        { headers: { Authorization: `${token}` } }
-      );
-
-      alert("تم الدفع بنجاح");
-      navigate("/home");
-    } catch (err) {
-      console.error(err);
-      setErrorMsg("حدث خطأ أثناء الدفع");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Container fluid className="payment-container">
@@ -121,7 +143,8 @@ const Payment = () => {
 
               <Form.Group className="mb-3">
               <Form.Label>اسم صاحب البطاقة</Form.Label>
-              <Form.Control type="text" placeholder="الاسم كما هو مكتوب على البطاقة" />
+              <Form.Control type="text" value={cardholderName}
+  onChange={(e) => setCardholderName(e.target.value)} placeholder="الاسم كما هو مكتوب على البطاقة" />
             </Form.Group>
 
               <Form.Group className="mb-3">
@@ -169,26 +192,30 @@ const Payment = () => {
 
               <Form.Group className="mb-3">
               <Form.Label>العنوان بالتفصيل (سطر 1)</Form.Label>
-              <Form.Control type="text" placeholder= "رقم المبنى، اسم الشارع" />
+              <Form.Control type="text" value={addressLine1}
+  onChange={(e) => setAddressLine1(e.target.value)} placeholder= "رقم المبنى، اسم الشارع" />
             </Form.Group>
             <Form.Group className="mb-3">
              <Form.Label>العنوان بالتفصيل (سطر 2) - اختياري</Form.Label>
 
-              <Form.Control type="text" placeholder="الحي، المنطقة" />
+              <Form.Control type="text" value={addressLine2}
+  onChange={(e) => setAddressLine2(e.target.value)} placeholder="الحي، المنطقة" />
             </Form.Group>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                               <Form.Label> المحافظة </Form.Label>
+                              <Form.Label> المحافظة </Form.Label>
 
-                  <Form.Control type="text" placeholder="المحافظة" value="القاهرة" />
+                  <Form.Control type="text" value={governorate}
+  onChange={(e) => setGovernorate(e.target.value)} placeholder="المحافظة" />
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                               <Form.Label>المدينة</Form.Label>
+                              <Form.Label>المدينة</Form.Label>
 
-                  <Form.Control type="text" placeholder=" المدينة" value="القاهرة" />
+                  <Form.Control type="text" value={city}
+  onChange={(e) => setCity(e.target.value)} placeholder=" المدينة"  />
                 </Form.Group>
               </Col>
             </Row>
