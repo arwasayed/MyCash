@@ -2,6 +2,109 @@ const Income = require("../models/Income");
 const Expense = require("../models/Expense");
 const { createNotification } = require('../Controllers/notification');
 
+
+
+async function getFilteredTransactions(user_id, filters = {}) {
+  const { period, category, transactionType } = filters;
+  
+  // Base query
+  let incomeQuery = { user_id };
+  let expenseQuery = { user_id, deleted: { $ne: true } };
+
+  // Date filtering based on period
+  if (period) {
+    const dateRange = getDateRange(period);
+    if (dateRange) {
+      incomeQuery.received_date = { $gte: dateRange.start, $lte: dateRange.end };
+      expenseQuery.date = { $gte: dateRange.start, $lte: dateRange.end };
+    }
+  }
+
+  // Category filtering
+  if (category && category !== 'all') {
+    if (category === 'income') {
+      // Only show incomes
+      expenseQuery = null;
+    } else if (category === 'expenses') {
+      // Only show expenses
+      incomeQuery = null;
+    } else {
+      // Specific category (for expenses)
+      expenseQuery.category = { $regex: new RegExp(category, 'i') };
+    }
+  }
+
+  // Transaction type filtering
+  if (transactionType && transactionType !== 'all') {
+    const typeQuery = { transactionType };
+    if (incomeQuery) incomeQuery.transactionType = transactionType;
+    if (expenseQuery) expenseQuery.transactionType = transactionType;
+  }
+
+  // Execute queries
+  const incomes = incomeQuery ? await Income.find(incomeQuery).sort({ timestamp: -1 }).lean() : [];
+  const expenses = expenseQuery ? await Expense.find(expenseQuery).sort({ timestamp: -1 }).lean() : [];
+
+  return { incomes, expenses };
+}
+function getDateRange(period) {
+  const now = new Date();
+  switch(period) {
+    case 'this-month':
+      return {
+        start: new Date(now.getFullYear(), now.getMonth(), 1),
+        end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      };
+    case 'last-month':
+      return {
+        start: new Date(now.getFullYear(), now.getMonth() - 1, 1),
+        end: new Date(now.getFullYear(), now.getMonth(), 0)
+      };
+    case 'this-year':
+      return {
+        start: new Date(now.getFullYear(), 0, 1),
+        end: new Date(now.getFullYear(), 11, 31)
+      };
+    default:
+      return null;
+  }
+}
+
+async function generateFinancialReport(user_id, filters = {}) {
+  const { incomes, expenses } = await getFilteredTransactions(user_id, filters);
+  
+  const summary = await getUserSummary(user_id);
+  const expenseDetails = expenses.slice(0, 20).map(formatExpense);
+  const incomeDetails = incomes.slice(0, 20).map(formatIncome);
+
+  return {
+    summary,
+    detailed_expenses: expenseDetails,
+    detailed_incomes: incomeDetails
+  };
+}
+
+function formatExpense(expense) {
+  return {
+    ...expense,
+    formatted_date: new Date(expense.date).toLocaleDateString('ar-EG', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  };
+}
+
+function formatIncome(income) {
+  return {
+    ...income,
+    formatted_date: new Date(income.received_date).toLocaleDateString('ar-EG', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  };
+}
 async function getCurrentBalance(user_id) {
   try {
     console.log(`\n=== Getting Current Balance for User: ${user_id} ===`);
@@ -313,5 +416,9 @@ module.exports = {
   getExpenseDetails,
   getIncomeDetails,
   generateExpenseReport,
-  checkOverspending
+  checkOverspending,
+  getFilteredTransactions,
+  generateFinancialReport,
+  formatExpense,
+  formatIncome
 };
