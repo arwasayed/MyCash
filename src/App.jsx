@@ -23,12 +23,10 @@ import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
 
-
-
-
 //Admin
 import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
 import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
+import ManageChallenge from "./components/Admin/ManageChallenge";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -44,10 +42,13 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/ForgetPassword" element={<ForgotPassword />} />
 
-          <Route path="/ResetPassword" element={<ResetPassword/>}/>
-          <Route path="/ResetPassword2/:token" element={<ResetPassword2/>}/>
-<Route path="/EmailConfirmation/:token" element={<EmailConfirmation />} />
-<Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/ResetPassword" element={<ResetPassword />} />
+          <Route path="/ResetPassword2/:token" element={<ResetPassword2 />} />
+          <Route
+            path="/EmailConfirmation/:token"
+            element={<EmailConfirmation />}
+          />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
           <Route path="/EmailConfirm1" element={<EmailConfirm1 />} />
           <Route path="/subscription" element={<Subscription />} />
@@ -55,17 +56,16 @@ function App() {
           <Route path="/notification" element={<Notification />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
-<Route path="/rename" element={<Rename/>}/>
+          <Route path="/rename" element={<Rename />} />
+          <Route path="/goals" element={<GoalsPage />} />
 
-<Route path="/chatbot" element={<Chatbot/>}/>
-<Route path="/payment" element={<Payment/>}/>
+          <Route path="/chatbot" element={<Chatbot />} />
+          <Route path="/payment" element={<Payment />} />
 
-
-
-
-{/* Admin */}
-<Route path="/challenge" element={<ChallengesPage/>}/>
-<Route path="/task" element={<ChallengesSection/>}/>
+          {/* Admin */}
+          <Route path="/challenge" element={<ChallengesPage />} />
+          <Route path="/task" element={<ChallengesSection />} />
+          <Route path="/manage-challenge" element={<ManageChallenge />} />
         </Routes>
       </div>
       <Footer />
