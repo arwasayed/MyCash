@@ -22,7 +22,8 @@ import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx";
 import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
-
+import ChangePassword from "./components/ChangePassword/ChangePassword.jsx"
+ 
 
 
 
@@ -59,6 +60,7 @@ function App() {
 
 <Route path="/chatbot" element={<Chatbot/>}/>
 <Route path="/payment" element={<Payment/>}/>
+<Route path="/changePass" element={<ChangePassword/>}/>
 
 
 

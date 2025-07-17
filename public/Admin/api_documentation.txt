@@ -1,0 +1,646 @@
+### Income Management
+- POST /api/income
+
+### Expense Management
+- POST /api/expense
+- GET /api/expenses
+- DELETE /api/expense/:id
+- PUT /api/expense/:id
+
+### Financial Summary & Reports
+- GET /api/summary
+- GET /api/balance
+- GET /api/financial-report
+
+### Chatbot Interaction
+- POST /api/chat
+
+## Getting Started
+
+\## Endpoint Details
+
+---
+# POST /api/income
+
+## Description
+
+Adds a new income record for a user and updates their cumulative balance. This endpoint is protected and requires authentication.
+
+## Request
+
+### Method
+`POST`
+
+### URL
+`/api/income`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+- `Content-Type: application/json`
+
+### Body
+```json
+{
+  "user_id": "string",
+  "amount": "number",
+  "currency": "string",
+  "frequency": "string",
+  "description": "string"
+}
+```
+
+#### Body Parameters
+- `user_id` (string, **required**): The ID of the user.
+- `amount` (number, **required**): The amount of income.
+- `currency` (string, optional, default: "EGP"): The currency of the income.
+- `frequency` (string, optional, default: "monthly"): The frequency of the income (e.g., "monthly", "annual").
+- `description` (string, optional): A brief description of the income.
+
+## Response
+
+### Success (201 Created)
+```json
+{
+  "id": "string",
+  "user_id": "string",
+  "amount": "number",
+  "currency": "string",
+  "frequency": "string",
+  "description": "string",
+  "received_date": "string" (ISO 8601 date-time),
+  "balance_after": "number",
+  "timestamp": "string" (ISO 8601 date-time),
+  "__v": "number",
+  "message": "string" (e.g., "تم إضافة دخل بقيمة 5000 EGP. رصيدك الحالي: 5000 EGP")
+}
+```
+
+### Error (400 Bad Request)
+```json
+{
+  "error": "string" (e.g., "Missing user_id or amount")
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X POST http://localhost:3000/api/income \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d 
+```json
+{
+  "user_id": "686bd4ac75316db54595192e",
+  "amount": 5000,
+  "currency": "EGP",
+  "frequency": "monthly",
+  "description": "راتبي الشهري"
+}
+```
+---
+# POST /api/expense
+
+## Description
+
+Adds a new expense record for a user and deducts the amount from their cumulative balance. This endpoint is protected and requires authentication. It also includes balance validation.
+
+## Request
+
+### Method
+`POST`
+
+### URL
+`/api/expense`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+- `Content-Type: application/json`
+
+### Body
+```json
+{
+  "user_id": "string",
+  "amount": "number",
+  "category": "string",
+  "description": "string",
+  "date": "string" (ISO 8601 date-time, optional)
+}
+```
+
+#### Body Parameters
+- `user_id` (string, **required**): The ID of the user.
+- `amount` (number, **required**): The amount of the expense.
+- `category` (string, **required**): The category of the expense (e.g., "Bills", "Food", "Entertainment").
+- `description` (string, optional): A brief description of the expense.
+- `date` (string, optional, default: current date): The date of the expense.
+
+## Response
+
+### Success (201 Created)
+```json
+{
+  "id": "string",
+  "user_id": "string",
+  "amount": "number",
+  "category": "string",
+  "description": "string",
+  "date": "string" (ISO 8601 date-time),
+  "balance_after": "number",
+  "timestamp": "string" (ISO 8601 date-time),
+  "message": "string" (e.g., "تم تسجيل مصروف بقيمة 1500 EGP على فاتورة الغاز. رصيدك الحالي: 7500 EGP")
+}
+```
+
+### Error (400 Bad Request - Insufficient Balance)
+```json
+{
+  "error": "string" (e.g., "رصيدك الحالي 7000 EGP غير كافي لهذا المصروف"),
+  "current_balance": "number",
+  "requested_amount": "number",
+  "currency": "string"
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X POST http://localhost:3000/api/expense \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d 
+```json
+{
+  "user_id": "686bd4ac75316db54595192e",
+  "amount": 1500,
+  "category": "Bills",
+  "description": "فاتورة الغاز"
+}
+```
+---
+# GET /api/expenses
+
+## Description
+
+Retrieves a list of expense records for a user, with optional filtering by category and date range. This endpoint is protected and requires authentication.
+
+## Request
+
+### Method
+`GET`
+
+### URL
+`/api/expenses`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+
+### Query Parameters
+- `user_id` (string, **required**): The ID of the user.
+- `category` (string, optional): Filter expenses by category.
+- `start_date` (string, optional, ISO 8601 date-time): Filter expenses from this date onwards.
+- `end_date` (string, optional, ISO 8601 date-time): Filter expenses up to this date.
+- `limit` (number, optional, default: 20): Maximum number of expenses to return.
+
+## Response
+
+### Success (200 OK)
+```json
+{
+  "expenses": [
+    {
+      "id": "string",
+      "user_id": "string",
+      "amount": "number",
+      "category": "string",
+      "description": "string",
+      "date": "string" (ISO 8601 date-time),
+      "balance_after": "number",
+      "timestamp": "string" (ISO 8601 date-time),
+      "formatted_date": "string" (e.g., "13 يوليو 2025"),
+      "formatted_time": "string" (e.g., "06:30 م")
+    }
+  ],
+  "total_count": "number",
+  "total_amount": "number"
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X GET "http://localhost:3000/api/expenses?user_id=686bd4ac75316db54595192e&category=Bills&limit=5" \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN"
+```
+---
+# DELETE /api/expense/:id
+
+## Description
+
+Deletes an expense record by its ID. Note that for simplicity, this implementation marks the expense as deleted rather than permanently removing it, and recalculating all subsequent balances is not automatically handled by this endpoint. This endpoint is protected and requires authentication.
+
+## Request
+
+### Method
+`DELETE`
+
+### URL
+`/api/expense/:id`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+
+### Path Parameters
+- `id` (string, **required**): The ID of the expense record to delete.
+
+## Response
+
+### Success (200 OK)
+```json
+{
+  "success": true,
+  "message": "تم حذف المصروف بنجاح. ملاحظة: قد يؤثر هذا على الرصيد المحسوب."
+}
+```
+
+### Error (404 Not Found)
+```json
+{
+  "error": "Expense not found"
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X DELETE http://localhost:3000/api/expense/YOUR_EXPENSE_ID \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN"
+```
+---
+# PUT /api/expense/:id
+
+## Description
+
+Updates an existing expense record by its ID. Note that for simplicity, recalculating all subsequent balances is not automatically handled by this endpoint. This endpoint is protected and requires authentication.
+
+## Request
+
+### Method
+`PUT`
+
+### URL
+`/api/expense/:id`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+- `Content-Type: application/json`
+
+### Path Parameters
+- `id` (string, **required**): The ID of the expense record to update.
+
+### Body
+```json
+{
+  "amount": "number" (optional),
+  "category": "string" (optional),
+  "description": "string" (optional),
+  "date": "string" (ISO 8601 date-time, optional)
+}
+```
+
+#### Body Parameters
+- `amount` (number, optional): The new amount of the expense.
+- `category` (string, optional): The new category of the expense.
+- `description` (string, optional): The new description of the expense.
+- `date` (string, optional): The new date of the expense.
+
+## Response
+
+### Success (200 OK)
+```json
+{
+  "id": "string",
+  "user_id": "string",
+  "amount": "number",
+  "category": "string",
+  "description": "string",
+  "date": "string" (ISO 8601 date-time),
+  "balance_after": "number",
+  "timestamp": "string" (ISO 8601 date-time),
+  "message": "string" (e.g., "تم تحديث المصروف بنجاح. ملاحظة: قد يؤثر هذا على الرصيد المحسوب.")
+}
+```
+
+### Error (404 Not Found)
+```json
+{
+  "error": "Expense not found"
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X PUT http://localhost:3000/api/expense/YOUR_EXPENSE_ID \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d 
+```json
+{
+  "amount": 600,
+  "description": "نزهة معدلة"
+}
+```
+
+---
+# GET /api/summary
+
+## Description
+
+Retrieves a comprehensive financial summary for a user, including current balance, total income, total expenses, expenses by category, and recent transactions. This endpoint is protected and requires authentication.
+
+## Request
+
+### Method
+`GET`
+
+### URL
+`/api/summary`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+
+### Query Parameters
+- `user_id` (string, **required**): The ID of the user.
+
+## Response
+
+### Success (200 OK)
+```json
+{
+  "current_balance": "number",
+  "currency": "string",
+  "last_transaction_date": "string" (ISO 8601 date-time),
+  "total_income_received": "number",
+  "total_expenses_made": "number",
+  "expenses_by_category": {
+    "Category1": "number",
+    "Category2": "number"
+  },
+  "recent_expenses": [
+    // Array of recent expense objects
+  ],
+  "recent_incomes": [
+    // Array of recent income objects
+  ],
+  "transaction_history": [
+    // Array of all recent transactions (income/expense)
+  ],
+  "has_transactions": "boolean",
+  "summary_generated_at": "string" (ISO 8601 date-time)
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X GET "http://localhost:3000/api/summary?user_id=686bd4ac75316db54595192e" \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN"
+```
+---
+# GET /api/balance
+
+## Description
+
+Retrieves the current cumulative balance for a specific user. This endpoint is protected and requires authentication.
+
+## Request
+
+### Method
+`GET`
+
+### URL
+`/api/balance`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+
+### Query Parameters
+- `user_id` (string, **required**): The ID of the user.
+
+## Response
+
+### Success (200 OK)
+```json
+{
+  "user_id": "string",
+  "current_balance": "number",
+  "currency": "string",
+  "last_transaction_date": "string" (ISO 8601 date-time),
+  "balance_checked_at": "string" (ISO 8601 date-time)
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X GET "http://localhost:3000/api/balance?user_id=686bd4ac75316db54595192e" \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN"
+```
+---
+# GET /api/financial-report
+
+## Description
+
+Retrieves a detailed financial report for a user, including a summary, detailed lists of recent expenses, and recent incomes. This endpoint is protected and requires authentication.
+
+## Request
+
+### Method
+`GET`
+
+### URL
+`/api/financial-report`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+
+### Query Parameters
+- `user_id` (string, **required**): The ID of the user.
+
+## Response
+
+### Success (200 OK)
+```json
+{
+  "user_id": "string",
+  "summary": {
+    "current_balance": "number",
+    "currency": "string",
+    "last_transaction_date": "string" (ISO 8601 date-time),
+    "total_income_received": "number",
+    "total_expenses_made": "number",
+    "expenses_by_category": {
+      "Category1": "number",
+      "Category2": "number"
+    },
+    "recent_expenses": [
+      // Array of recent expense objects
+    ],
+    "recent_incomes": [
+      // Array of recent income objects
+    ],
+    "transaction_history": [
+      // Array of all recent transactions (income/expense)
+    ],
+    "has_transactions": "boolean",
+    "summary_generated_at": "string" (ISO 8601 date-time)
+  },
+  "detailed_expenses": [
+    // Array of detailed expense objects
+  ],
+  "detailed_incomes": [
+    // Array of detailed income objects
+  ],
+  "report_generated_at": "string" (ISO 8601 date-time)
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X GET "http://localhost:3000/api/financial-report?user_id=686bd4ac75316db54595192e" \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN"
+```
+---
+# POST /api/chat
+
+## Description
+
+Sends a user message to the chatbot, which processes it using a RAG (Retrieval-Augmented Generation) system. The chatbot can provide financial advice, expense reports, and current balance information based on the user's financial data.
+
+## Request
+
+### Method
+`POST`
+
+### URL
+`/api/chat`
+
+### Headers
+- `Authorization: Bearer YOUR_AUTH_TOKEN` (Required)
+- `Content-Type: application/json`
+
+### Body
+```json
+{
+  "user_id": "string",
+  "message": "string"
+}
+```
+
+#### Body Parameters
+- `user_id` (string, **required**): The ID of the user.
+- `message` (string, **required**): The user's message to the chatbot.
+
+## Response
+
+### Success (200 OK)
+```json
+{
+  "reply": "string" (Chatbot's response),
+  "user_id": "string",
+  "message_id": "string" (UUID for the bot's message),
+  "financial_summary": {
+    "current_balance": "number",
+    "currency": "string",
+    "total_income": "number",
+    "total_expenses": "number",
+    "recent_expenses_count": "number",
+    "recent_incomes_count": "number"
+  },
+  "debug_info": {
+    "rag_used": "boolean",
+    "finance_summary_available": "boolean",
+    "expense_report_generated": "boolean"
+  }
+}
+```
+
+### Error (500 Internal Server Error)
+```json
+{
+  "error": "Server error"
+}
+```
+
+## Example Usage
+
+```bash
+curl -X POST http://localhost:3000/api/chat \
+-H "Authorization: Bearer YOUR_AUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d 
+```json
+{
+  "user_id": "686bd4ac75316db54595192e",
+  "message": "راجع مصروفاتي"
+}
+```
+---

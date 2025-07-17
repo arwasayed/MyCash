@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Badge, Image, Form, Button, ProgressBar } from 'react-bootstrap';
 import { FaCrown, FaCamera, FaPiggyBank, FaMoon, FaGlobe, FaLock, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import "./Account.css";
 
@@ -8,27 +9,89 @@ const Account = () => {
   const [user, setUser] = useState({ nickname: 'ساره محمود', email: 'sara.mahmoud@email.com', avatar: './jklj' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const totalBudget = 5000;
-  const spent = 3200;
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [spent, setSpent] = useState(0);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [currentBalance, setCurrentBalance] = useState(0);
   const remaining = totalBudget - spent;
-  const percentage = (spent / totalBudget) * 100;
+  const percentage = totalBudget === 0 ? 0 : (spent / totalBudget) * 100;
+  const [monthYearString, setMonthYearString] = useState('');
+
+  // استخرج userId بشكل صحيح
+  const storedUser = localStorage.getItem('user');
+  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+  const userId = parsedUser ? (parsedUser._id || parsedUser.id) : null;
+
+  // دالة تسجيل الخروج
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('لم يتم العثور على رمز التوثيق');
+      }
+      const response = await axios.post('/api/user/settings/logout', null, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.status === 200) {
+        localStorage.removeItem('token'); 
+        navigate('/login'); 
+      } else {
+        alert('فشل تسجيل الخروج. حاول مرة أخرى.');
+      }
+    } catch (error) {
+      console.error("خطأ في تسجيل الخروج:", error.message);
+      alert('حدث خطأ أثناء تسجيل الخروج.');
+    }
+  };
 
   const options = [
     { icon: <FaGlobe />, title: 'تغيير اللغة', subtitle: 'العربية / English' },
-    { icon: <FaMoon />, title: 'تغيير الاسم', subtitle: 'تفعيل / إلغاء' },
-    { icon: <FaLock />, title: 'تغيير كلمة السر', subtitle: 'حماية الحساب' },
-    { icon: <FaSignOutAlt />, title: 'تسجيل الخروج', subtitle: 'إنهاء الجلسة' },
+    { icon: <FaMoon />, title: 'تغيير الاسم', subtitle: 'تفعيل / إلغاء', onClick: () => navigate('/rename') },
+    { icon: <FaLock />, title: 'تغيير كلمة السر', subtitle: 'حماية الحساب', onClick: () => navigate('/changePass') },
+    { icon: <FaSignOutAlt />, title: 'تسجيل الخروج', subtitle: 'إنهاء الجلسة', onClick: handleLogout },
   ];
+
+  // دالة جلب البيانات المالية
+  const fetchFinancialData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
+
+      const summaryRes = await axios.get('/api/summary', { 
+        headers: { Authorization: `Bearer ${token}` },
+        params: { user_id: userId }
+      });
+      const balanceRes = await axios.get('/api/balance', { 
+        headers: { Authorization: `Bearer ${token}` },
+        params: { user_id: userId }
+      });
+
+      setTotalIncome(summaryRes.data.total_income_received || 0);
+      setSpent(summaryRes.data.total_expenses_made || 0);
+      setCurrentBalance(balanceRes.data.current_balance || 0);
+      setTotalBudget(summaryRes.data.total_budget || 0); // تأكد من اسم المتغير الصحيح في الـ API
+      setLoading(false);
+    } catch (error) {
+      console.error("خطأ في جلب البيانات المالية:", error.message, error.response?.data);
+      setError('فشل جلب البيانات المالية');
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
+        if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
+
         const response = await axios.get('/api/user/settings/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setUser({
           nickname: response.data.data.user.nickname,
           email: response.data.data.user.email,
@@ -36,11 +99,21 @@ const Account = () => {
         });
         setLoading(false);
       } catch (err) {
+        console.error("خطأ في جلب بيانات المستخدم:", err.message);
         setError('فشل جلب بيانات المستخدم');
         setLoading(false);
       }
     };
+
     fetchUserData();
+    fetchFinancialData();
+
+    const monthNames = [
+      "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+      "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+    ];
+    const today = new Date();
+    setMonthYearString(`${monthNames[today.getMonth()]} ${today.getFullYear()}`);
   }, []);
 
   const handleAvatarChange = async (e) => {
@@ -50,6 +123,8 @@ const Account = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
+      if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
+
       const formData = new FormData();
       formData.append('avatar', file);
 
@@ -71,6 +146,7 @@ const Account = () => {
       setLoading(false);
       alert('تم تحديث الصورة بنجاح');
     } catch (err) {
+      console.error("خطأ في تحديث الصورة:", err.message);
       setError(err.response?.data?.message || 'حدث خطأ أثناء تحديث الصورة');
       setLoading(false);
     }
@@ -78,23 +154,25 @@ const Account = () => {
 
   return (
     <Container fluid className="account-container d-flex justify-content-center align-items-center py-4" style={{ direction: 'rtl' }}>
+      {loading && <div className="text-center">جاري التحميل...</div>}
+      {error && <div className="text-danger text-center mb-3">{error}</div>}
       <Card className="profile" style={{ maxWidth: '926px', width: '95%' }}>
         <Row className="align-items-center">
           <Col xs="auto">
             <div style={{ position: 'relative', width: '60px', height: '60px' }}>
               <Image
-  src={
-  user.avatar.startsWith('http')
-    ? user.avatar
-    : user.avatar.startsWith('/')
-    ? `http://localhost:3000${user.avatar}?t=${Date.now()}`
-    : `/Uploads/${user.avatar}?t=${Date.now()}`
-}
-  roundedCircle
-  width={60}
-  height={60}
-  style={{ objectFit: 'cover' }}
-/>
+                src={
+                  user.avatar.startsWith('http')
+                    ? user.avatar
+                    : user.avatar.startsWith('/')
+                    ? `http://localhost:3000${user.avatar}?t=${Date.now()}`
+                    : `/Uploads/${user.avatar}?t=${Date.now()}`
+                }
+                roundedCircle
+                width={60}
+                height={60}
+                style={{ objectFit: 'cover' }}
+              />
               <div
                 style={{
                   position: "absolute",
@@ -127,7 +205,6 @@ const Account = () => {
             </Badge>
           </Col>
         </Row>
-        {error && <div className="text-danger mt-2">{error}</div>}
       </Card>
 
       <Card className="budget" style={{ maxWidth: '896px', width: '95%', marginTop: '20px' }}>
@@ -137,25 +214,26 @@ const Account = () => {
           </h5>
           <Col xs={12} md={6} className="p-4" style={{ marginBottom: '20px' }}>
             <Form.Group className="mb-3">
-              <Form.Label className="small now">الميزانية الحالية</Form.Label>
+              <Form.Label className="small now">الدخل الكلي</Form.Label>
               <Form.Control
                 type="text"
                 readOnly
-                defaultValue={`${totalBudget} جنيه`}
+                value={`${totalIncome} جنيه`}
                 style={{ backgroundColor: 'transparent', border: '1px solid #E5E7EB', paddingLeft: 0 }}
                 className="text-muted"
               />
+            
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="small">الشهر</Form.Label>
               <Form.Control
                 plaintext
                 readOnly
-                defaultValue="يناير 2024"
+                value={monthYearString}
                 style={{ backgroundColor: 'transparent', border: '1px solid #E5E7EB', paddingLeft: 0 }}
               />
             </Form.Group>
-            <Button className="w-100 mt-2 rounded-3 update">
+            <Button className="w-100 mt-2 rounded-3 update" onClick={fetchFinancialData}>
               <img src="Account/svg.svg" alt="update icon" /> تحديث الميزانية
             </Button>
             <p className="text-muted mt-3 key">
@@ -189,8 +267,8 @@ const Account = () => {
                 />
               </ProgressBar>
               <div className="d-flex justify-content-between px-2 small">
-                <span className="text-muted">المتبقي</span>
-                <span className="almutabaqaa mablagh">{remaining} جنيه</span>
+                <span className="text-muted"> المتبقى</span>
+                <span className="almutabaqaa mablagh">{currentBalance} جنيه</span>
               </div>
             </div>
           </Col>
@@ -218,14 +296,15 @@ const Account = () => {
                 border: 'none',
                 borderRadius: '12px',
                 width: '100%',
-                height: '76px'
+                height: '76px',
+                color: opt.title === 'تسجيل الخروج' ? '#FF6B6B' : undefined
               }}
-              onClick={() => { }}
+              onClick={opt.onClick}
             >
               <div
                 className="m-1"
                 style={{
-                  fontSize: '1.2rem',
+                  fontSize: "1.2rem",
                   color: opt.title === 'تسجيل الخروج' ? '#FF6B6B' : '#6C5DD3'
                 }}
               >
