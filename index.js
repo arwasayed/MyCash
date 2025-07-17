@@ -19,15 +19,36 @@ const { dailyFinanceCheck } = require('./services/scheduler');
 
 const paymentRoutes = require('./Routes/paymentRoute');
 const dailyTasksRoutes = require('./Routes/dailyTasks');
+const User = require('./models/userModel'); 
 
 
-
+const seedAdmin = async () => {
+  try {
+    const adminEmail = "admin@gmail.com";
+    const existingAdmin = await User.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      const admin = await User.create({
+        email: adminEmail,
+        password: "Admin@123",
+        role: "admin",
+        emailVerified: true,
+      });
+      console.log("✅ Static admin user created:", admin.email);
+    } else {
+      console.log("ℹ️ Static admin already exists");
+    }
+  } catch (error) {
+    console.error("❌ Error creating admin:", error.message);
+  }
+};
 
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log(' Connected to MongoDB'))
+  .then(() => {console.log(' Connected to MongoDB'); seedAdmin(); })
   .catch(err => console.error(' MongoDB connection error:', err));
 
 const app = express();
+
+
 // app.use(passport.initialize());
 app.use(cors({ origin: '*' }));
 app.use(express.json());
