@@ -20,6 +20,9 @@ const { dailyFinanceCheck } = require('./services/scheduler');
 const paymentRoutes = require('./Routes/paymentRoute');
 //Hager
 const uploadRouter = require('./Routes/upload');
+const dailyTasksRoutes = require('./Routes/dailyTasks');
+
+
 
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -50,6 +53,7 @@ app.use("/api/challenges", challengeRoutes);
 app.use("/api/badges", badgeRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use('/api/daily-tasks', dailyTasksRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async() =>{

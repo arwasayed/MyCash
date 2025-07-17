@@ -87,7 +87,7 @@ const userSchema = new mongoose.Schema({
     default: 'User',
     minlength: [2, 'Nickname must be at least 2 characters'],
     maxlength: [30, 'Nickname cannot exceed 30 characters'],
-match: [/^[\u0600-\u06FFa-zA-Z0-9_\- ]+$/, 'Nickname can only contain Arabic or English letters, numbers, spaces, hyphens and underscores']
+    match: [/^[a-zA-Z0-9_\- ]+$/, 'Nickname can only contain letters, numbers, spaces, hyphens and underscores']
   },
 avatar: {
   type: String,
@@ -97,9 +97,7 @@ avatar: {
       return /\.(jpg|jpeg|png|gif|webp)$|^https?:\/\//i.test(v);
     },
     message: 'يجب أن تكون الصورة بصيغة صالحة (JPG, PNG, GIF) أو رابط URL'
-  }
-
-    
+  } 
   },
   language: {
     type: String,
@@ -238,7 +236,6 @@ userSchema.add({
     paymentMethod: String
   }
 });
-
 
 userSchema.virtual("subscribe").set(function (plan) {
   const now = new Date();
