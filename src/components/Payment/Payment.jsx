@@ -204,18 +204,18 @@ const Payment = () => {
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                               <Form.Label> المحافظة </Form.Label>
+                              <Form.Label> المحافظة </Form.Label>
 
                   <Form.Control type="text" value={governorate}
-  onChange={(e) => setGovernorate(e.target.value)} placeholder="المحافظة" value="القاهرة" />
+  onChange={(e) => setGovernorate(e.target.value)} placeholder="المحافظة" />
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                               <Form.Label>المدينة</Form.Label>
+                              <Form.Label>المدينة</Form.Label>
 
                   <Form.Control type="text" value={city}
-  onChange={(e) => setCity(e.target.value)} placeholder=" المدينة" value="القاهرة" />
+  onChange={(e) => setCity(e.target.value)} placeholder=" المدينة"  />
                 </Form.Group>
               </Col>
             </Row>
