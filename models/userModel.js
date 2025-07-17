@@ -81,7 +81,7 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Password must contain at least: 1 uppercase, 1 lowercase, 1 number'
     }
-  ,
+  },
   nickname: { 
     type: String,
     default: 'User',
@@ -97,9 +97,7 @@ avatar: {
       return /\.(jpg|jpeg|png|gif|webp)$|^https?:\/\//i.test(v);
     },
     message: 'يجب أن تكون الصورة بصيغة صالحة (JPG, PNG, GIF) أو رابط URL'
-  }
-
-    
+  } 
   },
   language: {
     type: String,
