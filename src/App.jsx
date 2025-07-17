@@ -23,26 +23,14 @@ import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
 
-<<<<<<< HEAD
-=======
-import ChangePassword from "./components/ChangePassword/ChangePassword.jsx"
- 
 
-
-
-
->>>>>>> ec81ec22f09d1fe38f1093de0d1be76e9bb347a8
 //Admin
 
-import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
-import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
-<<<<<<< HEAD
-import ManageChallenge from "./components/Admin/ManageChallenge";
-=======
 
 // import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
+
 // import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
->>>>>>> ec81ec22f09d1fe38f1093de0d1be76e9bb347a8
+
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -58,13 +46,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/ForgetPassword" element={<ForgotPassword />} />
 
-          <Route path="/ResetPassword" element={<ResetPassword />} />
-          <Route path="/ResetPassword2/:token" element={<ResetPassword2 />} />
-          <Route
-            path="/EmailConfirmation/:token"
-            element={<EmailConfirmation />}
-          />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/ResetPassword" element={<ResetPassword/>}/>
+          <Route path="/ResetPassword2/:token" element={<ResetPassword2/>}/>
+<Route path="/EmailConfirmation/:token" element={<EmailConfirmation />} />
+<Route path="/verify-email/:token" element={<VerifyEmail />} />
 
           <Route path="/EmailConfirm1" element={<EmailConfirm1 />} />
           <Route path="/subscription" element={<Subscription />} />
@@ -72,31 +57,17 @@ function App() {
           <Route path="/notification" element={<Notification />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/planebudget" element={<PlaneBudget />} />
-          <Route path="/rename" element={<Rename />} />
-          <Route path="/goals" element={<GoalsPage />} />
+<Route path="/rename" element={<Rename/>}/>
 
-          <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="/payment" element={<Payment />} />
-
-<<<<<<< HEAD
-          {/* Admin */}
-          <Route path="/challenge" element={<ChallengesPage />} />
-          <Route path="/task" element={<ChallengesSection />} />
-          <Route path="/manage-challenge" element={<ManageChallenge />} />
-=======
-<Route path="/changePass" element={<ChangePassword/>}/>
-
+<Route path="/chatbot" element={<Chatbot/>}/>
+<Route path="/payment" element={<Payment/>}/>
 
 
 
 
 {/* Admin */}
-
-<Route path="/challenge" element={<ChallengesPage/>}/>
-<Route path="/task" element={<ChallengesSection/>}/>
-
-
->>>>>>> ec81ec22f09d1fe38f1093de0d1be76e9bb347a8
+{/* <Route path="/challenge" element={<ChallengesPage/>}/> */}
+{/* <Route path="/task" element={<ChallengesSection/>}/> */}
         </Routes>
       </div>
       <Footer />

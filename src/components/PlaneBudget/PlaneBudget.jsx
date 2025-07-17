@@ -35,7 +35,7 @@ export default function PlaneBudget() {
     try {
       const response = await fetch(`http://localhost:3000/api/expenses?user_id=${userId}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `${localStorage.getItem('token')}`
         }
       });
       
@@ -68,7 +68,7 @@ export default function PlaneBudget() {
       const response = await fetch(`http://localhost:3000/api/expense/${id}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -111,7 +111,7 @@ export default function PlaneBudget() {
       const response = await fetch(`http://localhost:3000/api/expense/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': ` ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -155,7 +155,7 @@ export default function PlaneBudget() {
       const incomeResponse = await fetch('http://localhost:3000/api/income', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': ` ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -175,7 +175,7 @@ export default function PlaneBudget() {
           const response = await fetch('http://localhost:3000/api/expense', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Authorization': ` ${localStorage.getItem('token')}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({

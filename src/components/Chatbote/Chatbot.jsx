@@ -26,7 +26,7 @@ const userId = JSON.parse(localStorage.getItem('user'))?.id;
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: ` ${token}`,
           },
         });
 
@@ -89,7 +89,7 @@ const userId = JSON.parse(localStorage.getItem('user'))?.id;
         response = await fetch('http://localhost:3000/api/chat', {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
           body: formData,
         });
@@ -98,7 +98,7 @@ const userId = JSON.parse(localStorage.getItem('user'))?.id;
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
           body: JSON.stringify({ user_id: userId, message: input }),
         });
