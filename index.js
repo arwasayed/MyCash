@@ -18,8 +18,8 @@ const path = require('path');
 const { dailyFinanceCheck } = require('./services/scheduler');
 
 const paymentRoutes = require('./Routes/paymentRoute');
-
-
+//Hager
+const uploadRouter = require('./Routes/upload');
 
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -37,7 +37,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ status: 'error', message: 'Something went wrong!' });
 });
 
+//Hager
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api', uploadRouter);
+
 app.use("/api", chatRoute);
 app.use("/api", expenseRoute); 
 app.use("/api", paymentRoutes);

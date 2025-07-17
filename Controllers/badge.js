@@ -3,6 +3,7 @@ const UserBadge = require('../models/UserBadge');
 const Badge = require('../models/Badge');
 const { badgeSchema } = require('../validation/badge.validation');
 
+
 exports.createBadge = catchAsync(async (req, res) => {
   const { error } = badgeSchema.validate(req.body);
   if (error) throw { statusCode: 400, message: error.details[0].message };
@@ -48,7 +49,9 @@ exports.deleteBadge = catchAsync(async (req, res) => {
 
 exports.updateBadge = catchAsync(async (req, res) => {
   const { error } = badgeSchema.validate(req.body);
-  if (error) { throw { statusCode: 400, message: error.details[0].message }; }
+  if (error) { 
+      console.log("Validation Error:", error.details[0].message);
+    throw { statusCode: 400, message: error.details[0].message }; }
 
   const badge = await Badge.findByIdAndUpdate(
     req.params.id,

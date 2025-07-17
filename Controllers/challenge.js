@@ -131,6 +131,7 @@ exports.updateChallenge = catchAsync(async (req, res) => {
       title: req.body.title,
       description: req.body.description,
       rewardXP: req.body.rewardXP,
+      isActive: req.body.isActive,
     },
     { new: true, runValidators: true }
   );
@@ -184,6 +185,8 @@ exports.createChallenge = catchAsync(async (req, res) => {
     title: req.body.title,
     description: req.body.description,
     rewardXP: req.body.rewardXP,
+    isActive: req.body.isActive,
+
   });
 
   const users = await User.find({}, "_id");
