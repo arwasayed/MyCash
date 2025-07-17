@@ -25,12 +25,16 @@ exports.joinChallenge = catchAsync(async (req, res) => {
     status: "in_progress",
   });
 
-  if (exists)
-    throw { statusCode: 400, message: "Already joined this challenge" };
-
+  if (exists) {
+    return res.status(400).json({
+      success: false,
+      message: "Already joined this challenge",
+    });
+  }
   const join = await UserChallenge.create({
     userId: req.user._id,
     challengeId: req.params.id,
+    status: "in_progress",
     startedAt: new Date(),
   });
 
@@ -48,11 +52,11 @@ exports.completeChallenge = catchAsync(async (req, res) => {
   });
 
   if (!uc)
-    throw {
-      statusCode: 400,
+    return res.status(400).json({
+      success: false,
       message: "Challenge not joined or already completed",
-    };
-
+    });
+    
   const challenge = await Challenge.findById(req.params.id);
   if (!challenge) throw { statusCode: 404, message: "Challenge not found" };
 
@@ -81,37 +85,47 @@ exports.completeChallenge = catchAsync(async (req, res) => {
 
 
 
-
-
 exports.getUserChallenges = catchAsync(async (req, res) => {
   const user_id = req.user._id;
 
-    const userChallenges = await UserChallenge.find({ user_id }).populate("challengeId");
-  const joinedChallengeIds = userChallenges.map((uc) => uc.challengeId?._id.toString());
+  const allUserChallenges = await UserChallenge.find({
+    userId: user_id,
+  }).populate("challengeId");
 
-    const staticChallenges = await Challenge.find({
-    isPersonalized: false,
-    _id: { $nin: joinedChallengeIds }
+  const activeChallengeIds = allUserChallenges
+    .filter((uc) => uc.status === 'in_progress')
+    .map((uc) => uc.challengeId?._id);
+
+  const allJoinedChallengeIds = allUserChallenges
+    .map((uc) => uc.challengeId?._id);
+
+  const activeChallenges = await Challenge.find({
+    _id: { $in: activeChallengeIds },
+    isActive:true
   });
 
-    const personalizedChallenges = await Challenge.find({
+  const staticChallenges = await Challenge.find({
+    isPersonalized: false,
+    _id: { $nin: allJoinedChallengeIds },
+    isActive:true
+  });
+
+  const personalizedChallenges = await Challenge.find({
     isPersonalized: true,
     userId: user_id,
+    _id: { $nin: allJoinedChallengeIds },
+    isActive:true
   });
-  console.log(personalizedChallenges);
-  
 
   res.json({
     success: true,
     data: {
       staticChallenges,
       personalizedChallenges,
-      activeChallenges: userChallenges.filter((uc) => uc.status === "in_progress"),
+      activeChallenges,
     },
   });
 });
-
-
 
 
 
