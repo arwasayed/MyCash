@@ -72,8 +72,9 @@ async function recalculateAllBalances(user_id) {
 
 async function addIncome(req, res) {
   try {
+    const user_id = req.user._id;
     console.log(`\n=== ADD INCOME REQUEST ===`);
-    const { user_id, amount, currency = "EGP", frequency = "monthly", description } = req.body;
+    const { amount, currency = "EGP", frequency = "monthly", description } = req.body;
     console.log(`User: ${user_id}, Amount: ${amount}, Description: ${description}`);
 
     // Calculate the new balance BEFORE saving
@@ -167,7 +168,8 @@ async function addExpense(req, res) {
 }
 
 async function getExpenses(req, res) {
-  const { user_id, category, start_date, end_date, limit = 20 } = req.query;
+  const user_id = req.user._id;
+  const { category, start_date, end_date, limit = 20 } = req.query;
 
   try {
     console.log(`\n=== GET EXPENSES REQUEST ===`);
@@ -357,7 +359,7 @@ async function updateExpense(req, res) {
 }
 
 async function getSummary(req, res) {
-  const { user_id } = req.query;
+  const user_id = req.user._id;
   try {
     const summary = await getUserSummary(user_id);
     const currentBalance = await getCurrentBalance(user_id);
@@ -376,7 +378,7 @@ async function getSummary(req, res) {
 }
 
 async function getBalance(req, res) {
-  const { user_id } = req.query;
+  const user_id = req.user._id;
   try {
     const balance = await getCurrentBalance(user_id);
     
