@@ -48,7 +48,7 @@ const Account = () => {
 
   const options = [
     { icon: <FaGlobe />, title: 'تغيير اللغة', subtitle: 'العربية / English' },
-    { icon: <FaMoon />, title: 'تغيير الاسم', subtitle: 'تفعيل / إلغاء', onClick: () => navigate('/rename') },
+    { icon: <FaMoon />, title: 'تغيير الاسم', subtitle: ' تعديل الاسم', onClick: () => navigate('/rename') },
     { icon: <FaLock />, title: 'تغيير كلمة السر', subtitle: 'حماية الحساب', onClick: () => navigate('/changePass') },
     { icon: <FaSignOutAlt />, title: 'تسجيل الخروج', subtitle: 'إنهاء الجلسة', onClick: handleLogout },
   ];
@@ -233,9 +233,12 @@ const Account = () => {
                 style={{ backgroundColor: 'transparent', border: '1px solid #E5E7EB', paddingLeft: 0 }}
               />
             </Form.Group>
-            <Button className="w-100 mt-2 rounded-3 update" onClick={fetchFinancialData}>
-              <img src="Account/svg.svg" alt="update icon" /> تحديث الميزانية
-            </Button>
+            <Button
+  className="w-100 mt-2 rounded-3 update"
+  onClick={() => navigate('/planebudget')}
+>
+  <img src="Account/svg.svg" alt="update icon" /> تحديث الميزانية
+</Button>
             <p className="text-muted mt-3 key">
               "ميزانيتك هي مفتاح كل حاجة... ابدأ بيها صح 💪"
             </p>
