@@ -15,18 +15,34 @@ import Account from "./components/Account/Account.jsx";
 import Notification from "./components/Notification/Notification.jsx";
 import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
-import Game from "./components/Game/Game.jsx";
-import AssistantPage from "./components/Assistant/AssistantPage.jsx";
-import GoalsPage from "./components/Goals/GoalsPage.jsx";
+// import Game from "./components/Game/Game.jsx";
+// import AssistantPage from "./components/Assistant/AssistantPage.jsx";
+// import GoalsPage from "./components/Goals/GoalsPage.jsx";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx";
 import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
 
+<<<<<<< HEAD
+=======
+import ChangePassword from "./components/ChangePassword/ChangePassword.jsx"
+ 
+
+
+
+
+>>>>>>> ec81ec22f09d1fe38f1093de0d1be76e9bb347a8
 //Admin
+
 import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
 import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
+<<<<<<< HEAD
 import ManageChallenge from "./components/Admin/ManageChallenge";
+=======
+
+// import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
+// import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
+>>>>>>> ec81ec22f09d1fe38f1093de0d1be76e9bb347a8
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -62,10 +78,25 @@ function App() {
           <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/payment" element={<Payment />} />
 
+<<<<<<< HEAD
           {/* Admin */}
           <Route path="/challenge" element={<ChallengesPage />} />
           <Route path="/task" element={<ChallengesSection />} />
           <Route path="/manage-challenge" element={<ManageChallenge />} />
+=======
+<Route path="/changePass" element={<ChangePassword/>}/>
+
+
+
+
+
+{/* Admin */}
+
+<Route path="/challenge" element={<ChallengesPage/>}/>
+<Route path="/task" element={<ChallengesSection/>}/>
+
+
+>>>>>>> ec81ec22f09d1fe38f1093de0d1be76e9bb347a8
         </Routes>
       </div>
       <Footer />
