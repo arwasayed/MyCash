@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col } from "react-bootstrap";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -13,21 +11,126 @@ import {
   AreaChart,
 } from "recharts";
 import "./Home.css";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
 
 const Home = () => {
-  const chartData = [
-    { month: "يناير", value: 7000 },
-    { month: "فبراير", value: 8500 },
-    { month: "مارس", value: 6000 },
-    { month: "أبريل", value: 9000 },
-    { month: "مايو", value: 7500 },
-    { month: "يونيو", value: 8200 },
+  const arabicMonthOrder = [
+    "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+    "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
   ];
+
+  const tips = [
+    "وفر 10% أول الشهر بدل آخره 😊",
+    "حاول تشتري بالجملة وتوفر مصاريف يومية 🛒",
+    "قسم دخلك على احتياجات، ادخار، ومتعة 🔄",
+    "متصرفش أكتر من 20% من دخلك على الكماليات 💅",
+    "اكتب كل مصاريفك يوم بيوم ✍️",
+    "جرب تعمل تحدي ادخار 5 جنيه يوميًا 💰",
+    "لو مش محتاجه دلوقتي، ماتشتريهوش 😅",
+    "حدد ميزانية للأكل برة وماتعديهاش 🍔",
+    "استخدم تطبيق لترتيب فلوسك زي MyCash 📱",
+    "راجع اشتراكاتك الشهرية، في حاجات ممكن تستغنى عنها 📉",
+    "استنى 24 ساعة قبل ما تشتري حاجة غالية ⏳",
+    "وفر في فواتيرك: طفي النور وافصل الشاحن 💡🔌",
+    "ابدأ بهدف ادخار بسيط وخلّيه يكبر كل شهر 📈",
+    "اطبخ في البيت بدل ما تطلب دليفري كل يوم 🍽️",
+    "لو عندك دخل إضافي، ماتصرفهوش كله – خليه للادخار 🚀",
+  ];
+
+  const todayIndex = new Date().getDate() % tips.length;
+  const tip = tips[todayIndex];
+
+  const [stats, setStats] = useState({
+    points: 0,
+    activeGoals: 0,
+    expenses: 0,
+    income: 0,
+    chartData: [],
+    tasks: [],
+    user: {},
+  });
+
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const fetchStats = async () => {
+      try {
+        const [goalsRes, summaryRes, expensesRes, profileRes] = await Promise.all([ 
+          axios.get("/api/saving-goals", {headers: { Authorization: token },}),
+          axios.get("/api/summary", { headers: { Authorization: token } }),
+          axios.get("/api/expenses", { headers: { Authorization: token } }),
+          axios.get("/api/user/settings/me", { headers: { Authorization: token },}),
+        ]);
+
+        const profile = profileRes.data?.data?.user || {};
+        const summary = summaryRes.data || {};
+        const chartData = summary.transaction_history || [];
+
+        const monthlyTotals = {};
+        chartData.forEach((txn) => {
+          if (txn.amount && txn.amount > 0 && txn.date) {
+            const date = new Date(txn.date);
+            const month = date.toLocaleString("ar-EG", { month: "long" });
+            monthlyTotals[month] = (monthlyTotals[month] || 0) + txn.amount;
+          }         
+        });
+
+        const formattedChartData = Object.entries(monthlyTotals)
+          .map(([month, value]) => ({ month, value }))
+          .sort(
+            (a, b) =>
+              arabicMonthOrder.indexOf(a.month) -
+              arabicMonthOrder.indexOf(b.month)
+          );
+
+        setStats({
+          points: profile.points || 0,
+          activeGoals: goalsRes.data?.data?.length || 0,
+          income: summary.current_balance || 0,
+          expenses: expensesRes.data?.total_amount || 0,
+          chartData: formattedChartData,
+          user: profile,
+        });
+
+        console.log("Fetched Summary:", summaryRes.data);
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      }
+    };
+
+    const fetchTasks = async () => {
+      try {
+        const res = await axios.get("/api/daily-tasks", { headers: { Authorization: token }, });
+        setTasks(res.data.tasks);
+      } catch (err) {
+        console.error("Error fetching daily tasks:", err);
+      }
+    };
+
+    fetchStats();
+    fetchTasks();
+  }, []);
+
+  const completeTask = async (taskKey) => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post(`/api/daily-tasks/${taskKey}/complete`, null, { headers: { Authorization: token }, });
+      setTasks((prev) =>
+        prev.map((t) => (t.key === taskKey ? { ...t, status: "done" } : t))
+      );
+    } catch (err) {
+      console.error("Error completing task:", err);
+    }
+  };
 
   return (
     <Container fluid className="home-page">
-      {/* Header and greeting */}
-      <div className="home-header">
+       {/* Header and greeting */}
+       <div className="home-header">
         <div className="home-greeting-card">
           <div className="greeting-image-container">
             <img
@@ -42,7 +145,7 @@ const Home = () => {
             />
           </div>
           <div className="greeting-text">
-            <h2>👋 أهلاً يا سارة</h2>
+            <h2>👋 أهلاً يا {stats.user?.nickname || "صاحبى"}</h2>
             <p id="greeting-text-p">مستعد ترتب فلوسك؟</p>
           </div>
         </div>
@@ -59,7 +162,7 @@ const Home = () => {
                 />
               </div>
               <div className="stat-value" style={{ textAlign: "right" }}>
-                1,250
+                {stats.points}
               </div>
             </div>
             <div className="stat-label" style={{ textAlign: "right" }}>
@@ -81,7 +184,7 @@ const Home = () => {
                 />
               </div>
               <div className="stat-value" style={{ textAlign: "right" }}>
-                5
+                {stats.activeGoals}
               </div>
             </div>
             <div className="stat-label" style={{ textAlign: "right" }}>
@@ -103,7 +206,7 @@ const Home = () => {
                 />
               </div>
               <div className="stat-value" style={{ textAlign: "right" }}>
-                8,500
+                {stats.expenses}
               </div>
             </div>
             <div className="stat-label" style={{ textAlign: "right" }}>
@@ -125,7 +228,7 @@ const Home = () => {
                 />
               </div>
               <div className="stat-value" style={{ textAlign: "right" }}>
-                15,000
+                {stats.income}
               </div>
             </div>
             <div className="stat-label" style={{ textAlign: "right" }}>
@@ -144,7 +247,7 @@ const Home = () => {
         </div>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart
-            data={chartData}
+            data={stats.chartData}
             margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
           >
             <defs>
@@ -183,6 +286,7 @@ const Home = () => {
           </AreaChart>
         </ResponsiveContainer>
       </div>
+
       {/* Daily Tip Section */}
       <div className="tip-section">
         <div className="tip-card">
@@ -197,79 +301,65 @@ const Home = () => {
             <div className="tip-text-block">
               <span className="tip-title">نصيحة اليوم</span>
               <br />
-              <span className="tip-text">
-                وفر{" "}
-                <span style={{ color: "#6c5dd3", fontWeight: 600 }}>10%</span>{" "}
-                أول الشهر بدل آخره 😊
-              </span>
+              <span className="tip-text">{tip}</span>
             </div>
           </div>
-          <button className="tip-btn">أعرف ليه</button>
+          {/* <button className="tip-btn">أعرف ليه</button> */}
         </div>
       </div>
-      {/* Tasks/Progress Section */}
+
+      {/* Tasks Section */}
       <div className="tasks-section">
-        <div className="tasks-progress-badge">مكتمل 75%</div>
+        <div className="tasks-progress-badge">
+          مكتمل {Math.round((tasks.filter((t) => t.status === "done").length / tasks.length) * 100)}%
+        </div>
         <div className="tasks-header">المهام اليومية</div>
         <ul className="tasks-list">
-          <li className="task-row done">
-            <span className="task-icon done">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <circle cx="11" cy="11" r="11" fill="#E0F7E9" />
-                <path
-                  d="M7 11.5L10 14.5L15 9.5"
-                  stroke="#00C48C"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
-            <span className="task-title">
-              <span className="task-points done">+50 نقطة</span>
-              أضف هدفًا جديدًا
-            </span>
-          </li>
-          <li className="task-row done">
-            <span className="task-icon done">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <circle cx="11" cy="11" r="11" fill="#E0F7E9" />
-                <path
-                  d="M7 11.5L10 14.5L15 9.5"
-                  stroke="#00C48C"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
-            <span className="task-title">
-              <span className="task-points done">+50 نقطة</span>
-              حدث ميزانيتك
-            </span>
-          </li>
-          <li className="task-row pending">
-            <span className="task-icon pending">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <circle cx="11" cy="11" r="11" fill="#F3F4F6" />
-                <circle
-                  cx="11"
-                  cy="11"
-                  r="7"
-                  stroke="#D1D5DB"
-                  strokeWidth="2"
-                />
-              </svg>
-            </span>
-            <span className="task-title">
-              <span className="task-points pending">+50 نقطة</span>
-              شات مع المساعد الذكي
-            </span>
-          </li>
+          {tasks.map((task) => (
+            <li
+              className={`task-row ${task.status}`}
+              key={task.key}
+              onClick={() =>
+                task.status === "pending" ? completeTask(task.key) : null
+              }
+            >
+              <span className={`task-icon ${task.status}`}>
+                {task.status === "done" ? (
+                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                    <circle cx="11" cy="11" r="11" fill="#E0F7E9" />
+                    <path
+                      d="M7 11.5L10 14.5L15 9.5"
+                      stroke="#00C48C"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                    <circle cx="11" cy="11" r="11" fill="#F3F4F6" />
+                    <circle
+                      cx="11"
+                      cy="11"
+                      r="7"
+                      stroke="#D1D5DB"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                )}
+              </span>
+              <span className="task-title">
+                <span className={`task-points ${task.status}`}>
+                  +{task.points} نقطة
+                </span>{" "}
+                {task.title}
+              </span>
+            </li>
+          ))}
         </ul>
       </div>
-      {/* Call to Action / Info Card */}
-      {/* <div className="cta-section"> */}
+
+      {/* CTA */}
       <div className="cta-card">
         <img
           src="/Home/images/AiHome.png"
@@ -280,9 +370,10 @@ const Home = () => {
           مش عارف تبدأ منين؟
           <br /> جرب المساعد الذكي الآن
         </div>
-        <button className="cta-btn">ابدأ التحدث</button>
+        <Link to="/chatbot" className="cta-btn">
+          ابدأ التحدث
+        </Link>
       </div>
-      {/* </div> */}
     </Container>
   );
 };
