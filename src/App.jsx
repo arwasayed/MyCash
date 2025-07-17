@@ -27,7 +27,7 @@ import Payment from "./components/Payment/Payment.jsx";
 //Admin
 
 
-// import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
+import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
 
 // import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
 
@@ -66,7 +66,7 @@ function App() {
 
 
 {/* Admin */}
-{/* <Route path="/challenge" element={<ChallengesPage/>}/> */}
+<Route path="/challenge" element={<ChallengesPage/>}/>
 {/* <Route path="/task" element={<ChallengesSection/>}/> */}
         </Routes>
       </div>
