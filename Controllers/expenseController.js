@@ -74,7 +74,7 @@ async function addIncome(req, res) {
   try {
     const user_id = req.user._id;
     console.log(`\n=== ADD INCOME REQUEST ===`);
-    const { amount, currency = "EGP", frequency = "monthly", description } = req.body;
+    const { id, amount, currency = "EGP", frequency = "monthly", description } = req.body;
     console.log(`User: ${user_id}, Amount: ${amount}, Description: ${description}`);
 
     // Calculate the new balance BEFORE saving
@@ -169,7 +169,7 @@ async function addExpense(req, res) {
 
 async function getExpenses(req, res) {
   const user_id = req.user._id;
-  const { category, start_date, end_date, limit = 20 } = req.query;
+  const { id, category, start_date, end_date, limit = 20 } = req.query;
 
   try {
     console.log(`\n=== GET EXPENSES REQUEST ===`);
