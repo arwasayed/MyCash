@@ -66,11 +66,18 @@ useEffect(() => {
       });
       const data = await response.json();
 
+      
       if (data.status === "success") {
         setSuccess(data.message);
         localStorage.setItem("token", `Bearer ${data.data.token}`);
          localStorage.setItem("user", JSON.stringify(data.data.user));
-        navigate("/home"); 
+         if(data.data.user.role === "user"){
+          navigate("/home"); 
+         }else{
+          navigate("/challenge"); 
+         }
+
+        
       } else {
         setError(data.message);
       }

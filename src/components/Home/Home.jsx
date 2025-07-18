@@ -14,7 +14,6 @@ import "./Home.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-
 const Home = () => {
   const arabicMonthOrder = [
     "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
@@ -48,11 +47,12 @@ const Home = () => {
     expenses: 0,
     income: 0,
     chartData: [],
-    tasks: [],
     user: {},
   });
 
   const [tasks, setTasks] = useState([]);
+   const { updateFinance } = useContext(FinanceContext);
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -113,7 +113,7 @@ const Home = () => {
 
     fetchStats();
     fetchTasks();
-  }, []);
+  }, );
 
   const completeTask = async (taskKey) => {
     const token = localStorage.getItem("token");

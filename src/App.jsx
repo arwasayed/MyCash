@@ -26,17 +26,17 @@ import Goals from "./components/Goals/GoalsPage.jsx";
 
 
 //Admin
-
-
 import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
+import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
 
-// import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
+
 
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 function App() {
   return (
+     
     <div className="app-layout">
       <Navbar />
       <div className="main-content">
