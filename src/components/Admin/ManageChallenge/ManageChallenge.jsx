@@ -8,8 +8,7 @@ import UpdateBadgeModel from "../UpdateBadge/UpdateBadge";
 
 const svgIcon = (name) => `/Admin UI/${name}`;
 
-// ChallengeCard component remains the same
-function ChallengeCard({ challenge }) {
+function ChallengeCard({ challenge, onDelete, onUpdate }) {
   const [updateChallengModel, setUpdateChallengModel] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -26,13 +25,14 @@ function ChallengeCard({ challenge }) {
 
   const handleDeleteConfirm = () => {
     if (deleteTarget === "challenge") {
-      // هنا منطق حذف التحدي
-      console.log("تم حذف التحدي");
-    } else if (deleteTarget === "badge") {
-      // هنا منطق حذف البادج
-      console.log("تم حذف البادج");
+      onDelete(challenge._id);
     }
     closeDeleteModal();
+  };
+
+  const handleUpdate = (updatedData) => {
+    onUpdate(challenge._id, updatedData);
+    setUpdateChallengModel(false);
   };
 
   return (
@@ -196,6 +196,8 @@ function ChallengeCard({ challenge }) {
       <UpdateChallengeModal
         show={updateChallengModel}
         handleClose={() => setUpdateChallengModel(false)}
+        challenge={challenge}
+        onUpdate={handleUpdate}
       />
 
       <DeleteConfirmModal
@@ -207,8 +209,7 @@ function ChallengeCard({ challenge }) {
   );
 }
 
-// BadgeCard component remains the same
-function BadgeCard({ badge, idx }) {
+function BadgeCard({ badge, idx, onDelete, onUpdate }) {
   const [UpdateBadge, setUpdateBadgeModel] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -224,14 +225,15 @@ function BadgeCard({ badge, idx }) {
   };
 
   const handleDeleteConfirm = () => {
-    if (deleteTarget === "challenge") {
-      // هنا منطق حذف التحدي
-      console.log("تم حذف التحدي");
-    } else if (deleteTarget === "badge") {
-      // هنا منطق حذف البادج
-      console.log("تم حذف البادج");
+    if (deleteTarget === "badge") {
+      onDelete(badge._id);
     }
     closeDeleteModal();
+  };
+
+  const handleUpdate = (updatedData) => {
+    onUpdate(badge._id, updatedData);
+    setUpdateBadgeModel(false);
   };
 
   let bg;
@@ -335,6 +337,8 @@ function BadgeCard({ badge, idx }) {
       <UpdateBadgeModel
         show={UpdateBadge}
         handleClose={() => setUpdateBadgeModel(false)}
+        badge={badge}
+        onUpdate={handleUpdate}
       />
 
       <DeleteConfirmModal
@@ -351,21 +355,16 @@ const ManageChallenge = () => {
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [updateChallengModel, setUpdateChallengModel] = useState(false);
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [showBadgeModal, setShowBadgeModal] = useState(false);
-
 
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setIsAuthenticated(false);
-    window.dispatchEvent(new Event("authChange"));
-    navigate("/login");
+    window.location.href = "/login";
   };
 
-  // API request helper with auth
   const apiRequest = async (url, method = "GET", body = null) => {
     const token = localStorage.getItem("token");
     const headers = {
@@ -385,7 +384,7 @@ const ManageChallenge = () => {
     const response = await fetch(url, config);
 
     if (response.status === 401) {
-      window.location.href = "/login";
+      handleLogout();
       return null;
     }
 
@@ -426,15 +425,126 @@ const ManageChallenge = () => {
     }
   };
 
-  const openChallengeForm = (challenge = null) => {
-    setShowChallengeModal(true);
+  const deleteChallenge = async (id) => {
+    try {
+      const response = await apiRequest(`/api/challenges/${id}`, "DELETE");
+      if (!response) return;
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "فشل في حذف التحدي");
+      }
+
+      setChallenges(challenges.filter(challenge => challenge._id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const deleteBadge = async (id) => {
+    try {
+      const response = await apiRequest(`/api/badges/${id}`, "DELETE");
+      if (!response) return;
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "فشل في حذف الشارة");
+      }
+
+      setBadges(badges.filter(badge => badge._id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const updateChallenge = async (id, updatedData) => {
+    try {
+      const response = await apiRequest(
+        `/api/challenges/${id}`,
+        "PUT",
+        updatedData
+      );
+      if (!response) return;
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "فشل في تحديث التحدي");
+      }
+
+      setChallenges(challenges.map(challenge => 
+        challenge._id === id ? data.data : challenge
+      ));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const updateBadge = async (id, updatedData) => {
+    try {
+      const response = await apiRequest(
+        `/api/badges/${id}`,
+        "PUT",
+        updatedData
+      );
+      if (!response) return;
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "فشل في تحديث الشارة");
+      }
+
+      setBadges(badges.map(badge => 
+        badge._id === id ? data.data : badge
+      ));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const addChallenge = async (newChallenge) => {
+    try {
+      const response = await apiRequest("/api/challenges", "POST", newChallenge);
+      if (!response) return;
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "فشل في إضافة التحدي");
+      }
+
+      setChallenges([...challenges, data.data]);
+      setShowChallengeModal(false);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const addBadge = async (newBadge) => {
+    try {
+      const response = await apiRequest("/api/badges", "POST", newBadge);
+      if (!response) return;
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "فشل في إضافة الشارة");
+      }
+
+      setBadges([...badges, data.data]);
+      setShowBadgeModal(false);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      handleLogout()
-      // window.location.href = "/login";
+      handleLogout();
       return;
     }
 
@@ -496,7 +606,7 @@ const ManageChallenge = () => {
           style={{ justifyContent: "space-between" }}
         >
           <Button
-            onClick={() => openChallengeForm()}
+            onClick={() => setShowChallengeModal(true)}
             style={{
               background: "#A259FF",
               border: "none",
@@ -522,7 +632,12 @@ const ManageChallenge = () => {
 
         {challenges.length > 0 ? (
           challenges.map((challenge) => (
-            <ChallengeCard key={challenge._id} challenge={challenge} />
+            <ChallengeCard
+              key={challenge._id}
+              challenge={challenge}
+              onDelete={deleteChallenge}
+              onUpdate={updateChallenge}
+            />
           ))
         ) : (
           <div style={{ textAlign: "center", padding: "2rem", color: "#888" }}>
@@ -565,7 +680,12 @@ const ManageChallenge = () => {
           {badges.length > 0 ? (
             badges.map((badge, idx) => (
               <div className="col-12 col-md-6 col-lg-4" key={badge._id}>
-                <BadgeCard badge={badge} idx={idx} />
+                <BadgeCard
+                  badge={badge}
+                  idx={idx}
+                  onDelete={deleteBadge}
+                  onUpdate={updateBadge}
+                />
               </div>
             ))
           ) : (
@@ -595,15 +715,13 @@ const ManageChallenge = () => {
       <ChallengeModal
         show={showChallengeModal}
         handleClose={() => setShowChallengeModal(false)}
+        onSubmit={addChallenge}
       />
 
-      <UpdateChallengeModal
-        show={updateChallengModel}
-        handleClose={() => setUpdateChallengModel(false)}
-      />
       <AddBadgeModel
         show={showBadgeModal}
         handleClose={() => setShowBadgeModal(false)}
+        onSubmit={addBadge}
       />
     </div>
   );
