@@ -305,7 +305,6 @@ export default function PlaneBudget() {
           <input
             type="number"
             placeholder="ادخل دخلك الشهري"
-            value={0}
             onChange={(e) => setIncome(e.target.value)}
             className="plane-budget-input"
           />
@@ -376,11 +375,11 @@ export default function PlaneBudget() {
             </div>
           ))}
           </div>
-          {showOverspendingAlert && (
+          {/* {showOverspendingAlert && (
             <div className="plane-budget-warning">
               ⚠️ المصروفات اكتر من دخلك خلي بالك
             </div>
-          )}
+          )} */}
           <div className="plane-budget-add-expense-container">
             <button
               type="button"
