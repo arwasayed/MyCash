@@ -9,11 +9,142 @@ const {
   calculateNewBalance,
   getExpenseDetails,
   getIncomeDetails,
-  checkOverspending
+  checkOverspending ,
+  generateFinancialReport,
+  formatExpense,
+  formatIncome
 } = require("../services/financeService");
+const PDFDocument = require('pdfkit');
+const ExcelJS = require('exceljs');
 
 const { processFinancialDataForRAG } = require("./chatController");
 
+async function getFinancialReport(req, res) {
+  try {
+    const { user_id, period, category, transactionType } = req.query;
+    
+    const reportData = await generateFinancialReport(user_id, {
+      period,
+      category,
+      transactionType
+    });
+
+    res.json({
+      user_id,
+      ...reportData,
+      report_generated_at: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error("Error generating financial report:", err.message);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+async function generatePDFReport(req, res) {
+  try {
+    const { user_id, period, category, transactionType } = req.query;
+    
+    const data = await generateFinancialReport(user_id, {
+      period,
+      category,
+      transactionType
+    });
+
+    // Create PDF
+    const doc = new PDFDocument();
+    
+    // Set response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=financial-report-${user_id}.pdf`);
+    
+    // Pipe PDF to response
+    doc.pipe(res);
+    
+    // Add Arabic title
+    doc.fontSize(20).text('التقرير المالي', { align: 'right' });
+    doc.moveDown();
+    
+    // Add summary
+    doc.fontSize(14).text(`الرصيد الحالي: ${data.summary.current_balance} ${data.summary.currency}`, { align: 'right' });
+    doc.text(`إجمالي الدخل: ${data.summary.total_income_received} ${data.summary.currency}`, { align: 'right' });
+    doc.text(`إجمالي المصروفات: ${data.summary.total_expenses_made} ${data.summary.currency}`, { align: 'right' });
+    doc.moveDown();
+    
+    // Add expenses by category
+    doc.fontSize(16).text('المصروفات حسب التصنيف', { align: 'right' });
+    Object.entries(data.summary.expenses_by_category).forEach(([category, amount]) => {
+      doc.text(`${category}: ${amount} ${data.summary.currency}`, { align: 'right' });
+    });
+    doc.moveDown();
+    
+    // Add recent transactions
+    doc.fontSize(16).text('آخر المعاملات', { align: 'right' });
+    data.detailed_expenses.forEach(expense => {
+      doc.text(`مصروف: ${expense.amount} ${data.summary.currency} - ${expense.category} - ${expense.formatted_date}`, { align: 'right' });
+    });
+    data.detailed_incomes.forEach(income => {
+      doc.text(`دخل: ${income.amount} ${data.summary.currency} - ${income.description} - ${income.formatted_date}`, { align: 'right' });
+    });
+    
+    // Finalize PDF
+    doc.end();
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    res.status(500).json({ error: "Error generating PDF report" });
+  }
+}
+
+async function generateExcelReport(req, res) {
+  try {
+    const { user_id, period, category, transactionType } = req.query;
+    
+    const data = await generateFinancialReport(user_id, {
+      period,
+      category,
+      transactionType
+    });
+
+    // Create workbook
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('التقرير المالي');
+    
+    // Set RTL direction
+    worksheet.views = [{ rightToLeft: true }];
+    
+    // Add summary
+    worksheet.addRow(['الرصيد الحالي', data.summary.current_balance]);
+    worksheet.addRow(['إجمالي الدخل', data.summary.total_income_received]);
+    worksheet.addRow(['إجمالي المصروفات', data.summary.total_expenses_made]);
+    worksheet.addRow([]);
+    
+    // Add expenses by category
+    worksheet.addRow(['التصنيف', 'المبلغ']);
+    Object.entries(data.summary.expenses_by_category).forEach(([category, amount]) => {
+      worksheet.addRow([category, amount]);
+    });
+    worksheet.addRow([]);
+    
+    // Add recent transactions
+    worksheet.addRow(['نوع المعاملة', 'المبلغ', 'التصنيف/الوصف', 'التاريخ']);
+    data.detailed_expenses.forEach(expense => {
+      worksheet.addRow(['مصروف', expense.amount, expense.category, expense.formatted_date]);
+    });
+    data.detailed_incomes.forEach(income => {
+      worksheet.addRow(['دخل', income.amount, income.description, income.formatted_date]);
+    });
+    
+    // Set response headers
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=financial-report-${user_id}.xlsx`);
+    
+    // Send Excel file
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error("Error generating Excel:", error);
+    res.status(500).json({ error: "Error generating Excel report" });
+  }
+}
 // Helper function to recalculate all balances after modification
 async function recalculateAllBalances(user_id) {
   try {
@@ -72,7 +203,7 @@ async function recalculateAllBalances(user_id) {
 
 async function addIncome(req, res) {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user._id.toString();
     console.log(`\n=== ADD INCOME REQUEST ===`);
     const { id, amount, currency = "EGP", frequency = "monthly", description } = req.body;
     console.log(`User: ${user_id}, Amount: ${amount}, Description: ${description}`);
@@ -114,9 +245,13 @@ async function addIncome(req, res) {
 
 async function addExpense(req, res) {
   try {
+    const user_id = req.user._id.toString();
     console.log(`\n=== ADD EXPENSE REQUEST ===`);
-    const user_id=req.user._id;
-    const { amount, category, description, date = new Date() } = req.body;
+// <<<<<<< HEAD
+//     const user_id=req.user._id;
+//     const { amount, category, description, date = new Date() } = req.body;
+// =======
+    const { id, amount, category, description, date = new Date() } = req.body;
     console.log(`User: ${user_id}, Amount: ${amount}, Description: ${description}`);
 
     // Calculate the new balance BEFORE saving
@@ -169,7 +304,7 @@ async function addExpense(req, res) {
 }
 
 async function getExpenses(req, res) {
-  const user_id = req.user._id;
+  const user_id = req.user._id.toString() ;
   const { id, category, start_date, end_date, limit = 20 } = req.query;
 
   try {
@@ -360,7 +495,7 @@ async function updateExpense(req, res) {
 }
 
 async function getSummary(req, res) {
-  const user_id = req.user._id;
+  const user_id = req.user._id.toString();
   try {
     const summary = await getUserSummary(user_id);
     const currentBalance = await getCurrentBalance(user_id);
@@ -379,7 +514,7 @@ async function getSummary(req, res) {
 }
 
 async function getBalance(req, res) {
-  const user_id = req.user._id;
+  const user_id = req.user._id.toString() ;
   try {
     const balance = await getCurrentBalance(user_id);
     
@@ -396,25 +531,25 @@ async function getBalance(req, res) {
   }
 }
 
-async function getFinancialReport(req, res) {
-  const { user_id } = req.query;
-  try {
-    const summary = await getUserSummary(user_id);
-    const expenseDetails = await getExpenseDetails(user_id, 20);
-    const incomeDetails = await getIncomeDetails(user_id, 20);
+// async function getFinancialReport(req, res) {
+//   const { user_id , } = req.query;
+//   try {
+//     const summary = await getUserSummary(user_id);
+//     const expenseDetails = await getExpenseDetails(user_id, 20);
+//     const incomeDetails = await getIncomeDetails(user_id, 20);
     
-    res.json({
-      user_id,
-      summary,
-      detailed_expenses: expenseDetails,
-      detailed_incomes: incomeDetails,
-      report_generated_at: new Date().toISOString()
-    });
-  } catch (err) {
-    console.error("Error generating financial report:", err.message);
-    res.status(500).json({ error: "Server error" });
-  }
-}
+//     res.json({
+//       user_id,
+//       summary,
+//       detailed_expenses: expenseDetails,
+//       detailed_incomes: incomeDetails,
+//       report_generated_at: new Date().toISOString()
+//     });
+//   } catch (err) {
+//     console.error("Error generating financial report:", err.message);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// }
 
 module.exports = {
   addIncome,
@@ -424,5 +559,7 @@ module.exports = {
   updateExpense,
   getSummary,
   getBalance,
-  getFinancialReport
+  getFinancialReport,
+  generatePDFReport,
+  generateExcelReport
 };

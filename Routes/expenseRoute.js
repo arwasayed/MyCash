@@ -10,7 +10,9 @@ const {
   updateExpense,
   getSummary,
   getBalance,
-  getFinancialReport
+  getFinancialReport,
+  generatePDFReport,
+  generateExcelReport
 } = require("../Controllers/expenseController");
 const { protect } = require('../middlewares/authMiddleware');
 
@@ -24,6 +26,8 @@ router.put("/expense/:id",protect, updateExpense);
 // Summary
 router.get("/summary",protect, getSummary);
 router.get("/balance", protect, getBalance); // NEW: Get current balance
-router.get("/financial-report", protect, getFinancialReport); 
+router.get("/financial-report", protect, getFinancialReport);
+router.get("/financial-report/pdf", protect, generatePDFReport);
+router.get("/financial-report/excel", protect, generateExcelReport);
 
 module.exports = router;

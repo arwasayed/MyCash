@@ -20,8 +20,8 @@ const UserChallengeSchema = new mongoose.Schema({
     },
     status: { 
       type: String, 
-      enum: ['in_progress', 'completed', 'failed'], 
-      default: 'in_progress' 
+      enum: ['not_started', 'in_progress', 'completed', 'failed'], 
+      default: 'not_started' 
     }
   }, { timestamps: true });
   
