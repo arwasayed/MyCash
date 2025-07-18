@@ -131,8 +131,7 @@ const GoalsPage = () => {
       console.error(
         "❌ Failed to save goal:",
         err.response?.data?.message || err.message
-      );
-      alert(`❌ فشل في الحفظ: ${err.response?.data?.message || err.message}`);
+      );      
     }
   };
 
