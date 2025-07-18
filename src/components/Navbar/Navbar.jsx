@@ -1,126 +1,162 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Navbar.css";
-import { Link } from "react-router-dom";
-
-// يمكنك استبدال هذا المتغير لاحقاً بـ context أو redux أو أي نظام مصادقة
-const isAuthenticated = false; // غيّر إلى true لتجربة شكل Navbar بعد الدخول
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
+  const navigate = useNavigate();
+
+  // Update auth state when component mounts and when localStorage changes
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(!!localStorage.getItem("token"));
+    };
+
+    // Check immediately
+    checkAuth();
+
+    // Listen for storage events
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    
+    // Also listen for custom event that we'll trigger after login
+    window.addEventListener("authChange", checkAuth);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("authChange", checkAuth);
+    };
+  }, []);
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsAuthenticated(false);
+    // Dispatch custom event to notify other tabs/windows
+    window.dispatchEvent(new Event("authChange"));
+    navigate("/"); // Redirect to home page
+  };
+
   return (
     <>
-      {/* Top Navbar for large screens */}
+      {/* Desktop Navbar */}
       <nav
         className="navbar navbar-expand-lg bg-white shadow-sm fixed-top d-none d-lg-flex"
         dir="rtl"
       >
         <div
-          className="container-fluid d-flex align-items-center"
+          className="container-fluid d-flex align-items-center justify-content-between"
           style={{ direction: "rtl" }}
         >
-          {/* Brand at far right */}
-          <Link
-            to="/"
-            className="navbar-brand fw-bold"
-            style={{
-              color: "#6c5dd3",
-              fontSize: "1.5rem",
-              fontFamily: "Cairo",
-            }}
-          >
-            ماي كاش
-          </Link>
-          {/* Centered nav links */}
-          <div className="flex-grow-1 d-flex justify-content-center">
-            <ul className="navbar-nav flex-row gap-4">
-              <li className="nav-item">
-                <Link className="nav-link" to="/home">
-                  الصفحة الرئيسية
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/chatbot">
-                  المساعد الذكي
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/goals">
-                  أهدافي
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/game">
-                  الألعاب
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/planebudget">
-                  خطتي
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/reports">
-                  التقارير
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/subscription">
-                  الاشتراكات
-                </Link>
-              </li>
-            </ul>
+          {/* Right Side - Brand Logo */}
+          <div className="d-flex">
+            <Link
+              to={isAuthenticated ? "/home" : "/"}
+              className="navbar-brand fw-bold"
+              style={{
+                color: "#6c5dd3",
+                fontSize: "1.5rem",
+                fontFamily: "Cairo",
+              }}
+            >
+              ماي كاش
+            </Link>
           </div>
-
-          {/* Auth links at far left */}
-          {!isAuthenticated ? (
-            <div className="d-flex align-items-center ms-auto">
-              <Link
-                to="/login"
-                className="auth-link"
-                style={{ color: "#6c5dd3" }}
-              >
-                تسجيل الدخول
-              </Link>
-              <span className="separator mx-2" style={{ color: "#6c5dd3" }}>
-                |
-              </span>
-              <Link
-                to="/register"
-                className="auth-link"
-                style={{ color: "#6c5dd3" }}
-              >
-                إنشاء حساب
-              </Link>
-            </div>
-          ) : (
-            <div className="d-flex align-items-center gap-3 ms-auto">
-              <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
-                alt="User"
-                style={{ width: 32, height: 32, borderRadius: "50%" }}
-              />
-              <span className="icon-notification" title="الإشعارات">
-                🔔
-              </span>
-              <span className="icon-globe" title="اللغة">
-                🌐
-              </span>
-              <span className="icon-settings" title="الإعدادات">
-                ⚙️
-              </span>
+          
+          {/* Center - Navigation Links (only when authenticated) */}
+          {isAuthenticated && (
+            <div className="position-absolute start-50 translate-middle-x">
+              <ul className="navbar-nav flex-row gap-4">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/home">
+                    الصفحة الرئيسية
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/chatbot">
+                    المساعد الذكي
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/goals">
+                    أهدافي
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/game">
+                    الألعاب
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/planebudget">
+                    خطتي
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/reports">
+                    التقارير
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/subscription">
+                    الاشتراكات
+                  </Link>
+                </li>
+              </ul>
             </div>
           )}
+
+          {/* Left Side - Auth Links */}
+          <div className="d-flex">
+            {!isAuthenticated ? (
+              <div className="d-flex align-items-center">
+                <Link
+                  to="/login"
+                  className="auth-link"
+                  style={{ color: "#6c5dd3" }}
+                >
+                  تسجيل الدخول
+                </Link>
+                <span className="separator mx-2" style={{ color: "#6c5dd3" }}>
+                  |
+                </span>
+                <Link
+                  to="/register"
+                  className="auth-link"
+                  style={{ color: "#6c5dd3" }}
+                >
+                  إنشاء حساب
+                </Link>
+              </div>
+            ) : (
+              <div className="d-flex align-items-center gap-3">
+                <button
+                  onClick={handleLogout}
+                  className="auth-link border-0 bg-transparent"
+                  style={{ color: "#6c5dd3", cursor: "pointer" }}
+                >
+                  تسجيل خروج
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
-      {/* Sidebar (Offcanvas) for small screens */}
+      {/* Mobile Navbar */}
       <nav
         className="navbar bg-white shadow-sm fixed-top d-flex d-lg-none"
-        dir="rtl"
+        dir="ltr"
       >
-        <div className="container d-flex align-items-center flex-row-reverse">
-          {/* Brand */}
+        <div className="container d-flex align-items-center justify-content-between">
           <Link
-            to="/"
+            to={isAuthenticated ? "/home" : "/"}
             className="navbar-brand fw-bold"
             style={{
               color: "#6c5dd3",
@@ -130,7 +166,7 @@ const Navbar = () => {
           >
             ماي كاش
           </Link>
-          {/* Sidebar toggler */}
+
           <button
             className="navbar-toggler"
             type="button"
@@ -142,13 +178,14 @@ const Navbar = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
         </div>
-        {/* Offcanvas Sidebar */}
+
+        {/* Mobile Sidebar */}
         <div
           className="offcanvas offcanvas-end"
           tabIndex="-1"
           id="sidebarNav"
           aria-labelledby="sidebarNavLabel"
-          dir="rtl"
+          dir="ltr"
         >
           <div className="offcanvas-header">
             <h5 className="offcanvas-title" id="sidebarNavLabel">
@@ -161,75 +198,67 @@ const Navbar = () => {
               aria-label="Close"
             ></button>
           </div>
+
           <div className="offcanvas-body">
-            <ul className="navbar-nav flex-column gap-3 mb-4">
-              <li className="nav-item">
-                <a className="nav-link" href="/home">
-                  الصفحة الرئيسية
-                </a>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/chatbot">
-                  المساعد الذكي
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/goals">
-                  أهدافي
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/game">
-                  الألعاب
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/planebudget">
-                  خطتي
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/reports">
-                  التقارير
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/planebudget">
-                  ظبط الميزانية
-                </Link>
-              </li>
-              <li className="nav-item">
-                 <Link className="nav-link" to="/subscription">
-                  الاشتراكات
-                </Link>
-              </li>
-            </ul>
+            {isAuthenticated && (
+              <ul className="navbar-nav flex-column gap-3 mb-4">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/home">
+                    الصفحة الرئيسية
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/chatbot">
+                    المساعد الذكي
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/goals">
+                    أهدافي
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/game">
+                    الألعاب
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/planebudget">
+                    خطتي
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/reports">
+                    التقارير
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/subscription">
+                    الاشتراكات
+                  </Link>
+                </li>
+              </ul>
+            )}
+
             {!isAuthenticated ? (
               <div className="d-flex align-items-center gap-2 justify-content-center">
-                <a href="/login" className="auth-link">
+                <Link to="/login" className="auth-link">
                   تسجيل الدخول
-                </a>
+                </Link>
                 <span className="separator">|</span>
                 <Link to="/register" className="auth-link">
                   إنشاء حساب
                 </Link>
               </div>
             ) : (
-              <div className="d-flex align-items-center gap-3 justify-content-center mt-3">
-                <img
-                  src="https://randomuser.me/api/portraits/men/32.jpg"
-                  alt="User"
-                  style={{ width: 32, height: 32, borderRadius: "50%" }}
-                />
-                <span className="icon-notification" title="الإشعارات">
-                  🔔
-                </span>
-                <span className="icon-globe" title="اللغة">
-                  🌐
-                </span>
-                <span className="icon-settings" title="الإعدادات">
-                  ⚙️
-                </span>
+              <div className="d-flex flex-column align-items-center gap-3 justify-content-center mt-3">
+                <button
+                  onClick={handleLogout}
+                  className="auth-link border-0 bg-transparent mt-2"
+                  style={{ color: "#6c5dd3", cursor: "pointer" }}
+                >
+                  تسجيل خروج
+                </button>
               </div>
             )}
           </div>

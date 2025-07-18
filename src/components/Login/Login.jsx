@@ -43,7 +43,8 @@ useEffect(() => {
       if (data.status === "success") {
         setSuccess(data.message);
         localStorage.setItem("token",`Bearer ${data.data.token}`);
-         localStorage.setItem("user", JSON.stringify(data.data.user));
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        window.dispatchEvent(new Event("authChange"));
         navigate("/home"); 
       } else {
         setError(data.message);
@@ -72,6 +73,7 @@ useEffect(() => {
         localStorage.setItem("token", `Bearer ${data.data.token}`);
          localStorage.setItem("user", JSON.stringify(data.data.user));
          if(data.data.user.role === "user"){
+          window.dispatchEvent(new Event("authChange"));
           navigate("/home"); 
          }else{
           navigate("/challenge"); 
