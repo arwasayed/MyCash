@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Badge, Image, Form, Button, ProgressBar } from 'react-bootstrap';
-import { FaCrown, FaCamera, FaPiggyBank, FaMoon, FaGlobe, FaLock, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FaCrown, FaCamera,FaEdit, FaPiggyBank, FaMoon, FaTrash, FaLock, FaSignOutAlt, FaCog } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import "./Account.css";
@@ -21,7 +21,6 @@ const Account = () => {
 
   
 
-  // استخرج userId بشكل صحيح
   const storedUser = localStorage.getItem('user');
   const parsedUser = storedUser ? JSON.parse(storedUser) : null;
   const userId = parsedUser ? (parsedUser._id || parsedUser.id) : null;
@@ -34,7 +33,7 @@ const Account = () => {
         throw new Error('لم يتم العثور على رمز التوثيق');
       }
       const response = await axios.post('/api/user/settings/logout', null, {
-        headers: { Authorization: `${token}` } // تصحيح التنسيق
+        headers: { Authorization: `${token}` }
       });
       if (response.status === 200) {
         localStorage.removeItem('token'); 
@@ -48,9 +47,33 @@ const Account = () => {
     }
   };
 
+
+    const handleDeleteAccount = async () => {
+  if (!window.confirm("هل أنت متأكد من حذف حسابك؟ سيتم حذف جميع البيانات ولا يمكن التراجع!")) return;
+
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
+
+    const response = await axios.delete('/api/user/settings/delete-account', {
+      headers: { Authorization: `${token}` },
+    });
+
+    if (response.status === 204) {
+      localStorage.clear();
+      alert("تم حذف حسابك بنجاح 😢");
+      navigate('/');
+    }
+  } catch (error) {
+    console.error("خطأ في حذف الحساب:", error.message);
+    alert('حدث خطأ أثناء حذف الحساب. حاول مرة أخرى.');
+  }
+};
+
+
   const options = [
-    { icon: <FaGlobe />, title: 'تغيير اللغة', subtitle: 'العربية / English' },
-    { icon: <FaMoon />, title: 'تغيير الاسم', subtitle: 'تعديل الاسم', onClick: () => navigate('/rename') },
+  { icon: <FaTrash />, title: 'حذف الحساب', subtitle: 'حذف الحساب ', onClick: handleDeleteAccount }, 
+     { icon: <FaEdit />, title: 'تغيير الاسم', subtitle: 'تعديل الاسم', onClick: () => navigate('/rename') },
     { icon: <FaLock />, title: 'تغيير كلمة السر', subtitle: 'حماية الحساب', onClick: () => navigate('/changePass') },
     { icon: <FaSignOutAlt />, title: 'تسجيل الخروج', subtitle: 'إنهاء الجلسة', onClick: handleLogout },
   ];
@@ -85,6 +108,9 @@ const Account = () => {
       setLoading(false);
     }
   };
+
+
+
 
   useEffect(() => {
     const fetchUserData = async () => {

@@ -23,6 +23,7 @@ import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
 import Goals from "./components/Goals/GoalsPage.jsx";
+import ChangePassword from "./components/ChangePassword/ChangePassword.jsx";
 
 
 //Admin
@@ -35,6 +36,7 @@ import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 function App() {
+  
   return (
      
     <div className="app-layout">
@@ -69,6 +71,7 @@ function App() {
 
 <Route path="/chatbot" element={<Chatbot/>}/>
 <Route path="/payment" element={<Payment/>}/>
+<Route path="/changePass" element={<ChangePassword/>}/>
 
 
 

@@ -51,7 +51,6 @@ const Home = () => {
   });
 
   const [tasks, setTasks] = useState([]);
-   const { updateFinance } = useContext(FinanceContext);
 
 
   useEffect(() => {
