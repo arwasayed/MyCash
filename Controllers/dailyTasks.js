@@ -21,20 +21,20 @@ const DAILY_TASKS = [
 
 exports.getDailyTasks = async (req, res) => {
   const userId = req.user._id;
+  const today = new Date();
 
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-
-  const userTasks = await UserTask.find({
-    userId,
-    createdAt: { $gte: todayStart },
-  });
+  const userTasks = await UserTask.find({ userId });
 
   const tasks = DAILY_TASKS.map((task) => {
-    const userTask = userTasks.find((t) => t.taskKey === task.key);
+    const userTask = userTasks.find(
+      (t) =>
+        t.taskKey === task.key &&
+        t.completed &&
+        isSameDay(new Date(t.completedAt), today)
+    );
     return {
       ...task,
-      status: userTask?.completed ? "done" : "pending",
+      status: userTask ? "done" : "pending",
     };
   });
 
@@ -48,7 +48,6 @@ function isSameDay(d1, d2) {
     d1.getDate() === d2.getDate()
   );
 }
-
 exports.completeTask = async (req, res) => {
   const userId = req.user._id;
   const { taskKey } = req.params;
@@ -59,13 +58,16 @@ exports.completeTask = async (req, res) => {
   }
 
   const existing = await UserTask.findOne({ userId, taskKey });
-    if (existing?.completed && isSameDay(existing.completedAt, new Date())) {
+  if (
+    existing &&
+    existing.completed &&
+    isSameDay(new Date(existing.completedAt), new Date())
+  ) {
     return res.json({
       success: false,
       message: "Task already completed today",
     });
   }
-
 
   await UserTask.findOneAndUpdate(
     { userId, taskKey },
