@@ -203,7 +203,7 @@ async function recalculateAllBalances(user_id) {
 
 async function addIncome(req, res) {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user._id.toString();
     console.log(`\n=== ADD INCOME REQUEST ===`);
     const { id, amount, currency = "EGP", frequency = "monthly", description } = req.body;
     console.log(`User: ${user_id}, Amount: ${amount}, Description: ${description}`);
@@ -245,7 +245,7 @@ async function addIncome(req, res) {
 
 async function addExpense(req, res) {
   try {
-    const user_id = req.user._id;
+    const user_id = req.user._id.toString();
     console.log(`\n=== ADD EXPENSE REQUEST ===`);
     const { id, amount, category, description, date = new Date() } = req.body;
     console.log(`User: ${user_id}, Amount: ${amount}, Description: ${description}`);
@@ -300,7 +300,7 @@ async function addExpense(req, res) {
 }
 
 async function getExpenses(req, res) {
-  const user_id = req.user._id;
+  const user_id = req.user._id.toString() ;
   const { id, category, start_date, end_date, limit = 20 } = req.query;
 
   try {
@@ -491,7 +491,7 @@ async function updateExpense(req, res) {
 }
 
 async function getSummary(req, res) {
-  const user_id = req.user._id;
+  const user_id = req.user._id.toString();
   try {
     const summary = await getUserSummary(user_id);
     const currentBalance = await getCurrentBalance(user_id);
@@ -510,7 +510,7 @@ async function getSummary(req, res) {
 }
 
 async function getBalance(req, res) {
-  const user_id = req.user._id;
+  const user_id = req.user._id.toString() ;
   try {
     const balance = await getCurrentBalance(user_id);
     
