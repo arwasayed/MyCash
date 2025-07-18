@@ -112,7 +112,7 @@ const Home = () => {
 
     fetchStats();
     fetchTasks();
-  }, );
+  }, []);
 
   const completeTask = async (taskKey) => {
     const token = localStorage.getItem("token");

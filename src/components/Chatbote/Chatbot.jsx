@@ -18,7 +18,7 @@ const userId = JSON.parse(localStorage.getItem('user'))?.id;
 
       const fetchUser = async () => {
           try {
-            const res = await axios.get('/api/user/settings/me', {
+            const res = await axios.get('http://localhost:3000/api/user/settings/me', {
               headers: {
                 Authorization: ` ${localStorage.getItem('token')}`
               }

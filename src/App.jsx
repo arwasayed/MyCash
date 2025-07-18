@@ -30,15 +30,12 @@ import ChangePassword from "./components/ChangePassword/ChangePassword.jsx";
 import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
 import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
 
-
-
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 function App() {
   
   return (
-     
     <div className="app-layout">
       <Navbar />
       <div className="main-content">
@@ -68,6 +65,9 @@ function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/game" element={<Game />} />
+          <Route path="/chatbot" element={<Chatbot />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/changePass" element={<ChangePassword />} />
 
 <Route path="/chatbot" element={<Chatbot/>}/>
 <Route path="/payment" element={<Payment/>}/>
@@ -79,6 +79,9 @@ function App() {
 {/* Admin */}
 <Route path="/challenge" element={<ChallengesPage/>}/>
 {/* <Route path="/task" element={<ChallengesSection/>}/> */}
+          {/* Admin */}
+          <Route path="/challenge" element={<ChallengesPage />} />
+          {/* <Route path="/task" element={<ChallengesSection/>}/> */}
         </Routes>
       </div>
       <Footer />
