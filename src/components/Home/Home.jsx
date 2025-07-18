@@ -48,7 +48,6 @@ const Home = () => {
     expenses: 0,
     income: 0,
     chartData: [],
-    tasks: [],
     user: {},
   });
 

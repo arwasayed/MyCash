@@ -58,7 +58,7 @@ const Subscription = () => {
               <div className="free mt-3">
                 <img src="images/Frame (10).svg" />
               </div>
-              <Card.Title className="plan-title">مميز</Card.Title>
+              <Card.Title className="plan-title">شهرى</Card.Title>
               <div className="price-section">
                 <span className="price">50</span>
                 <span className="period">جنيه/شهر</span>
@@ -84,7 +84,7 @@ const Subscription = () => {
               <div className="free mt-3">
                 <img src="images/Frame (11).svg" />
               </div>
-              <Card.Title className="plan-title">احترافي</Card.Title>
+              <Card.Title className="plan-title">سنوى</Card.Title>
               <div className="price-section">
                 <span className="price">500</span>
                 <span className="period">جنيه/سنة</span>
