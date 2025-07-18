@@ -23,6 +23,8 @@ router.get('/verify-email/:token', verifyEmail);
 
 router.post('/google', userController.googleAuth);
 
+router.delete('/settings/delete-account', protect, userController.deleteAccount);
+
 
 // //google
 // router.get('/auth/google',

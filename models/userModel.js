@@ -87,7 +87,7 @@ const userSchema = new mongoose.Schema({
     default: 'User',
     minlength: [2, 'Nickname must be at least 2 characters'],
     maxlength: [30, 'Nickname cannot exceed 30 characters'],
-    match: [/^[a-zA-Z0-9_\- ]+$/, 'Nickname can only contain letters, numbers, spaces, hyphens and underscores']
+match: [/^[\u0600-\u06FFa-zA-Z0-9_\- ]+$/, 'Nickname can only contain Arabic/English letters, numbers, spaces, hyphens and underscores']
   },
 avatar: {
   type: String,

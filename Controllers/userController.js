@@ -7,6 +7,56 @@ const sendEmail = require('../utils/email');
 // const passport = require('passport');
 // const OAuth2Client = require ('google-auth-library');
 
+const Badge=require('../models/UserBadge');
+
+const Expense = require('../models/Expense');
+const Income = require('../models/Income');
+const chat = require('../models/ChatMessage');
+const challenge = require('../models/UserChallenge');
+const task = require('../models/UserTask');
+const goal = require('../models/SavingGoal');
+
+
+
+
+
+
+
+
+
+//
+
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await  Expense.deleteMany({ user_id: userId });
+     await Income.deleteMany({ user_id: userId });
+     await Badge.deleteMany({ userId: userId });
+      await   chat.deleteMany({ user_id: userId });
+    await  challenge.deleteMany({ user_id: userId });
+    await  task.deleteMany({ userId: userId });
+      await   goal.deleteMany({ userId: userId });
+     
+     
+  
+
+    await User.findByIdAndDelete(userId);
+
+    res.status(204).json({ status: 'success', message: 'تم حذف الحساب وجميع البيانات المرتبطة بنجاح.' });
+  } catch (err) {
+    console.error('خطأ في حذف الحساب:', err.message);
+    res.status(500).json({ status: 'error', message: 'فشل في حذف الحساب. حاول لاحقاً.' });
+  }
+};
+
+
+
+
+
+
+
+
 
 
 
