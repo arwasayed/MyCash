@@ -8,6 +8,8 @@ import {
   MdOutlineShield,
 } from "react-icons/md";
 import { GiRobotGolem } from "react-icons/gi";
+import { Link } from "react-router-dom";
+import { LiaAnkhSolid } from "react-icons/lia";
 
 const LandingPage = () => {
   return (
@@ -27,17 +29,17 @@ const LandingPage = () => {
               رحلتك نحو الحرية المالية اليوم
             </p>
             <div className="hero-buttons d-flex gap-2 flex-wrap justify-content-end">
-              <button className="btn-primary">
-                ابدأ الآن مجاناً
-                <span className="startnow-icon" style={{ marginRight: 8 }}>
-                  <img
-                    src="/public/Landing-Page/landing-icons/StartNow.svg"
-                    alt="ابدأ الآن"
-                    width={19}
-                    height={19}
-                  />
-                </span>
-              </button>
+              <Link to="/register" className="btn-primary d-flex align-items-center text-decoration-none">
+    ابدأ الآن مجاناً
+    <span className="startnow-icon" style={{ marginRight: 8 }}>
+      <img
+        src="/Landing-Page/landing-icons/StartNow.svg"
+        alt="ابدأ الآن"
+        width={19}
+        height={19}
+      />
+    </span>
+  </Link>
               <button className="btn-secondary">
                 شاهد كيف يعمل
                 <span className="watchnow-icon" style={{ marginRight: 8 }}>
@@ -235,18 +237,18 @@ const LandingPage = () => {
             انضم لآلاف المستخدمين الذين يديرون أموالهم بذكاء مع ماي كاش
           </p>
           <div className="cta-buttons d-flex gap-2 justify-content-center mb-4 flex-wrap">
-            <button className="btn-primary-cta">
-              ابدأ رحلتك الآن
-              <span className="startjourny-icon" style={{ marginRight: 8 }}>
-                <img
-                  src="/public/Landing-Page/landing-icons/StartJourny.svg"
-                  alt="ابدأ رحلتك الآن"
-                  width={17}
-                  height={19}
-                />
-              </span>
-            </button>
-            <button className="btn-secondary-cta">
+          <Link to="/register" className="btn-primary-cta" style={{ textDecoration: "none" }}>
+  ابدأ رحلتك الآن
+  <span className="startjourny-icon" style={{ marginRight: 8 }}>
+    <img
+      src="/Landing-Page/landing-icons/StartJourny.svg"
+      alt="ابدأ رحلتك الآن"
+      width={17}
+      height={19}
+    />
+  </span>
+</Link>
+            <Link className="btn-secondary-cta" to="https://wa.me/201008170815?text=%20مرحبًا،%20أرغب%20في%20الاستفسار%20عن%20خدمتكم%20فى%20موقع%20ماى%20كاش" style={{ textDecoration: "none" }}>
               تواصل معنا
               <span className="contactus-icon" style={{ marginRight: 8 }}>
                 <img
@@ -256,7 +258,7 @@ const LandingPage = () => {
                   height={19}
                 />
               </span>
-            </button>
+            </Link>
           </div>
           <div className="cta-image mt-4">
             <img

@@ -8,7 +8,7 @@ flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
   width:100% ;
-  margin-top: 100px;
+  margin-top: 50px;
   direction: rtl;
 }
 
@@ -38,7 +38,7 @@ left: 712px;
 font-family: Cairo;
 font-weight: 400;
 font-style: Regular;
-font-size: 30px;
+font-size: 30px !important;
 line-height: 36px;
 letter-spacing: 0%;
 color: #333333;
@@ -49,38 +49,39 @@ p.notification-subtext {
 width: 228px;
 height: 30px;
 opacity: 1;
-top: 86.5px;
 left: 604px;
 font-family: Cairo;
 font-weight: 400;
 font-style: Regular;
-font-size: 16px;
+font-size: 16px !important;
 line-height: 24px;
 letter-spacing: 0%;
 color: #7B88A8;
+margin-top: 20px;
 
 }
 
 .search{
-width: 550px;
-height: 40px;
+  width: 100%;
+max-width:2000px !important;
+height: auto;
 opacity: 1;
 top: 379px;
-left: 471px;
+left: 471px !important;
 margin: 50px auto 0 auto !important;
+
+
 
 
 
 }
 
-
-
 .bt{
-width: 97.25px;
-height: 40px;
+width: 90.25px !important;
+height: 40px !important;
 opacity: 1;
-border-radius: 8px;
-background: #F5F7FA;
+border-radius: 8px !important;
+background: #F5F7FA !important;
 border: 1px solid #E5E7EB;
 font-family: Cairo;
 font-weight: 400;
@@ -90,17 +91,19 @@ line-height: 100%;
 letter-spacing: 0%;
 text-align: center;
 color: #7B88A8;
+padding: 0 5px !important;
+
 
  
 }
 
 .bt:hover{
 
-width: 100px;
+width: 100px !important;
 height: 40px;
 opacity: 1;
 border-radius: 8px;
-background: #6C5DD3;
+background: #6C5DD3 !important;
 border: 1px solid #E5E7EB;
 font-family: Cairo;
 font-weight: 400;

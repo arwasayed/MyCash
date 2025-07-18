@@ -33,6 +33,7 @@ export default function PlaneBudget() {
   const fetchExpenses = async (userId) => {
     setIsLoading(true);
     try {
+      console.log("📦 newExpense being sent:", newExpense);
       const response = await fetch(`http://localhost:3000/api/expenses?user_id=${userId}`, {
         headers: {
           'Authorization': `${localStorage.getItem('token')}`

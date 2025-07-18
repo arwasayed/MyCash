@@ -15,9 +15,11 @@ const Account = () => {
   const [spent, setSpent] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
-  const remaining = totalBudget - spent;
-  const percentage = totalBudget === 0 ? 0 : (spent / totalBudget) * 100;
+  const remaining = currentBalance; // الرصيد يعتمد على currentBalance (13924 جنيه)
+  const percentage = totalIncome === 0 ? 0 : Math.min(100, Math.round((spent / totalIncome) * 100)); // نسبة بناءً على الدخل
   const [monthYearString, setMonthYearString] = useState('');
+
+  
 
   // استخرج userId بشكل صحيح
   const storedUser = localStorage.getItem('user');
@@ -32,7 +34,7 @@ const Account = () => {
         throw new Error('لم يتم العثور على رمز التوثيق');
       }
       const response = await axios.post('/api/user/settings/logout', null, {
-        headers: { Authorization: `${token}` }
+        headers: { Authorization: `${token}` } // تصحيح التنسيق
       });
       if (response.status === 200) {
         localStorage.removeItem('token'); 
@@ -48,7 +50,7 @@ const Account = () => {
 
   const options = [
     { icon: <FaGlobe />, title: 'تغيير اللغة', subtitle: 'العربية / English' },
-    { icon: <FaMoon />, title: 'تغيير الاسم', subtitle: ' تعديل الاسم', onClick: () => navigate('/rename') },
+    { icon: <FaMoon />, title: 'تغيير الاسم', subtitle: 'تعديل الاسم', onClick: () => navigate('/rename') },
     { icon: <FaLock />, title: 'تغيير كلمة السر', subtitle: 'حماية الحساب', onClick: () => navigate('/changePass') },
     { icon: <FaSignOutAlt />, title: 'تسجيل الخروج', subtitle: 'إنهاء الجلسة', onClick: handleLogout },
   ];
@@ -61,18 +63,21 @@ const Account = () => {
       if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
 
       const summaryRes = await axios.get('/api/summary', { 
-        headers: { Authorization: ` ${token}` },
+        headers: { Authorization: `${token}` },
         params: { user_id: userId }
       });
+      console.log("Summary Data:", summaryRes.data); // تسجيل البيانات للتحقق
+
       const balanceRes = await axios.get('/api/balance', { 
-        headers: { Authorization: ` ${token}` },
+        headers: { Authorization: `${token}` },
         params: { user_id: userId }
       });
+      console.log("Balance Data:", balanceRes.data); // تسجيل البيانات للتحقق
 
       setTotalIncome(summaryRes.data.total_income_received || 0);
       setSpent(summaryRes.data.total_expenses_made || 0);
       setCurrentBalance(balanceRes.data.current_balance || 0);
-      setTotalBudget(summaryRes.data.total_budget || 0); // تأكد من اسم المتغير الصحيح في الـ API
+      setTotalBudget(summaryRes.data.total_budget || 0);
       setLoading(false);
     } catch (error) {
       console.error("خطأ في جلب البيانات المالية:", error.message, error.response?.data);
@@ -89,7 +94,7 @@ const Account = () => {
         if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
 
         const response = await axios.get('/api/user/settings/me', {
-          headers: { Authorization: ` ${token}` },
+          headers: { Authorization: `${token}` },
         });
 
         setUser({
@@ -133,7 +138,7 @@ const Account = () => {
         formData,
         {
           headers: {
-            Authorization: ` ${token}`,
+            Authorization: `${token}`,
             'Content-Type': 'multipart/form-data',
           },
         }
@@ -222,7 +227,6 @@ const Account = () => {
                 style={{ backgroundColor: 'transparent', border: '1px solid #E5E7EB', paddingLeft: 0 }}
                 className="text-muted"
               />
-            
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="small">الشهر</Form.Label>
@@ -234,11 +238,11 @@ const Account = () => {
               />
             </Form.Group>
             <Button
-  className="w-100 mt-2 rounded-3 update"
-  onClick={() => navigate('/planebudget')}
->
-  <img src="Account/svg.svg" alt="update icon" /> تحديث الميزانية
-</Button>
+              className="w-100 mt-2 rounded-3 update"
+              onClick={() => navigate('/planebudget')}
+            >
+              <img src="Account/svg.svg" alt="update icon" /> تحديث الميزانية
+            </Button>
             <p className="text-muted mt-3 key">
               "ميزانيتك هي مفتاح كل حاجة... ابدأ بيها صح 💪"
             </p>
@@ -270,7 +274,7 @@ const Account = () => {
                 />
               </ProgressBar>
               <div className="d-flex justify-content-between px-2 small">
-                <span className="text-muted"> المتبقى</span>
+                <span className="text-muted">المتبقي</span>
                 <span className="almutabaqaa mablagh">{currentBalance} جنيه</span>
               </div>
             </div>

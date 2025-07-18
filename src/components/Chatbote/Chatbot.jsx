@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Chatbot.css';
 import { Container, Row, Col, Image, Button, Card, ProgressBar, Form, Alert } from 'react-bootstrap';
+import axios from 'axios';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
@@ -10,8 +11,25 @@ const Chatbot = () => {
   const [subscriptionMessage, setSubscriptionMessage] = useState('');
   const [file, setFile] = useState(null);
 const userId = JSON.parse(localStorage.getItem('user'))?.id;
+  const [user, setUser] = useState({});
 
   useEffect(() => {
+
+
+      const fetchUser = async () => {
+          try {
+            const res = await axios.get('/api/user/settings/me', {
+              headers: {
+                Authorization: ` ${localStorage.getItem('token')}`
+              }
+            });
+            setUser(res.data.data.user);
+          } catch (err) {
+            console.error('خطأ في جلب البيانات:', err);
+          }
+        };
+        fetchUser();
+    
     const fetchChatHistory = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -174,7 +192,22 @@ const userId = JSON.parse(localStorage.getItem('user'))?.id;
               {msg.sender === 'user' ? (
                 <>
                   <Col xs="auto">
-                    <Image src="/chatbot/div.png" alt="User" className="user-image" />
+ <Image
+  src={
+    user?.avatar
+      ? user.avatar.startsWith('http')
+        ? user.avatar
+        : user.avatar.startsWith('/')
+        ? `http://localhost:3000${user.avatar}?t=${Date.now()}`
+        : `/Uploads/${user.avatar}?t=${Date.now()}`
+      : '/default-avatar.png'
+  }
+  roundedCircle
+  width={60}
+  height={60}
+  style={{ objectFit: 'cover' }}
+/>
+
                   </Col>
                   <Col xs="auto" className="message-col">
                     <Card className="px-3 py-2 rounded-pill border-0 user-chat">{msg.message}</Card>

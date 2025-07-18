@@ -144,10 +144,10 @@ const Notification = () => {
         </Col>
       </Row>
 
-     
+     <div className='d-flex justify-content-center mt-3'>
       <Row className="search mt-3">
         {['all', 'goal', 'challenge', 'badge', 'finance'].map((type) => (
-          <Col key={type} xs="auto" className="p-1">
+          <Col key={type} xs="auto" className="">
             <Button
               className={`bt all ${filterType === type ? 'active' : ''}`}
               onClick={() => {
@@ -167,6 +167,7 @@ const Notification = () => {
           </Col>
         ))}
       </Row>
+      </div>
 
       {/* قائمة الإشعارات */}
       <div className="container mt-4">

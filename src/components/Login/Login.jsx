@@ -119,29 +119,33 @@ useEffect(() => {
               />
             </Form.Group>
 
-            <div className="mb-3" dir="rtl">
-              <div
-                className="d-flex justify-content-between align-items-center w-100"
-                style={{ maxWidth: "300px" }}
-              >
-                <div className="form-check d-flex align-items-center m-0">
-                  <input
-                    className="form-check-input ms-2"
-                    type="checkbox"
-                    id="rememberMe"
-                  />
-                  <label
-                    className="form-check-label custom-form-check-label "
-                    htmlFor="rememberMe"
-                  >
-                    تذكرني
-                  </label>
-                </div>
-                <Link to="/ForgetPassword" className="custom-link login-link">
-                  نسيت كلمة السر؟
-                </Link>
-              </div>
-            </div>
+           <div className="d-flex justify-content-between align-items-center mb-3">
+  {/* checkbox + label */}
+  <div className="form-check d-flex align-items-center m-0">
+    <input
+      className="form-check-input ms-2"
+      type="checkbox"
+      id="rememberMe"
+    />
+    <label
+      className="form-check-label custom-form-check-label"
+      htmlFor="rememberMe"
+      style={{ margin: 0 }}
+    >
+      تذكرني
+    </label>
+  </div>
+
+  {/* forgot password */}
+  <Link
+    to="/ForgetPassword"
+    className="custom-link login-link"
+    style={{ textDecoration: "none", fontSize: "0.95rem" }}
+  >
+    نسيت كلمة السر؟
+  </Link>
+</div>
+
 
             {success && (
               <div className="custom-alert success">

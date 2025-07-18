@@ -15,7 +15,7 @@ import Account from "./components/Account/Account.jsx";
 import Notification from "./components/Notification/Notification.jsx";
 import Reports from "./components/Reports/Reports.jsx";
 import PlaneBudget from "./components/PlaneBudget/PlaneBudget.jsx";
-// import Game from "./components/Game/Game.jsx";
+import Game from "./components/Game/Game.jsx";
 // import AssistantPage from "./components/Assistant/AssistantPage.jsx";
 // import GoalsPage from "./components/Goals/GoalsPage.jsx";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail.jsx";
@@ -23,6 +23,7 @@ import Rename from "./components/Rename/Rename.jsx";
 import Chatbot from "./components/Chatbote/Chatbot.jsx";
 import Payment from "./components/Payment/Payment.jsx";
 import Goals from "./components/Goals/GoalsPage.jsx";
+
 
 //Admin
 
