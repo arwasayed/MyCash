@@ -117,6 +117,10 @@ avatar: {
       message: 'Last login date cannot be in the future'
     }
   },
+  points: {
+    type: Number,
+    default: 0
+  },
   role: {
     type: String,
     enum: ['user', 'admin'],
@@ -154,7 +158,8 @@ avatar: {
       delete ret.__v;
       return ret;
     }
-  }
+  },
+  
 });
 
 userSchema.pre('save', async function(next) {
