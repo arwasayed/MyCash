@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
-
+import { Container, Row, Col, Card, Badge, Image, Form, Button, ProgressBar } from 'react-bootstrap';
+import axios from "axios"; 
 const Navbar = () => {
+  const [user, setUser] = useState({ nickname: 'صاحبى', email: 'sara.mahmoud@email.com', avatar: './jklj' });
+  const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!localStorage.getItem("token")
   );
@@ -10,6 +13,29 @@ const Navbar = () => {
 
   // Update auth state when component mounts and when localStorage changes
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
+
+        const response = await axios.get('http://localhost:3000/api/user/settings/me', {
+          headers: { Authorization: `${token}` },
+        });
+        console.log(response);
+
+        setUser({
+          nickname: response.data.data.user.nickname,
+          email: response.data.data.user.email,
+          avatar: response.data.data.user.avatar || 'default-avatar.png',
+        });
+      } catch (err) {
+        console.error("navخطأ في جلب بيانات المستخدم:", err.message);
+        setError('navفشل جلب بيانات المستخدم');
+      }
+    };
+
+    fetchUserData();
+
     const checkAuth = () => {
       setIsAuthenticated(!!localStorage.getItem("token"));
     };
@@ -135,7 +161,31 @@ const Navbar = () => {
                 </Link>
               </div>
             ) : (
-              <div className="d-flex align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3 ms-auto">
+                <Image
+                src={
+                  user.avatar.startsWith('http')
+                    ? user.avatar
+                    : user.avatar.startsWith('/')
+                    ? `http://localhost:3000${user.avatar}?t=${Date.now()}`
+                    : `/Uploads/${user.avatar}?t=${Date.now()}`
+                }
+                roundedCircle
+                width={60}
+                height={60}
+                style={{ objectFit: 'cover' }}
+              />
+                <span className="icon-notification" title="الإشعارات">
+                <Link className="nav-link" to="/notification">
+                  🔔
+                </Link>
+                </span>
+                <span className="icon-settings" title="الإعدادات">
+                <Link className="nav-link" to="/account">
+                    ⚙️
+                </Link>
+                </span>
+                {/* <div className="d-flex align-items-center gap-3"> */}
                 <button
                   onClick={handleLogout}
                   className="auth-link border-0 bg-transparent"
@@ -143,6 +193,7 @@ const Navbar = () => {
                 >
                   تسجيل خروج
                 </button>
+                {/* </div> */}
               </div>
             )}
           </div>
