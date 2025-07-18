@@ -27,12 +27,12 @@ const UpdateBadgeModel = ({ show, handleClose }) => {
           return;
         }
         const challengesResponse = await axios.get("http://localhost:3000/api/challenges", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: token },
         });
         setChallenges(challengesResponse.data.data || []);
 
         const badgesResponse = await axios.get("http://localhost:3000/api/badges", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: token },
         });
         setBadges(badgesResponse.data.data || []);
       } catch (err) {
@@ -103,7 +103,7 @@ const UpdateBadgeModel = ({ show, handleClose }) => {
 
     const res = await axios.post("http://localhost:3000/api/upload", data, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: token,
         "Content-Type": "multipart/form-data",
       },
     });
@@ -160,7 +160,7 @@ if (formData.challengeId && formData.challengeId.trim() !== "") {
 
       await axios.put(`http://localhost:3000/api/badges/${selectedBadgeId}`, payload, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
         },
       });
 

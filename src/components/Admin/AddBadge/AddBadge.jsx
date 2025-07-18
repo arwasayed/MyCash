@@ -26,7 +26,7 @@ const AddBadgeModal = ({ show, handleClose }) => {
         }
         const response = await axios.get("http://localhost:3000/api/challenges", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
         });
         setChallenges(response.data.data || []);

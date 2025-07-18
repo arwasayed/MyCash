@@ -29,7 +29,7 @@ const UpdateChallengeModal = ({ show, handleClose }) => {
         }
         const response = await axios.get("/api/challenges", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
         });
         setChallenges(response.data.data);
@@ -99,7 +99,7 @@ const handleChange = (e) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
         }
       );

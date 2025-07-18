@@ -27,7 +27,7 @@ const ChallengeModal = ({ show, handleClose }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/challenges',
+        '/api/challenges/',
         {
           title: formData.title,
           description: formData.description,
@@ -37,7 +37,7 @@ const ChallengeModal = ({ show, handleClose }) => {
         },
         {
           headers: {
-  Authorization: `Bearer ${localStorage.getItem("token")}`,
+  Authorization: localStorage.getItem("token"),
 },
 
         }
