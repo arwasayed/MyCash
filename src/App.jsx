@@ -30,14 +30,17 @@ import ChangePassword from "./components/ChangePassword/ChangePassword.jsx";
 import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
 import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route,useLocation } from "react-router-dom";
 import "./App.css";
 
 function App() {
-  
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+  const isregisterPage = location.pathname === "/register";  
   return (
     <div className="app-layout">
-      <Navbar />
+      {/* <Navbar /> */}
+      {! (isLoginPage || isregisterPage ) && <Navbar />}
       <div className="main-content">
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -84,7 +87,8 @@ function App() {
           {/* <Route path="/task" element={<ChallengesSection/>}/> */}
         </Routes>
       </div>
-      <Footer />
+      {/* <Footer /> */}
+      {!(isLoginPage || isregisterPage ) && <Footer />}
     </div>
   );
 }
