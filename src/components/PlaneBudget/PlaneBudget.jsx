@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import "./PlaneBudget.css";
 
-const initialExpenses = [{ id: 1, category: "الصنع", amount: "" }];
-
 export default function PlaneBudget() {
   const [income, setIncome] = useState("");
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const [expenses, setExpenses] = useState([]);
   const [newCategory, setNewCategory] = useState("الصنع");
   const [userId, setUserId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [initialData, setInitialData] = useState({
+    income: "",
+    expenses: []
+  });
+  const [hasChanges, setHasChanges] = useState(false);
+  const [showOverspendingAlert, setShowOverspendingAlert] = useState(false);
 
   const totalExpenses = expenses.reduce(
     (sum, e) => sum + Number(e.amount || 0),
@@ -21,35 +25,68 @@ export default function PlaneBudget() {
     ? Math.min(100, Math.round((totalExpenses / Number(income)) * 100))
     : 0;
 
+  // Check for overspending
   useEffect(() => {
-    const loggedInUserId = "686bd4ac75316db54595192e";
+    if (income && totalExpenses > Number(income)) {
+      setShowOverspendingAlert(true);
+    } else {
+      setShowOverspendingAlert(false);
+    }
+  }, [income, totalExpenses]);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const loggedInUserId = user?.id;
     setUserId(loggedInUserId);
     
     if (loggedInUserId) {
-      fetchExpenses(loggedInUserId);
+      fetchFinancialData(loggedInUserId);
     }
   }, []);
 
-  const fetchExpenses = async (userId) => {
+  useEffect(() => {
+    // Check if there are changes compared to initial data
+    const incomeChanged = income !== initialData.income;
+    const expensesChanged = JSON.stringify(expenses) !== JSON.stringify(initialData.expenses);
+    
+    setHasChanges(incomeChanged || expensesChanged);
+  }, [income, expenses, initialData]);
+
+  const fetchFinancialData = async (userId) => {
     setIsLoading(true);
     try {
-      console.log("📦 newExpense being sent:", newExpense);
-      const response = await fetch(`http://localhost:3000/api/expenses?user_id=${userId}`, {
+      // Fetch current balance (income)
+      const incomeResponse = await fetch(`http://localhost:3000/api/balance`, {
         headers: {
           'Authorization': `${localStorage.getItem('token')}`
         }
       });
       
-      if (!response.ok) {
-        throw new Error('فشل في جلب البيانات');
+      if (incomeResponse.ok) {
+        const incomeData = await incomeResponse.json();
+        const currentIncome = incomeData.current_balance.toString();
+        setIncome(currentIncome);
+        setInitialData(prev => ({ ...prev, income: currentIncome }));
       }
+
+      // Fetch existing expenses
+      const expensesResponse = await fetch(`http://localhost:3000/api/expenses`, {
+        headers: {
+          'Authorization': `${localStorage.getItem('token')}`
+        }
+      });
       
-      const data = await response.json();
-      setExpenses(data.expenses.map(exp => ({
-        id: exp.id,
-        category: exp.category,
-        amount: exp.amount.toString()
-      })));
+      if (expensesResponse.ok) {
+        const expensesData = await expensesResponse.json();
+        const formattedExpenses = expensesData.expenses.map(exp => ({
+          id: exp.id,
+          category: exp.category,
+          amount: exp.amount.toString()
+        }));
+        
+        setExpenses(formattedExpenses);
+        setInitialData(prev => ({ ...prev, expenses: formattedExpenses }));
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -82,7 +119,7 @@ export default function PlaneBudget() {
         throw new Error('فشل في تحديث المصروف');
       }
       
-      // تحديث الحالة المحلية مباشرة بدون الحاجة لـ refresh
+      // Update local state
       setExpenses(prevExpenses => 
         prevExpenses.map(exp => 
           exp.id === id 
@@ -91,6 +128,8 @@ export default function PlaneBudget() {
         )
       );
       
+      // Refresh initial data
+      fetchFinancialData(userId);
       setEditingId(null);
     } catch (err) {
       setError(err.message);
@@ -102,26 +141,33 @@ export default function PlaneBudget() {
   const handleAddExpense = () => {
     setExpenses([
       ...expenses,
-      { id: Date.now(), category: newCategory, amount: "" },
+      { id: `new-${Date.now()}`, category: newCategory, amount: "" },
     ]);
   };
 
   const handleRemoveExpense = async (id) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/expense/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': ` ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
+      // Only delete from backend if it's an existing expense
+      if (!id.startsWith('new-')) {
+        const response = await fetch(`http://localhost:3000/api/expense/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': ` ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('فشل في حذف المصروف');
         }
-      });
-      
-      if (!response.ok) {
-        throw new Error('فشل في حذف المصروف');
       }
       
+      // Remove from local state
       setExpenses(prevExpenses => prevExpenses.filter((e) => e.id !== id));
+      
+      // Refresh data
+      fetchFinancialData(userId);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -146,33 +192,51 @@ export default function PlaneBudget() {
   };
 
   const handleSave = async () => {
-    if (!userId || !income) {
-      alert('يجب إدخال الدخل الشهري أولاً');
+    if (!hasChanges) {
+      alert('لا يوجد تغييرات لحفظها');
       return;
     }
     
+    if (showOverspendingAlert) {
+      const confirmSave = window.confirm("المصروفات اكتر من دخلك! هل تريد الاستمرار في الحفظ؟");
+      if (!confirmSave) return;
+    }
+    
     setIsLoading(true);
+    setError(null);
+    
     try {
-      const incomeResponse = await fetch('http://localhost:3000/api/income', {
-        method: 'POST',
-        headers: {
-          'Authorization': ` ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          amount: Number(income),
-          frequency: 'monthly',
-          description: 'الدخل الشهري'
-        })
-      });
+      let savedIncome = false;
+      let savedExpenses = false;
       
-      if (!incomeResponse.ok) {
-        throw new Error('فشل في حفظ الدخل');
+      // Save income if changed
+      if (income !== initialData.income) {
+        const incomeResponse = await fetch('http://localhost:3000/api/income', {
+          method: 'POST',
+          headers: {
+            'Authorization': ` ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            amount: Number(income),
+            frequency: 'monthly',
+            description: 'الدخل الشهري'
+          })
+        });
+        
+        if (!incomeResponse.ok) {
+          throw new Error('فشل في حفظ الدخل');
+        }
+        
+        savedIncome = true;
       }
       
-      for (const expense of expenses) {
-        if (expense.amount && expense.category) {
+      // Save expenses
+      const newExpenses = expenses.filter(exp => exp.id.startsWith('new-') && exp.amount && exp.category);
+      const existingExpenses = expenses.filter(exp => !exp.id.startsWith('new-'));
+      
+      if (newExpenses.length > 0) {
+        for (const expense of newExpenses) {
           const response = await fetch('http://localhost:3000/api/expense', {
             method: 'POST',
             headers: {
@@ -180,7 +244,6 @@ export default function PlaneBudget() {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              user_id: userId,
               amount: Number(expense.amount),
               category: expense.category,
               description: expense.description || ''
@@ -191,10 +254,22 @@ export default function PlaneBudget() {
             throw new Error('فشل في حفظ المصروف');
           }
         }
+        savedExpenses = true;
       }
       
-      alert('تم حفظ الخطة بنجاح!');
-      fetchExpenses(userId); // إعادة جلب البيانات للتأكد من المزامنة
+      // Show appropriate success message
+      if (savedIncome && savedExpenses) {
+        alert('تم حفظ الدخل والمصروفات بنجاح!');
+      } else if (savedIncome) {
+        alert('تم حفظ الدخل بنجاح!');
+      } else if (savedExpenses) {
+        alert('تم حفظ المصروفات بنجاح!');
+      } else {
+        alert('لا يوجد تغييرات جديدة لحفظها');
+      }
+      
+      // Refresh data
+      fetchFinancialData(userId);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -230,13 +305,20 @@ export default function PlaneBudget() {
           <input
             type="number"
             placeholder="ادخل دخلك الشهري"
-            value={income}
+            value={0}
             onChange={(e) => setIncome(e.target.value)}
             className="plane-budget-input"
           />
         </div>
         <div className="plane-budget-expenses-section">
           <div className="plane-budget-expenses-title">+ بنود الإنفاق</div>
+          <div 
+            className="plane-budget-expenses-list"
+            style={{ 
+              maxHeight: expenses.length > 3 ? '300px' : 'none',
+              overflowY: expenses.length > 3 ? 'auto' : 'visible'
+            }}
+          >
           {expenses.map((exp) => (
             <div className="plane-budget-expense-row" key={exp.id}>
               <select
@@ -260,14 +342,16 @@ export default function PlaneBudget() {
                 onChange={(e) => handleExpenseChange(exp.id, e.target.value)}
                 disabled={isLoading && editingId !== exp.id}
               />
+              
+              {/* Update Button */}
               {editingId === exp.id ? (
                 <button
                   type="button"
-                  className="plane-budget-save-btn"
+                  className="plane-budget-update-btn"
                   onClick={() => handleUpdateExpense(exp.id)}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'جاري الحفظ...' : '💾 حفظ'}
+                  {isLoading ? 'جاري الحفظ...' : '💾'}
                 </button>
               ) : (
                 <button
@@ -276,35 +360,38 @@ export default function PlaneBudget() {
                   onClick={() => setEditingId(exp.id)}
                   disabled={isLoading}
                 >
-                  <img 
-                    src="/Plane/Icons/edit.svg" 
-                    alt="edit" 
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black' width='24px' height='24px'><path d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/></svg>";
-                    }}
-                  />
+                  ✏️
                 </button>
               )}
+              
+              {/* Delete Button */}
               <button
                 type="button"
                 className="plane-budget-remove-btn"
                 onClick={() => handleRemoveExpense(exp.id)}
                 disabled={isLoading}
               >
-                <img src="/Plane/Icons/Vector(1).svg" alt="remove" />
+                🗑️
               </button>
             </div>
           ))}
-          <button
-            type="button"
-            className="plane-budget-add-btn"
-            onClick={handleAddExpense}
-            disabled={isLoading}
-          >
-            <img src="/Plane/Icons/Vector.svg" alt="add" />
-            إضافة بند جديد
-          </button>
+          </div>
+          {showOverspendingAlert && (
+            <div className="plane-budget-warning">
+              ⚠️ المصروفات اكتر من دخلك خلي بالك
+            </div>
+          )}
+          <div className="plane-budget-add-expense-container">
+            <button
+              type="button"
+              className="plane-budget-add-btn"
+              onClick={handleAddExpense}
+              disabled={isLoading}
+            >
+              <img src="/Plane/Icons/Vector.svg" alt="add" />
+              إضافة بند جديد
+            </button>
+          </div>
         </div>
         <div className="plane-budget-progress-bar-wrapper">
           <div className="plane-budget-progress-bar-row">
@@ -316,11 +403,11 @@ export default function PlaneBudget() {
         </div>
         <button
           type="button"
-          className="plane-budget-save-btn"
+          className={`plane-budget-save-btn ${!hasChanges ? 'disabled' : ''}`}
           onClick={handleSave}
-          disabled={isLoading}
+          disabled={isLoading || !hasChanges}
         >
-          {isLoading ? 'جاري الحفظ...' : '✨ حفظ الخطة'}
+          {isLoading ? 'جاري الحفظ...' : '💾 حفظ التغييرات'}
         </button>
       </form>
       {error && <div className="plane-budget-error">{error}</div>}
