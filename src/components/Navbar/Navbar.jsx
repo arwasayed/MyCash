@@ -21,12 +21,14 @@ const Navbar = () => {
         const response = await axios.get('http://localhost:3000/api/user/settings/me', {
           headers: { Authorization: `${token}` },
         });
+        const userrole = JSON.parse(localStorage.getItem('user'))?.role;
         console.log(response);
 
         setUser({
           nickname: response.data.data.user.nickname,
           email: response.data.data.user.email,
           avatar: response.data.data.user.avatar || 'default-avatar.png',
+          role:userrole||'user'
         });
       } catch (err) {
         console.error("navخطأ في جلب بيانات المستخدم:", err.message);
@@ -38,6 +40,12 @@ const Navbar = () => {
 
     const checkAuth = () => {
       setIsAuthenticated(!!localStorage.getItem("token"));
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (userData) {
+        setUser(prev => ({
+          ...prev,
+          role: userData.role || 'user'
+        }));}
     };
 
     // Check immediately
@@ -68,7 +76,7 @@ const Navbar = () => {
     window.dispatchEvent(new Event("authChange"));
     navigate("/"); // Redirect to home page
   };
-
+  const isRegularUser = isAuthenticated && user.role === "user";
   return (
     <>
       {/* Desktop Navbar */}
@@ -96,7 +104,7 @@ const Navbar = () => {
           </div>
           
           {/* Center - Navigation Links (only when authenticated) */}
-          {isAuthenticated && (
+          {isRegularUser && (
             <div className="position-absolute start-50 translate-middle-x">
               <ul className="navbar-nav flex-row gap-4">
                 <li className="nav-item">
@@ -168,11 +176,11 @@ const Navbar = () => {
                     ? user.avatar
                     : user.avatar.startsWith('/')
                     ? `http://localhost:3000${user.avatar}?t=${Date.now()}`
-                    : `/uploads/${user.avatar}?t=${Date.now()}`
+                    : `/Uploads/${user.avatar}?t=${Date.now()}`
                 }
                 roundedCircle
-                width={40}
-                height={40}
+                width={60}
+                height={60}
                 style={{ objectFit: 'cover' }}
               />
                 <span className="icon-notification" title="الإشعارات">
@@ -251,7 +259,7 @@ const Navbar = () => {
           </div>
 
           <div className="offcanvas-body">
-            {isAuthenticated && (
+            {isRegularUser && (
               <ul className="navbar-nav flex-column gap-3 mb-4">
                 <li className="nav-item">
                   <Link className="nav-link" to="/home">
