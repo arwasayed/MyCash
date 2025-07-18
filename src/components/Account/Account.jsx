@@ -6,7 +6,7 @@ import axios from 'axios';
 import "./Account.css";
 
 const Account = () => {
-  const [user, setUser] = useState({ nickname: 'ساره محمود', email: 'sara.mahmoud@email.com', avatar: './jklj' });
+  const [user, setUser] = useState({ nickname: 'صاحبى', email: 'sara.mahmoud@email.com', avatar: './jklj' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -63,17 +63,17 @@ const Account = () => {
       if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
 
       const summaryRes = await axios.get('/api/summary', { 
-        headers: { Authorization: `${token}` },
-        params: { user_id: userId }
+        headers: { Authorization: `${token}` }
       });
-      console.log("Summary Data:", summaryRes.data); // تسجيل البيانات للتحقق
-
+      console.log("Summary Data:", summaryRes.data); 
+      
       const balanceRes = await axios.get('/api/balance', { 
         headers: { Authorization: `${token}` },
         params: { user_id: userId }
       });
       console.log("Balance Data:", balanceRes.data); // تسجيل البيانات للتحقق
 
+      
       setTotalIncome(summaryRes.data.total_income_received || 0);
       setSpent(summaryRes.data.total_expenses_made || 0);
       setCurrentBalance(balanceRes.data.current_balance || 0);
@@ -156,6 +156,11 @@ const Account = () => {
       setLoading(false);
     }
   };
+
+  const handleRedirect = () => {
+    navigate("/game");
+  };
+
 
   return (
     <Container fluid className="account-container d-flex justify-content-center align-items-center py-4" style={{ direction: 'rtl' }}>
@@ -331,7 +336,7 @@ const Account = () => {
           <div>
             <img src="Account/Vector.svg" alt="achivement icon" />
           </div>
-          <p className="month text-white">إنجازاتك هذا الشهر</p>
+          <p className="month text-white">إنجازاتك</p>
           <div className="points pt-2" style={{
             maxWidth: '848px',
             margin: '0 auto',
@@ -344,7 +349,7 @@ const Account = () => {
               fontSize: '30px',
               textAlign: 'center',
               color: '#FFFFFF'
-            }}>1,250</div>
+            }}>{parsedUser.points || 0}</div>
             <div className="mt-2" style={{
               width: '100%',
               fontFamily: 'Cairo',
@@ -354,9 +359,9 @@ const Account = () => {
               color: '#FFFFFF'
             }}>نقطة توفير</div>
           </div>
-          <div className="challengs" style={{ maxWidth: '414px', margin: '30px auto 0 auto' }}>
+          <button className="challengs" style={{ maxWidth: '414px',paddingBottom:'2rem' }} onClick={handleRedirect}>
             <span>تحديات وشارات</span>
-          </div>
+          </button>
         </div>
       </section>
     </Container>
