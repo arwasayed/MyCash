@@ -68,7 +68,7 @@ const Home = () => {
         const profile = profileRes.data?.data?.user || {};
         const summary = summaryRes.data || {};
         const chartData = summary.transaction_history || [];
-
+        console.log( profile)
         const monthlyTotals = {};
         chartData.forEach((txn) => {
           if (txn.amount && txn.amount > 0 && txn.date) {

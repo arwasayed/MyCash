@@ -8,7 +8,10 @@ import UpdateBadgeModel from "../UpdateBadge/UpdateBadge";
 
 const svgIcon = (name) => `/Admin UI/${name}`;
 
-function ChallengeCard({ challenge, onDelete, onUpdate }) {
+
+// ChallengeCard component
+function ChallengeCard({ challenge, onDelete , apiRequest}) {
+
   const [updateChallengModel, setUpdateChallengModel] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -23,9 +26,20 @@ function ChallengeCard({ challenge, onDelete, onUpdate }) {
     setDeleteTarget(null);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (deleteTarget === "challenge") {
-      onDelete(challenge._id);
+
+      try {
+        const response = await apiRequest(`/api/challenges/${challenge._id}`, "DELETE");
+        if (response && response.ok) {
+          console.log("تم حذف التحدي");
+          onDelete(challenge._id); // Notify parent to remove challenge from state
+        } else {
+          console.error("فشل في حذف التحدي");
+        }
+      } catch (err) {
+        console.error("خطأ:", err.message);
+      }
     }
     closeDeleteModal();
   };
@@ -209,7 +223,9 @@ function ChallengeCard({ challenge, onDelete, onUpdate }) {
   );
 }
 
-function BadgeCard({ badge, idx, onDelete, onUpdate }) {
+// BadgeCard component
+function BadgeCard({ badge, idx, onDelete,apiRequest }) {
+
   const [UpdateBadge, setUpdateBadgeModel] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -224,9 +240,20 @@ function BadgeCard({ badge, idx, onDelete, onUpdate }) {
     setDeleteTarget(null);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (deleteTarget === "badge") {
-      onDelete(badge._id);
+      try {
+        const response = await apiRequest(`/api/badges/${badge._id}`, "DELETE");
+        if (response && response.ok) {
+          console.log("تم حذف البادج");
+          onDelete(badge._id); // Notify parent to remove badge from state
+        } else {
+          console.error("فشل في حذف البادج");
+        }
+      } catch (err) {
+        console.error("خطأ:", err.message);
+      }
+
     }
     closeDeleteModal();
   };
@@ -424,121 +451,16 @@ const ManageChallenge = () => {
       setError(err.message);
     }
   };
-
-  const deleteChallenge = async (id) => {
-    try {
-      const response = await apiRequest(`/api/challenges/${id}`, "DELETE");
-      if (!response) return;
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في حذف التحدي");
-      }
-
-      setChallenges(challenges.filter(challenge => challenge._id !== id));
-    } catch (err) {
-      setError(err.message);
-    }
+  const handleDeleteChallenge = (challengeId) => {
+    setChallenges(challenges.filter((challenge) => challenge._id !== challengeId));
   };
 
-  const deleteBadge = async (id) => {
-    try {
-      const response = await apiRequest(`/api/badges/${id}`, "DELETE");
-      if (!response) return;
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في حذف الشارة");
-      }
-
-      setBadges(badges.filter(badge => badge._id !== id));
-    } catch (err) {
-      setError(err.message);
-    }
+  const handleDeleteBadge = (badgeId) => {
+    setBadges(badges.filter((badge) => badge._id !== badgeId));
   };
 
-  const updateChallenge = async (id, updatedData) => {
-    try {
-      const response = await apiRequest(
-        `/api/challenges/${id}`,
-        "PUT",
-        updatedData
-      );
-      if (!response) return;
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في تحديث التحدي");
-      }
-
-      setChallenges(challenges.map(challenge => 
-        challenge._id === id ? data.data : challenge
-      ));
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const updateBadge = async (id, updatedData) => {
-    try {
-      const response = await apiRequest(
-        `/api/badges/${id}`,
-        "PUT",
-        updatedData
-      );
-      if (!response) return;
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في تحديث الشارة");
-      }
-
-      setBadges(badges.map(badge => 
-        badge._id === id ? data.data : badge
-      ));
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const addChallenge = async (newChallenge) => {
-    try {
-      const response = await apiRequest("/api/challenges", "POST", newChallenge);
-      if (!response) return;
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في إضافة التحدي");
-      }
-
-      setChallenges([...challenges, data.data]);
-      setShowChallengeModal(false);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const addBadge = async (newBadge) => {
-    try {
-      const response = await apiRequest("/api/badges", "POST", newBadge);
-      if (!response) return;
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في إضافة الشارة");
-      }
-
-      setBadges([...badges, data.data]);
-      setShowBadgeModal(false);
-    } catch (err) {
-      setError(err.message);
-    }
+  const openChallengeForm = (challenge = null) => {
+    setShowChallengeModal(true);
   };
 
   useEffect(() => {
@@ -635,8 +557,10 @@ const ManageChallenge = () => {
             <ChallengeCard
               key={challenge._id}
               challenge={challenge}
-              onDelete={deleteChallenge}
-              onUpdate={updateChallenge}
+
+              onDelete={handleDeleteChallenge}
+              apiRequest={apiRequest}
+
             />
           ))
         ) : (
@@ -683,8 +607,9 @@ const ManageChallenge = () => {
                 <BadgeCard
                   badge={badge}
                   idx={idx}
-                  onDelete={deleteBadge}
-                  onUpdate={updateBadge}
+
+                  onDelete={handleDeleteBadge}
+                  apiRequest={apiRequest}
                 />
               </div>
             ))
