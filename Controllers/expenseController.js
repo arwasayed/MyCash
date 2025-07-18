@@ -245,8 +245,9 @@ async function addIncome(req, res) {
 
 async function addExpense(req, res) {
   try {
+    const user_id = req.user._id;
     console.log(`\n=== ADD EXPENSE REQUEST ===`);
-    const { user_id, amount, category, description, date = new Date() } = req.body;
+    const { id, amount, category, description, date = new Date() } = req.body;
     console.log(`User: ${user_id}, Amount: ${amount}, Description: ${description}`);
 
     // Calculate the new balance BEFORE saving
