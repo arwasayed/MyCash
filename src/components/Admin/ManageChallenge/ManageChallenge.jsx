@@ -358,11 +358,11 @@ const ManageChallenge = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    // localStorage.removeItem("token");
-    // localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsAuthenticated(false);
     window.dispatchEvent(new Event("authChange"));
-    navigate("/login"); // Redirect to home page
+    navigate("/login");
   };
 
   // API request helper with auth

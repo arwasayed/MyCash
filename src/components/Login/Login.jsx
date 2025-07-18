@@ -47,12 +47,11 @@ const Login = () => {
       if (data.status === "success") {
         setSuccess(data.message);
         localStorage.setItem("user", JSON.stringify(data.data.user));
+        localStorage.setItem("token", `Bearer ${data.data.token}`);
         if (data.data.user.role === "user") {
-          localStorage.setItem("token", data.data.token);
           window.dispatchEvent(new Event("authChange"));
           navigate("/home");
-        } else {
-          localStorage.setItem("token", `Bearer ${data.data.token}`);
+        } else {          
           window.dispatchEvent(new Event("authChange"));
           navigate("/challenge");
         }
@@ -80,12 +79,11 @@ const Login = () => {
       if (data.status === "success") {
         setSuccess(data.message);
         localStorage.setItem("user", JSON.stringify(data.data.user));
+        localStorage.setItem("token", `Bearer ${data.data.token}`);
         if (data.data.user.role === "user") {
-          localStorage.setItem("token", data.data.token);
           window.dispatchEvent(new Event("authChange"));
           navigate("/home");
-        } else {
-          localStorage.setItem("token", `Bearer ${data.data.token}`);
+        } else {          
           window.dispatchEvent(new Event("authChange"));
           navigate("/challenge");
         }
