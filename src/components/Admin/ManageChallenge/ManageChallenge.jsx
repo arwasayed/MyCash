@@ -355,6 +355,16 @@ const ManageChallenge = () => {
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [showBadgeModal, setShowBadgeModal] = useState(false);
 
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("user");
+    setIsAuthenticated(false);
+    window.dispatchEvent(new Event("authChange"));
+    navigate("/login"); // Redirect to home page
+  };
+
   // API request helper with auth
   const apiRequest = async (url, method = "GET", body = null) => {
     const token = localStorage.getItem("token");
@@ -423,7 +433,8 @@ const ManageChallenge = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      window.location.href = "/login";
+      handleLogout()
+      // window.location.href = "/login";
       return;
     }
 

@@ -99,7 +99,7 @@ const AddBadgeModal = ({ show, handleClose }) => {
         uploadFormData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -122,7 +122,7 @@ const AddBadgeModal = ({ show, handleClose }) => {
         badgeData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
             "Content-Type": "application/json",
           },
         }

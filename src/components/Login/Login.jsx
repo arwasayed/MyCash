@@ -12,40 +12,50 @@ const Login = () => {
   const navigate = useNavigate();
 
   // تحميل مكتبة Google Sign-In
-useEffect(() => {
-  if (window.google) {
-    window.google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleGoogleSignIn,
-    });
+  useEffect(() => {
+    if (window.google) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleSignIn,
+      });
 
-    window.google?.accounts.id.renderButton(
-      document.getElementById("googleSignInButton"),
-      { theme: "outline",
-    size: "large", 
-    text: "signin_with",
-    shape: "pill", 
-    logo_alignment: "left"}
-    );
-  }
+      window.google?.accounts.id.renderButton(
+        document.getElementById("googleSignInButton"),
+        {
+          theme: "outline",
+          size: "large",
+          text: "signin_with",
+          shape: "pill",
+          logo_alignment: "left",
+        }
+      );
+    }
   }, []);
 
   const handleGoogleSignIn = async (response) => {
     try {
       const res = await fetch("http://localhost:3000/api/user/google", {
         method: "POST",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({ credential: response.credential, mode: "login"}),
-       
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          credential: response.credential,
+          mode: "login",
+        }),
       });
       const data = await res.json();
 
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token",`Bearer ${data.data.token}`);
         localStorage.setItem("user", JSON.stringify(data.data.user));
-        window.dispatchEvent(new Event("authChange"));
-        navigate("/home"); 
+        if (data.data.user.role === "user") {
+          localStorage.setItem("token", data.data.token);
+          window.dispatchEvent(new Event("authChange"));
+          navigate("/home");
+        } else {
+          localStorage.setItem("token", `Bearer ${data.data.token}`);
+          window.dispatchEvent(new Event("authChange"));
+          navigate("/challenge");
+        }
       } else {
         setError(data.message);
       }
@@ -67,19 +77,18 @@ useEffect(() => {
       });
       const data = await response.json();
 
-      
       if (data.status === "success") {
         setSuccess(data.message);
-        localStorage.setItem("token", `Bearer ${data.data.token}`);
-         localStorage.setItem("user", JSON.stringify(data.data.user));
-         if(data.data.user.role === "user"){
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        if (data.data.user.role === "user") {
+          localStorage.setItem("token", data.data.token);
           window.dispatchEvent(new Event("authChange"));
-          navigate("/home"); 
-         }else{
-          navigate("/challenge"); 
-         }
-
-        
+          navigate("/home");
+        } else {
+          localStorage.setItem("token", `Bearer ${data.data.token}`);
+          window.dispatchEvent(new Event("authChange"));
+          navigate("/challenge");
+        }
       } else {
         setError(data.message);
       }
@@ -128,33 +137,32 @@ useEffect(() => {
               />
             </Form.Group>
 
-           <div className="d-flex justify-content-between align-items-center mb-3">
-  {/* checkbox + label */}
-  <div className="form-check d-flex align-items-center m-0">
-    <input
-      className="form-check-input ms-2"
-      type="checkbox"
-      id="rememberMe"
-    />
-    <label
-      className="form-check-label custom-form-check-label"
-      htmlFor="rememberMe"
-      style={{ margin: 0 }}
-    >
-      تذكرني
-    </label>
-  </div>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              {/* checkbox + label */}
+              <div className="form-check d-flex align-items-center m-0">
+                <input
+                  className="form-check-input ms-2"
+                  type="checkbox"
+                  id="rememberMe"
+                />
+                <label
+                  className="form-check-label custom-form-check-label"
+                  htmlFor="rememberMe"
+                  style={{ margin: 0 }}
+                >
+                  تذكرني
+                </label>
+              </div>
 
-  {/* forgot password */}
-  <Link
-    to="/ForgetPassword"
-    className="custom-link login-link"
-    style={{ textDecoration: "none", fontSize: "0.95rem" }}
-  >
-    نسيت كلمة السر؟
-  </Link>
-</div>
-
+              {/* forgot password */}
+              <Link
+                to="/ForgetPassword"
+                className="custom-link login-link"
+                style={{ textDecoration: "none", fontSize: "0.95rem" }}
+              >
+                نسيت كلمة السر؟
+              </Link>
+            </div>
 
             {success && (
               <div className="custom-alert success">
@@ -170,24 +178,27 @@ useEffect(() => {
               </div>
             )}
 
-            <Button variant="primary" className="login-button text-white" type="submit">
+            <Button
+              variant="primary"
+              className="login-button text-white"
+              type="submit"
+            >
               <p>تسجيل الدخول</p>
             </Button>
 
-          <div id="googleSignInButton">
-  <Button
-    variant="primary"
-    className="Google-button"
-    type="button"  
-    onClick={() => window.google.accounts.id.prompt()} 
-  >
-    <p>
-      تسجيل باستخدام Google
-      <img src="/images/devicon_google (1).svg" alt="Google icon" />
-    </p>
-  </Button>
-</div>
-
+            <div id="googleSignInButton">
+              <Button
+                variant="primary"
+                className="Google-button"
+                type="button"
+                onClick={() => window.google.accounts.id.prompt()}
+              >
+                <p>
+                  تسجيل باستخدام Google
+                  <img src="/images/devicon_google (1).svg" alt="Google icon" />
+                </p>
+              </Button>
+            </div>
           </Form>
 
           <span className="newaccount">

@@ -168,11 +168,11 @@ const Navbar = () => {
                     ? user.avatar
                     : user.avatar.startsWith('/')
                     ? `http://localhost:3000${user.avatar}?t=${Date.now()}`
-                    : `/Uploads/${user.avatar}?t=${Date.now()}`
+                    : `/uploads/${user.avatar}?t=${Date.now()}`
                 }
                 roundedCircle
-                width={60}
-                height={60}
+                width={40}
+                height={40}
                 style={{ objectFit: 'cover' }}
               />
                 <span className="icon-notification" title="الإشعارات">
