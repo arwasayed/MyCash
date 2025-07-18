@@ -51,7 +51,6 @@ const Home = () => {
   });
 
   const [tasks, setTasks] = useState([]);
-   const { updateFinance } = useContext(FinanceContext);
 
 
   useEffect(() => {
@@ -113,7 +112,7 @@ const Home = () => {
 
     fetchStats();
     fetchTasks();
-  }, );
+  }, []);
 
   const completeTask = async (taskKey) => {
     const token = localStorage.getItem("token");
