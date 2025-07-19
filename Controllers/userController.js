@@ -94,8 +94,8 @@ exports.signup = async (req, res) => {
     });
     const verifyToken = newUser.createEmailVerifyToken();
     await newUser.save({ validateBeforeSave: false });
-const verifyUrl = `http://localhost:5173/EmailConfirmation/${verifyToken}`;    const message = `
-      عزيزي ${newUser.nickname || 'المستخدم'}،
+    const verifyUrl = `http://localhost:5173/EmailConfirmation/${verifyToken}`;
+      `عزيزي ${newUser.nickname || 'المستخدم'}،
       شكراً لتسجيلك في ${process.env.APP_NAME}!
       يرجى النقر على الرابط التالي لتفعيل حسابك:
       ${verifyUrl}
