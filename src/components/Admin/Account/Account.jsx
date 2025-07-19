@@ -3,9 +3,9 @@ import { Container, Row, Col, Card, Badge, Image, Form, Button, ProgressBar } fr
 import { FaCrown, FaCamera,FaEdit, FaPiggyBank, FaMoon, FaTrash, FaLock, FaSignOutAlt, FaCog } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import "./Account.css";
 
-const Account = () => {
+
+const AdminAccount = () => {
   const [user, setUser] = useState({ nickname: 'صاحبى', email: 'sara.mahmoud@email.com', avatar: './jklj' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -234,81 +234,13 @@ const Account = () => {
             <div className="text-muted small">{user.email}</div>
             <Badge bg="warning" text="white" className="mt-1 d-inline-flex align-items-center">
               <FaCrown className="ms-1" />
-              Gold Member
+              Admin
             </Badge>
           </Col>
         </Row>
       </Card>
 
-      <Card className="budget" style={{ maxWidth: '896px', width: '95%', marginTop: '20px' }}>
-        <Row>
-          <h5 className="px-4 monthy" style={{ width: '100%' }}>
-            <img src="Account/Frame (13).svg" alt="budget icon" /> الميزانية الشهرية
-          </h5>
-          <Col xs={12} md={6} className="p-4" style={{ marginBottom: '20px' }}>
-            <Form.Group className="mb-3">
-              <Form.Label className="small now">الدخل الكلي</Form.Label>
-              <Form.Control
-                type="text"
-                readOnly
-                value={`${totalIncome} جنيه`}
-                style={{ backgroundColor: 'transparent', border: '1px solid #E5E7EB', paddingLeft: 0 }}
-                className="text-muted"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label className="small">الشهر</Form.Label>
-              <Form.Control
-                plaintext
-                readOnly
-                value={monthYearString}
-                style={{ backgroundColor: 'transparent', border: '1px solid #E5E7EB', paddingLeft: 0 }}
-              />
-            </Form.Group>
-            <Button
-              className="w-100 mt-2 rounded-3 update"
-              onClick={() => navigate('/planebudget')}
-            >
-              <img src="Account/svg.svg" alt="update icon" /> تحديث الميزانية
-            </Button>
-            <p className="text-muted mt-3 key">
-              "ميزانيتك هي مفتاح كل حاجة... ابدأ بيها صح 💪"
-            </p>
-          </Col>
-          <Col
-            xs={12}
-            md={6}
-            className="rounded-4 flex-column align-items-center justify-content-center text-center p-4 hala"
-            style={{ marginBottom: '20px' }}
-          >
-            <FaPiggyBank size={40} className="mb-2" style={{ color: '#6C5DD3' }} />
-            <h6 className="mb-3">حالة الميزانية</h6>
-            <div className="w-100">
-              <div className="d-flex justify-content-between px-2 small">
-                <span className="text-muted">المبلغ المصروف</span>
-                <span className="almasruf mablagh">{spent} جنيه</span>
-              </div>
-              <ProgressBar
-                now={percentage}
-                className="my-2"
-                style={{ height: "8px", borderRadius: "5px", backgroundColor: '#e0e0e0' }}
-              >
-                <ProgressBar
-                  now={percentage}
-                  style={{
-                    background: 'linear-gradient(90deg, #6C5DD3 0%, #00C48C 100%)',
-                    borderRadius: '5px'
-                  }}
-                />
-              </ProgressBar>
-              <div className="d-flex justify-content-between px-2 small">
-                <span className="text-muted">المتبقي</span>
-                <span className="almutabaqaa mablagh">{currentBalance} جنيه</span>
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </Card>
+     
 
       <div
         className="text-center m-4 fw-bold fs-5 setting"
@@ -354,41 +286,8 @@ const Account = () => {
         ))}
       </div>
 
-      <section className="achivements" style={{ maxWidth: '896px', width: '95%', marginTop: '50px' }}>
-        <div className="achivement pt-4" style={{ maxWidth: '848px', margin: '0 auto' }}>
-          <div>
-            <img src="Account/Vector.svg" alt="achivement icon" />
-          </div>
-          <p className="month text-white">إنجازاتك</p>
-          <div className="points pt-2" style={{
-            maxWidth: '848px',
-            margin: '0 auto',
-            height: 'auto'
-          }}>
-            <div style={{
-              width: '100%',
-              fontFamily: 'Cairo',
-              fontWeight: '400',
-              fontSize: '30px',
-              textAlign: 'center',
-              color: '#FFFFFF'
-            }}>{parsedUser?.points ?? 0}</div>
-            <div className="mt-2" style={{
-              width: '100%',
-              fontFamily: 'Cairo',
-              fontWeight: '400',
-              fontSize: '14px',
-              textAlign: 'center',
-              color: '#FFFFFF'
-            }}>نقطة توفير</div>
-          </div>
-          <button className="challengs" style={{ maxWidth: '414px',paddingBottom:'2rem' }} onClick={handleRedirect}>
-            <span>تحديات وشارات</span>
-          </button>
-        </div>
-      </section>
     </Container>
   );
 };
 
-export default Account;
+export default AdminAccount;

@@ -103,7 +103,6 @@ const Payment = () => {
           { headers: { Authorization: `${token}` } }
         );
   
-        alert("تم الدفع بنجاح");
         navigate("/home");
       } catch (err) {
         console.error(err);

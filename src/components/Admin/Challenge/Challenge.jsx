@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Modal, Form, Button, Image } from "react-bootstrap";
 import { AiOutlineSave } from "react-icons/ai";
 import axios from "axios";
-import './Challenge.css';
+import "./Challenge.css";
 
-const ChallengeModal = ({ show, handleClose }) => {
+const ChallengeModal = ({ show, handleClose, onAdd }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -14,6 +14,7 @@ const ChallengeModal = ({ show, handleClose }) => {
   });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -25,9 +26,10 @@ const ChallengeModal = ({ show, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const response = await axios.post(
-        '/api/challenges/',
+        "/api/challenges/",
         {
           title: formData.title,
           description: formData.description,
@@ -37,11 +39,11 @@ const ChallengeModal = ({ show, handleClose }) => {
         },
         {
           headers: {
-  Authorization: localStorage.getItem("token"),
-},
-
+            Authorization: localStorage.getItem("token"),
+          },
         }
       );
+      console.log("API Response:", response.data); // للتحقق من الاستجابة
       setSuccess("تم إنشاء التحدي بنجاح!");
       setError(null);
       setFormData({
@@ -51,13 +53,17 @@ const ChallengeModal = ({ show, handleClose }) => {
         rewardXP: 100,
         isActive: true,
       });
+      onAdd(response.data.data); // تمرير البيانات إلى ManageChallenge
       setTimeout(() => {
         handleClose();
         setSuccess(null);
       }, 2000);
     } catch (err) {
+      console.error("Error:", err);
       setError(err.response?.data?.message || "حدث خطأ أثناء إنشاء التحدي");
       setSuccess(null);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -69,8 +75,7 @@ const ChallengeModal = ({ show, handleClose }) => {
           إضافة تحدي جديد
         </Modal.Title>
       </Modal.Header>
-
-      <Modal.Body style={{ padding: '30px' }}>
+      <Modal.Body style={{ padding: "30px" }}>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-4">
             <Form.Label>
@@ -87,7 +92,6 @@ const ChallengeModal = ({ show, handleClose }) => {
               required
             />
           </Form.Group>
-
           <Form.Group className="mb-4">
             <Form.Label>
               <Image src="Admin/des.svg" alt="icon" className="me-2 m-2" />
@@ -104,7 +108,6 @@ const ChallengeModal = ({ show, handleClose }) => {
               required
             />
           </Form.Group>
-
           <Form.Group className="mb-4">
             <Form.Label>
               <Image src="Admin/time.svg" alt="icon" className="me-2 m-2" />
@@ -121,7 +124,6 @@ const ChallengeModal = ({ show, handleClose }) => {
               required
             />
           </Form.Group>
-
           <Form.Group className="mb-4">
             <Form.Label>
               <Image src="Admin/mo.svg" alt="icon" className="me-2 m-2" />
@@ -138,7 +140,6 @@ const ChallengeModal = ({ show, handleClose }) => {
               required
             />
           </Form.Group>
-
           <Form.Group className="mb-4">
             <Form.Label>الحالة</Form.Label>
             <div className="form-switch d-flex align-items-center gap-3">
@@ -152,16 +153,24 @@ const ChallengeModal = ({ show, handleClose }) => {
               <span style={{ color: "#A5B1CE" }}>تفعيل التحدي</span>
             </div>
           </Form.Group>
-
           {error && <div className="text-danger mb-3">{error}</div>}
           {success && <div className="text-success mb-3">{success}</div>}
-
           <div className="d-flex mt-5">
-            <Button variant="primary" type="submit" className="save-btn">
+            <Button
+              variant="primary"
+              type="submit"
+              className="save-btn"
+              disabled={isSubmitting}
+            >
               <AiOutlineSave className="me-1 m-2" />
-              حفظ التحدي
+              {isSubmitting ? "جاري الحفظ..." : "حفظ التحدي"}
             </Button>
-            <Button variant="secondary" onClick={handleClose} className="mx-2 close-btn">
+            <Button
+              variant="secondary"
+              onClick={handleClose}
+              className="mx-2 close-btn"
+              disabled={isSubmitting}
+            >
               إلغاء
               <Image src="Admin/close.svg" alt="icon" className="me-2 m-2" />
             </Button>

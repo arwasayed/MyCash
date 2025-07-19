@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Image, InputGroup, Button, Form } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 import axios from 'axios';
 import './Rename.css';
 
@@ -34,10 +35,8 @@ const Rename = () => {
       });
       setUser(res.data.data.user); 
       setNewName('');
-      alert('✅ تم حفظ الاسم الجديد بنجاح');
     } catch (err) {
       console.error('فشل الحفظ:', err);
-      alert('❌ حدث خطأ أثناء حفظ الاسم');
     }
   };
 
@@ -95,7 +94,7 @@ const Rename = () => {
 
           <div className="d-flex gap-2 mt-3 mb-3 buttons-row">
             <Button className="save-name" onClick={handleSave}>💾 حفظ التعديل</Button>
-            <Button className="cancel" onClick={() => setNewName('')}>إلغاء</Button>
+            <Link className="cancel " to="/account">إلغاء</Link>
           </div>
         </Form>
       </div>

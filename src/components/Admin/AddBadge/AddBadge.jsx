@@ -3,7 +3,7 @@ import { Modal, Form, Button, Image } from "react-bootstrap";
 import { AiOutlineSave } from "react-icons/ai";
 import axios from "axios";
 
-const AddBadgeModal = ({ show, handleClose }) => {
+const AddBadgeModal = ({ show, handleClose,onAdd }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -104,6 +104,7 @@ const AddBadgeModal = ({ show, handleClose }) => {
           },
         }
       );
+      
 
       const imageUrl = uploadResponse.data.url;
       console.log("Uploaded image URL:", imageUrl);
@@ -130,6 +131,7 @@ const AddBadgeModal = ({ show, handleClose }) => {
 
       setSuccess("تم إضافة الشارة بنجاح!");
       setError(null);
+      onAdd(response.data.data);
       setFormData({
         title: "",
         description: "",

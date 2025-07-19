@@ -2,84 +2,99 @@ import React, { useState, useEffect } from "react";
 import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Badge, Image, Form, Button, ProgressBar } from 'react-bootstrap';
-import axios from "axios"; 
+import { FaUserCircle } from 'react-icons/fa';
+import axios from "axios";
+
 const Navbar = () => {
-  const [user, setUser] = useState({ nickname: 'صاحبى', email: 'sara.mahmoud@email.com', avatar: './jklj' });
+  const [user, setUser] = useState({
+    nickname: 'صاحبى',
+    email: 'sara.mahmoud@email.com',
+    avatar: './jklj',
+    role: 'user'
+  });
   const [error, setError] = useState(null);
+  const [imageError, setImageError] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!localStorage.getItem("token")
   );
   const navigate = useNavigate();
 
-  // Update auth state when component mounts and when localStorage changes
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
+  // جلب بيانات المستخدم
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('لم يتم العثور على رمز التوثيق');
 
-        const response = await axios.get('http://localhost:3000/api/user/settings/me', {
-          headers: { Authorization: `${token}` },
-        });
-        const userrole = JSON.parse(localStorage.getItem('user'))?.role;
-        console.log(response);
+      const response = await axios.get('http://localhost:3000/api/user/settings/me', {
+        headers: { Authorization: `${token}` },
+      });
+      const userrole = JSON.parse(localStorage.getItem('user'))?.role;
 
-        setUser({
-          nickname: response.data.data.user.nickname,
-          email: response.data.data.user.email,
-          avatar: response.data.data.user.avatar || 'default-avatar.png',
-          role:userrole||'user'
-        });
-      } catch (err) {
-        console.error("navخطأ في جلب بيانات المستخدم:", err.message);
-        setError('navفشل جلب بيانات المستخدم');
-      }
-    };
+      setUser({
+        nickname: response.data.data.user.nickname,
+        email: response.data.data.user.email,
+        avatar: response.data.data.user.avatar || 'default-avatar.png',
+        role: userrole || 'user'
+      });
+      setImageError(false);
+    } catch (err) {
+      console.error("خطأ في جلب بيانات المستخدم:", err.message);
+      setError('فشل جلب بيانات المستخدم');
+    }
+  };
 
-    fetchUserData();
+  // تحديث حالة التوثيق وبيانات المستخدم
+useEffect(() => {
+  fetchUserData();
 
-    const checkAuth = () => {
-      setIsAuthenticated(!!localStorage.getItem("token"));
-      const userData = JSON.parse(localStorage.getItem("user"));
-      if (userData) {
-        setUser(prev => ({
-          ...prev,
-          role: userData.role || 'user'
-        }));}
-    };
+  // جلب البيانات كل 30 ثانية
+  const interval = setInterval(fetchUserData, 1000);
 
-    // Check immediately
-    checkAuth();
+  const checkAuth = () => {
+    setIsAuthenticated(!!localStorage.getItem("token"));
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (userData) {
+      setUser(prev => ({
+        ...prev,
+        role: userData.role || 'user'
+      }));
+    }
+  };
 
-    // Listen for storage events
-    const handleStorageChange = () => {
-      checkAuth();
-    };
+  checkAuth();
 
-    window.addEventListener("storage", handleStorageChange);
-    
-    // Also listen for custom event that we'll trigger after login
-    window.addEventListener("authChange", checkAuth);
+  window.addEventListener("storage", checkAuth);
+  window.addEventListener("authChange", checkAuth);
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("authChange", checkAuth);
-    };
-  }, []);
+  return () => {
+    clearInterval(interval); // تنظيف الاستعلام الدوري
+    window.removeEventListener("storage", checkAuth);
+    window.removeEventListener("authChange", checkAuth);
+  };
+}, []);
 
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsAuthenticated(false);
-    // Dispatch custom event to notify other tabs/windows
     window.dispatchEvent(new Event("authChange"));
-    navigate("/"); // Redirect to home page
+    navigate("/");
   };
+
   const isRegularUser = isAuthenticated && user.role === "user";
+
+  // بناء رابط الصورة
+  const getAvatarUrl = () => {
+    if (!user.avatar || imageError) return null;
+    if (user.avatar.startsWith('http')) return user.avatar;
+    if (user.avatar.startsWith('/')) return `http://localhost:3000${user.avatar}?t=${Date.now()}`;
+    return `/Uploads/${user.avatar}?t=${Date.now()}`;
+  };
+
   return (
     <>
-      {/* Desktop Navbar */}
+      {/* شريط التنقل لسطح المكتب */}
       <nav
         className="navbar navbar-expand-lg bg-white shadow-sm fixed-top d-none d-lg-flex"
         dir="rtl"
@@ -88,7 +103,6 @@ const Navbar = () => {
           className="container-fluid d-flex align-items-center justify-content-between"
           style={{ direction: "rtl" }}
         >
-          {/* Right Side - Brand Logo */}
           <div className="d-flex">
             <Link
               to={isAuthenticated ? "/home" : "/"}
@@ -103,7 +117,6 @@ const Navbar = () => {
             </Link>
           </div>
           
-          {/* Center - Navigation Links (only when authenticated) */}
           {isRegularUser && (
             <div className="position-absolute start-50 translate-middle-x">
               <ul className="navbar-nav flex-row gap-4">
@@ -124,7 +137,7 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/game">
-                    الألعاب
+                    التحديات والشارات
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -146,7 +159,6 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Left Side - Auth Links */}
           <div className="d-flex">
             {!isAuthenticated ? (
               <div className="d-flex align-items-center">
@@ -170,30 +182,31 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="d-flex align-items-center gap-3 ms-auto">
-                <Image
-                src={
-                  user.avatar.startsWith('http')
-                    ? user.avatar
-                    : user.avatar.startsWith('/')
-                    ? `http://localhost:3000${user.avatar}?t=${Date.now()}`
-                    : `/Uploads/${user.avatar}?t=${Date.now()}`
-                }
-                roundedCircle
-                width={60}
-                height={60}
-                style={{ objectFit: 'cover' }}
-              />
+                {getAvatarUrl() && !imageError ? (
+                  <Image
+                    src={getAvatarUrl()}
+                    roundedCircle
+                    width={60}
+                    height={60}
+                    style={{ objectFit: 'cover' }}
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <FaUserCircle size={60} style={{ color: '#6c5dd3' }} />
+                )}
                 <span className="icon-notification" title="الإشعارات">
-                <Link className="nav-link" to="/notification">
-                  🔔
-                </Link>
+                  <Link className="nav-link" to="/notification">
+                    🔔
+                  </Link>
                 </span>
                 <span className="icon-settings" title="الإعدادات">
-                <Link className="nav-link" to="/account">
+                  <Link
+                    className="nav-link"
+                    to={user.role === 'admin' ? '/admin-account' : '/account'}
+                  >
                     ⚙️
-                </Link>
+                  </Link>
                 </span>
-                {/* <div className="d-flex align-items-center gap-3"> */}
                 <button
                   onClick={handleLogout}
                   className="auth-link border-0 bg-transparent"
@@ -201,14 +214,13 @@ const Navbar = () => {
                 >
                   تسجيل خروج
                 </button>
-                {/* </div> */}
               </div>
             )}
           </div>
         </div>
       </nav>
 
-      {/* Mobile Navbar */}
+      {/* شريط التنقل للجوال */}
       <nav
         className="navbar bg-white shadow-sm fixed-top d-flex d-lg-none"
         dir="ltr"
@@ -238,7 +250,6 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Sidebar */}
         <div
           className="offcanvas offcanvas-end"
           tabIndex="-1"
@@ -278,7 +289,7 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/game">
-                    الألعاب
+                    التحديات والشارات
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -311,6 +322,18 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="d-flex flex-column align-items-center gap-3 justify-content-center mt-3">
+                {getAvatarUrl() && !imageError ? (
+                  <Image
+                    src={getAvatarUrl()}
+                    roundedCircle
+                    width={60}
+                    height={60}
+                    style={{ objectFit: 'cover' }}
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <FaUserCircle size={60} style={{ color: '#6c5dd3' }} />
+                )}
                 <button
                   onClick={handleLogout}
                   className="auth-link border-0 bg-transparent mt-2"

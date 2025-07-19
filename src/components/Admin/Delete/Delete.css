@@ -1,6 +1,6 @@
 .Delete-model{
-  width: 512px;
-height: 562px;
+  width: 512px !important;
+height: 562px !important;
 angle: 0 deg;
 opacity: 1;
 border-radius: 20px;
@@ -45,16 +45,17 @@ color: #374151;
 
 .btns{
     width: 100%;
-   max-width: 700px;
+   
 height: 48px;
 angle: 0 deg;
 opacity: 1;
-margin-right: 10px;
+
 margin-top: 80px;
+
 }
 .yes-btn{
-   width: 194px;
-height: 48px;
+   width: 180px !important;
+height: 48px !important;
 
 opacity: 1;
 border-radius: 8px;
@@ -63,7 +64,7 @@ border-radius: 8px;
 
 }
 .no-btn{
-  width: 194px;
+  width: 180px !important;
 height: 48px;
 
 opacity: 1;
@@ -71,4 +72,8 @@ border-radius: 8px;
 background: #6B7280;
 
   border: 1px solid #E5E7EB
+}
+.circle{
+  width: 96px !important;
+  height: 96px !important;
 }

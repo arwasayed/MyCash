@@ -3,72 +3,52 @@ import { Modal, Form, Button, Image } from "react-bootstrap";
 import { AiOutlineSave } from "react-icons/ai";
 import axios from "axios";
 
-const UpdateBadgeModel = ({ show, handleClose }) => {
-  const [badges, setBadges] = useState([]);
-  const [selectedBadgeId, setSelectedBadgeId] = useState("");
+const UpdateBadgeModal = ({ show, handleClose, badge, onUpdate }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     challengeId: "",
   });
-  const [file, setFile] = useState(null); 
-  const [imagePreview, setImagePreview] = useState(null); 
+  const [file, setFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [challenges, setChallenges] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // تحميل بيانات الشارة وجلب التحديات عند فتح النافذة
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("برجاء تسجيل الدخول كـ admin أولاً");
-          return;
+    if (show && badge) {
+      // تحميل بيانات الشارة من prop
+      setFormData({
+        title: badge.title || "",
+        description: badge.description || "",
+        challengeId: badge.challengeId || "",
+      });
+      setImagePreview(badge.iconUrl || null);
+      setFile(null);
+      setError(null);
+      setSuccess(null);
+
+      // جلب التحديات
+      const fetchChallenges = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            setError("برجاء تسجيل الدخول كـ admin أولاً");
+            return;
+          }
+          const response = await axios.get("http://localhost:3000/api/challenges", {
+            headers: { Authorization: token },
+          });
+          setChallenges(response.data.data || []);
+        } catch (err) {
+          setError(err.response?.data?.message || "حدث خطأ أثناء جلب التحديات");
         }
-        const challengesResponse = await axios.get("http://localhost:3000/api/challenges", {
-          headers: { Authorization: token },
-        });
-        setChallenges(challengesResponse.data.data || []);
-
-        const badgesResponse = await axios.get("http://localhost:3000/api/badges", {
-          headers: { Authorization: token },
-        });
-        setBadges(badgesResponse.data.data || []);
-      } catch (err) {
-        setError(err.response?.data?.message || "حدث خطأ أثناء جلب البيانات");
-      }
-    };
-    if (show) {
-      fetchData();
+      };
+      fetchChallenges();
     }
-  }, [show]);
-
-  const handleBadgeSelect = (e) => {
-    const badgeId = e.target.value;
-    setSelectedBadgeId(badgeId);
-    const selectedBadge = badges.find((badge) => badge._id === badgeId);
-    if (selectedBadge) {
-      setFormData({
-        title: selectedBadge.title || "",
-        description: selectedBadge.description || "",
-        challengeId: selectedBadge.challengeId || "",
-      });
-      setImagePreview(selectedBadge.iconUrl || null);
-      setFile(null);
-    } else {
-      setFormData({
-        title: "",
-        description: "",
-        challengeId: "",
-        isActive: true,
-      });
-      setImagePreview(null);
-      setFile(null);
-    }
-    setError(null);
-    setSuccess(null);
-  };
+  }, [show, badge]);
 
   // تحديث بيانات الفورم
   const handleChange = (e) => {
@@ -79,6 +59,7 @@ const UpdateBadgeModel = ({ show, handleClose }) => {
     });
   };
 
+  // معالجة تغيير الصورة
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -96,6 +77,8 @@ const UpdateBadgeModel = ({ show, handleClose }) => {
       setImagePreview(null);
     }
   };
+
+  // دالة رفع الصورة
   const uploadImage = async (file) => {
     const token = localStorage.getItem("token");
     const data = new FormData();
@@ -111,11 +94,11 @@ const UpdateBadgeModel = ({ show, handleClose }) => {
     return res.data.url;
   };
 
+  // معالجة إرسال الفورم
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!selectedBadgeId) {
-      setError("من فضلك اختاري شارة لتعديلها");
+    if (!badge?._id) {
+      setError("لا توجد شارة لتعديلها");
       return;
     }
     if (!formData.title.trim()) {
@@ -124,10 +107,6 @@ const UpdateBadgeModel = ({ show, handleClose }) => {
     }
     if (!formData.description.trim()) {
       setError("برجاء إدخال وصف الشارة");
-      return;
-    }
-    if (!formData.challengeId) {
-      setError("برجاء اختيار تحدي صالح");
       return;
     }
 
@@ -140,40 +119,37 @@ const UpdateBadgeModel = ({ show, handleClose }) => {
     setIsLoading(true);
     setError(null);
     setSuccess(null);
-
     try {
       let iconUrl = imagePreview;
       if (file) {
         iconUrl = await uploadImage(file);
       }
-
-    const payload = {
-  title: formData.title.trim(),
-  description: formData.description.trim(),
-  iconUrl,
-};
-
-if (formData.challengeId && formData.challengeId.trim() !== "") {
-  payload.challengeId = formData.challengeId;
-}
-
-
-      await axios.put(`http://localhost:3000/api/badges/${selectedBadgeId}`, payload, {
-        headers: {
-          Authorization: token,
-        },
+      const payload = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        iconUrl,
+      };
+      if (formData.challengeId && formData.challengeId.trim() !== "") {
+        payload.challengeId = formData.challengeId;
+      }
+      const response = await axios.put(`http://localhost:3000/api/badges/${badge._id}`, payload, {
+        headers: { Authorization: token },
       });
+      console.log("Update badge response:", response.data);
 
       setSuccess("تم تحديث الشارة بنجاح!");
+      setError(null);
+
+      // استدعاء onUpdate مع بيانات الشارة المحدثة
+      onUpdate(badge._id, response.data.data || payload);
+
       setFormData({
         title: "",
         description: "",
         challengeId: "",
-        isActive: true,
       });
       setFile(null);
       setImagePreview(null);
-      setSelectedBadgeId("");
       setTimeout(() => {
         handleClose();
         setSuccess(null);
@@ -197,26 +173,6 @@ if (formData.challengeId && formData.challengeId.trim() !== "") {
 
       <Modal.Body style={{ padding: "30px" }}>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-4">
-            <Form.Label>
-              <Image src="Admin/badge.svg" alt="icon" className="me-2 m-2" />
-              اختر الشارة
-            </Form.Label>
-            <Form.Select
-              value={selectedBadgeId}
-              onChange={handleBadgeSelect}
-              className="bg-light-purple"
-              disabled={isLoading}
-            >
-              <option value="">اختر شارة...</option>
-              {badges.map((badge) => (
-                <option key={badge._id} value={badge._id}>
-                  {badge.title}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
           <Form.Group className="mb-4">
             <Form.Label>
               <Image src="Admin/badge.svg" alt="icon" className="me-2 m-2" />
@@ -298,7 +254,6 @@ if (formData.challengeId && formData.challengeId.trim() !== "") {
             )}
           </Form.Group>
 
-
           {error && <div className="text-danger mb-3">{error}</div>}
           {success && <div className="text-success mb-3">{success}</div>}
 
@@ -322,4 +277,4 @@ if (formData.challengeId && formData.challengeId.trim() !== "") {
   );
 };
 
-export default UpdateBadgeModel;
+export default UpdateBadgeModal;

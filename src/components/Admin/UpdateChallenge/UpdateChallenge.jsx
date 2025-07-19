@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form, Button, Image } from "react-bootstrap";
-import { FaGift, FaLock, FaQuestionCircle, FaUserEdit } from "react-icons/fa";
 import { AiOutlineSave } from "react-icons/ai";
 import axios from "axios";
 
-const UpdateChallengeModal = ({ show, handleClose }) => {
-  const [challenges, setChallenges] = useState([]);
-  const [selectedChallengeId, setSelectedChallengeId] = useState("");
+const UpdateChallengeModal = ({ show, handleClose, onUpdate, challenge }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -18,106 +15,64 @@ const UpdateChallengeModal = ({ show, handleClose }) => {
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // جلب التحديات من الـ API
   useEffect(() => {
-    const fetchChallenges = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("برجاء تسجيل الدخول كـ admin أولاً");
-          return;
-        }
-        const response = await axios.get("/api/challenges", {
-          headers: {
-            Authorization: token,
-          },
-        });
-        setChallenges(response.data.data);
-      } catch (err) {
-        setError(err.response?.data?.message || "حدث خطأ أثناء جلب التحديات");
-      }
-    };
-    if (show) {
-      fetchChallenges();
+    if (challenge) {
+      setFormData({
+        title: challenge.title || "",
+        description: challenge.description || "",
+        durationDays: challenge.durationDays || 7,
+        rewardXP: challenge.rewardXP || 100,
+        isActive: challenge.isActive !== undefined ? challenge.isActive : true,
+      });
     }
-  }, [show]);
+  }, [challenge, show]);
 
-  // ملء الفورم ببيانات التحدي المختار
-  const handleChallengeSelect = (e) => {
-    const challengeId = e.target.value;
-    setSelectedChallengeId(challengeId);
-    const selectedChallenge = challenges.find(
-      (challenge) => challenge._id === challengeId
-    );
-    if (selectedChallenge) {
-      setFormData({
-        title: selectedChallenge.title,
-        description: selectedChallenge.description,
-        durationDays: selectedChallenge.durationDays || 7,
-        rewardXP: selectedChallenge.rewardXP || 100,
-        isActive: selectedChallenge.isActive,
-      });
-    } else {
-      setFormData({
-        title: "",
-        description: "",
-        durationDays: 7,
-        rewardXP: 100,
-        isActive: true,
-      });
-    }
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : type === "number" ? Number(value) : value,
+    });
   };
 
-const handleChange = (e) => {
-  const { name, value, type, checked } = e.target;
-  setFormData({
-    ...formData,
-    [name]: type === "checkbox" ? checked : value,
-  });
-};
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedChallengeId) {
-      setError("من فضلك اختاري تحدي لتعديله");
-      return;
-    }
     const token = localStorage.getItem("token");
     if (!token) {
       setError("برجاء تسجيل الدخول كـ admin أولاً");
       return;
     }
+    if (!challenge?._id) {
+      setError("لا يوجد تحدي محدد للتعديل");
+      return;
+    }
     setIsLoading(true);
     try {
       const response = await axios.put(
-        `/api/challenges/${selectedChallengeId}`,
+        `http://localhost:3000/api/challenges/${challenge._id}`,
         {
           title: formData.title,
           description: formData.description,
-          durationDays: Number(formData.durationDays),
-          rewardXP: Number(formData.rewardXP),
+          durationDays: formData.durationDays,
+          rewardXP: formData.rewardXP,
           isActive: formData.isActive,
         },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+        { headers: { Authorization: token } }
       );
+      console.log("API Response:", response.data); // للتحقق من الاستجابة
       setSuccess("تم تحديث التحدي بنجاح!");
       setError(null);
-      setFormData({
-        title: "",
-        description: "",
-        durationDays: 7,
-        rewardXP: 100,
-        isActive: true,
+      // تمرير البيانات المحدثة إلى المكون الأب
+      onUpdate(challenge._id, {
+        ...formData,
+        _id: challenge._id,
       });
-      setSelectedChallengeId("");
       setTimeout(() => {
         handleClose();
         setSuccess(null);
-      }, 2000);
+      }, 1000);
     } catch (err) {
+      console.error("خطأ في طلب PUT:", err.response?.data || err.message);
       setError(err.response?.data?.message || "حدث خطأ أثناء تحديث التحدي");
       setSuccess(null);
     } finally {
@@ -134,28 +89,8 @@ const handleChange = (e) => {
         </Modal.Title>
       </Modal.Header>
 
-      <Modal.Body style={{ padding: '30px' }}>
+      <Modal.Body style={{ padding: "30px" }}>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-4">
-            <Form.Label>
-              <Image src="Admin/name.svg" alt="icon" className="me-2 m-2" />
-              اختر التحدي
-            </Form.Label>
-            <Form.Select
-              value={selectedChallengeId}
-              onChange={handleChallengeSelect}
-              className="bg-light-purple"
-              disabled={isLoading}
-            >
-              <option value="">اختر تحدي...</option>
-              {challenges.map((challenge) => (
-                <option key={challenge._id} value={challenge._id}>
-                  {challenge.title}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
           <Form.Group className="mb-4">
             <Form.Label>
               <Image src="Admin/name.svg" alt="icon" className="me-2 m-2" />
@@ -193,7 +128,7 @@ const handleChange = (e) => {
 
           <Form.Group className="mb-4">
             <Form.Label>
-              <Image src="Admin/time.svg" alt="icon" className="me-2m-2" />
+              <Image src="Admin/time.svg" alt="icon" className="me-2 m-2" />
               <span className="title"> عدد أيام التحدي</span>
             </Form.Label>
             <Form.Control

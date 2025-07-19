@@ -8,6 +8,9 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -24,7 +27,7 @@ const ChangePassword = () => {
       const token = localStorage.getItem('token');
 
       const response = await fetch('/api/user/settings/change-password', {
-        method: 'POST', 
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: ` ${token}`
@@ -51,6 +54,16 @@ const ChangePassword = () => {
     }
   };
 
+  const togglePasswordVisibility = (field) => {
+    if (field === 'current') {
+      setShowCurrentPassword(!showCurrentPassword);
+    } else if (field === 'new') {
+      setShowNewPassword(!showNewPassword);
+    } else if (field === 'confirm') {
+      setShowConfirmPassword(!showConfirmPassword);
+    }
+  };
+
   return (
     <Container fluid className="forgot-container d-flex justify-content-center align-items-center">
       <div className="reset-box1 text-center rounded">
@@ -63,9 +76,9 @@ const ChangePassword = () => {
           <Form onSubmit={handleSubmit} className="resetpass">
             <Form.Group className="mb-3">
               <Form.Label>🔑 كلمة المرور الحالية</Form.Label>
-              <div className="input-wrapper">
+              <div className="input-wrapper position-relative">
                 <Form.Control
-                  type="password"
+                  type={showCurrentPassword ? 'text' : 'password'}
                   placeholder="ادخل كلمة المرور الحالية"
                   value={currentPassword}
                   className="custom-placeholder"
@@ -73,15 +86,21 @@ const ChangePassword = () => {
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   required
                 />
-                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
+                <img
+                  src="/images/Frame (5).svg"
+                  alt="eye icon"
+                  className="input-icon position-absolute"
+                  style={{ cursor: 'pointer', top: '50%', transform: 'translateY(-50%)', left: '10px' }}
+                  onClick={() => togglePasswordVisibility('current')}
+                />
               </div>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>🔑 كلمة السر الجديدة</Form.Label>
-              <div className="input-wrapper">
+              <div className="input-wrapper position-relative">
                 <Form.Control
-                  type="password"
+                  type={showNewPassword ? 'text' : 'password'}
                   placeholder="أدخل كلمة السر الجديدة"
                   value={newPassword}
                   className="custom-placeholder"
@@ -89,15 +108,21 @@ const ChangePassword = () => {
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                 />
-                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
+                <img
+                  src="/images/Frame (5).svg"
+                  alt="eye icon"
+                  className="input-icon position-absolute"
+                  style={{ cursor: 'pointer', top: '50%', transform: 'translateY(-50%)', left: '10px' }}
+                  onClick={() => togglePasswordVisibility('new')}
+                />
               </div>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>🔑 تأكيد كلمة السر</Form.Label>
-              <div className="input-wrapper">
+              <div className="input-wrapper position-relative">
                 <Form.Control
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="أعد إدخال كلمة السر"
                   value={confirmPassword}
                   className="custom-placeholder"
@@ -105,7 +130,13 @@ const ChangePassword = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
+                <img
+                  src="/images/Frame (5).svg"
+                  alt="eye icon"
+                  className="input-icon position-absolute"
+                  style={{ cursor: 'pointer', top: '50%', transform: 'translateY(-50%)', left: '10px' }}
+                  onClick={() => togglePasswordVisibility('confirm')}
+                />
               </div>
             </Form.Group>
 

@@ -5,12 +5,15 @@ import UpdateChallengeModal from "../UpdateChallenge/UpdateChallenge";
 import DeleteConfirmModal from "../Delete/Delete";
 import AddBadgeModel from "../AddBadge/AddBadge";
 import UpdateBadgeModel from "../UpdateBadge/UpdateBadge";
+import axios from "axios";
 
 const svgIcon = (name) => `/Admin UI/${name}`;
 
 
 // ChallengeCard component
-function ChallengeCard({ challenge, onDelete , apiRequest}) {
+function ChallengeCard({ challenge, onDelete , onUpdate}) {
+  console.log("ChallengeCard props.challenge:", challenge);
+
 
   const [updateChallengModel, setUpdateChallengModel] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,17 +29,18 @@ function ChallengeCard({ challenge, onDelete , apiRequest}) {
     setDeleteTarget(null);
   };
 
+  
+
   const handleDeleteConfirm = async () => {
     if (deleteTarget === "challenge") {
-
       try {
-        const response = await apiRequest(`/api/challenges/${challenge._id}`, "DELETE");
-        if (response && response.ok) {
-          console.log("تم حذف التحدي");
-          onDelete(challenge._id); // Notify parent to remove challenge from state
-        } else {
-          console.error("فشل في حذف التحدي");
-        }
+        const response = await axios.delete(`/api/challenges/${challenge._id}`, {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        });
+        console.log("API Response:", response.data);
+        onDelete(challenge._id); // إعلام المكون الأب بحذف التحدي
       } catch (err) {
         console.error("خطأ:", err.message);
       }
@@ -45,6 +49,7 @@ function ChallengeCard({ challenge, onDelete , apiRequest}) {
   };
 
   const handleUpdate = (updatedData) => {
+     console.log("ChallengeCard handleUpdate called with:", updatedData);
     onUpdate(challenge._id, updatedData);
     setUpdateChallengModel(false);
   };
@@ -224,8 +229,7 @@ function ChallengeCard({ challenge, onDelete , apiRequest}) {
 }
 
 // BadgeCard component
-function BadgeCard({ badge, idx, onDelete,apiRequest }) {
-
+function BadgeCard({ badge, idx, onDelete,onUpdate }) {
   const [UpdateBadge, setUpdateBadgeModel] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -240,20 +244,20 @@ function BadgeCard({ badge, idx, onDelete,apiRequest }) {
     setDeleteTarget(null);
   };
 
-  const handleDeleteConfirm = async () => {
+
+const handleDeleteConfirm = async () => {
     if (deleteTarget === "badge") {
       try {
-        const response = await apiRequest(`/api/badges/${badge._id}`, "DELETE");
-        if (response && response.ok) {
-          console.log("تم حذف البادج");
-          onDelete(badge._id); // Notify parent to remove badge from state
-        } else {
-          console.error("فشل في حذف البادج");
-        }
+        const response = await axios.delete(`/api/badges/${badge._id}`, {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        });
+        console.log("API Response:", response.data);
+        onDelete(badge._id);// إعلام المكون الأب بحذف التحدي
       } catch (err) {
         console.error("خطأ:", err.message);
       }
-
     }
     closeDeleteModal();
   };
@@ -392,65 +396,122 @@ const ManageChallenge = () => {
     window.location.href = "/login";
   };
 
-  const apiRequest = async (url, method = "GET", body = null) => {
+  // const apiRequest = async (url, method = "GET", body = null) => {
+  //   const token = localStorage.getItem("token");
+  //   const headers = {
+  //     Authorization: token,
+  //     "Content-Type": "application/json",
+  //   };
+
+  //   const config = {
+  //     method,
+  //     headers,
+  //   };
+
+  //   if (body) {
+  //     config.body = JSON.stringify(body);
+  //   }
+
+  //   const response = await fetch(url, config);
+
+  //   if (response.status === 401) {
+  //     handleLogout();
+  //     return null;
+  //   }
+
+  //   return response;
+  // };
+
+ const fetchChallenges = async () => {
+    try {
+      const response = await axios.get("/api/challenges", {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      });
+      setChallenges(response.data.data || []);
+    } catch (err) {
+      setError(err.response?.data?.message || "فشل في جلب بيانات التحديات");
+    }
+  };
+const fetchBadges = async () => {
+  try {
     const token = localStorage.getItem("token");
-    const headers = {
-      Authorization: token,
-      "Content-Type": "application/json",
-    };
-
-    const config = {
-      method,
-      headers,
-    };
-
-    if (body) {
-      config.body = JSON.stringify(body);
-    }
-
-    const response = await fetch(url, config);
-
-    if (response.status === 401) {
+    if (!token) {
       handleLogout();
-      return null;
+      return;
     }
-
-    return response;
-  };
-
-  const fetchChallenges = async () => {
-    try {
-      const response = await apiRequest("/api/challenges");
-      if (!response) return;
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في جلب بيانات التحديات");
+    const response = await axios.get("http://localhost:3000/api/badges", {
+      headers: {
+        Authorization: token,
+      },
+    });
+    console.log("Badges API Response:", response.data); // للتحقق من الاستجابة
+    setBadges(response.data.data || response.data || []); // دعم بنية استجابة مختلفة
+    setError(null); // إعادة تعيين الخطأ عند النجاح
+  } catch (err) {
+    console.error("Error fetching badges:", err);
+    let errorMessage = "فشل في جلب بيانات الشارات";
+    if (err.response) {
+      if (err.response.status === 401) {
+        handleLogout();
+        errorMessage = "جلسة منتهية، يرجى تسجيل الدخول مرة أخرى";
+      } else if (err.response.status === 404) {
+        errorMessage = "مسار الشارات غير موجود";
+      } else {
+        errorMessage = err.response.data?.message || errorMessage;
       }
-
-      setChallenges(data.data || []);
-    } catch (err) {
-      setError(err.message);
+    } else if (err.request) {
+      errorMessage = "فشل الاتصال بالخادم، تحقق من تشغيل الخادم على http://localhost:3000";
     }
-  };
+    setError(errorMessage);
+  }
+};
 
-  const fetchBadges = async () => {
-    try {
-      const response = await apiRequest("/api/badges");
-      if (!response) return;
+  const handleAddChallenge = async (newChallenge) => {
+  try {
+  
+      await fetchChallenges(); // إعادة جلب التحديات من الخادم
+      setShowChallengeModal(false);
 
-      const data = await response.json();
+  } catch (err) {
+    console.error("خطأ:", err.message);
+  }
+};
 
-      if (!response.ok) {
-        throw new Error(data.message || "فشل في جلب بيانات الشارات");
-      }
+const handleAddBadge = async (newBadge) => {
+  try {
+  
+    console.log("Adding new badge:", newBadge);
+      await fetchBadges(); // إعادة جلب الشارات من الخادم
+      setShowBadgeModal(false);
+ 
+  } catch (err) {
+    console.error("خطأ:", err.message);
+  }
+};
 
-      setBadges(data.data || []);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+
+const handleUpdateChallenge = (challengeId, updatedChallenge) => {
+  console.log('🔄 Updating challenge in state:', challengeId, updatedChallenge);
+
+  setChallenges(prev =>
+    prev.map(ch => (ch._id === challengeId ? { ...ch, ...updatedChallenge } : ch))
+  );
+  fetchChallenges();
+};
+
+
+const handleUpdateBadge = (badgeId, updatedData) => {
+  console.log("Updating badge:", badgeId, updatedData);
+  setBadges(
+    badges.map((badge) =>
+      badge._id === badgeId ? { ...badge, ...updatedData } : badge
+    )
+  );
+   fetchBadges();
+};
+
   const handleDeleteChallenge = (challengeId) => {
     setChallenges(challenges.filter((challenge) => challenge._id !== challengeId));
   };
@@ -557,9 +618,8 @@ const ManageChallenge = () => {
             <ChallengeCard
               key={challenge._id}
               challenge={challenge}
-
-              onDelete={handleDeleteChallenge}
-              apiRequest={apiRequest}
+  onDelete={handleDeleteChallenge}
+onUpdate={handleUpdateChallenge}
 
             />
           ))
@@ -605,11 +665,10 @@ const ManageChallenge = () => {
             badges.map((badge, idx) => (
               <div className="col-12 col-md-6 col-lg-4" key={badge._id}>
                 <BadgeCard
-                  badge={badge}
-                  idx={idx}
-
-                  onDelete={handleDeleteBadge}
-                  apiRequest={apiRequest}
+                 badge={badge}
+  idx={idx}
+  onDelete={handleDeleteBadge}
+onUpdate={handleUpdateBadge}
                 />
               </div>
             ))
@@ -640,13 +699,13 @@ const ManageChallenge = () => {
       <ChallengeModal
         show={showChallengeModal}
         handleClose={() => setShowChallengeModal(false)}
-        onSubmit={addChallenge}
+        onAdd={handleAddChallenge}
       />
 
       <AddBadgeModel
         show={showBadgeModal}
         handleClose={() => setShowBadgeModal(false)}
-        onSubmit={addBadge}
+        onAdd={handleAddBadge}
       />
     </div>
   );

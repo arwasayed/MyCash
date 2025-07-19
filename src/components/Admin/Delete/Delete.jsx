@@ -20,7 +20,7 @@ const DeleteConfirmModal = ({ show, onCancel, onConfirm }) => {
           هل أنت متأكد من الرغبة في حذف ؟ لا يمكن التراجع عن هذا الإجراء.
         </p>
         <div
-          className="mx-auto mb-4"
+          className="mx-auto mb-4 circle"
           style={{
             width: "96px",
             height: "96px",
@@ -31,35 +31,35 @@ const DeleteConfirmModal = ({ show, onCancel, onConfirm }) => {
             alignItems: "center",
             color: "#842029",
             marginBottom: "30px",
+            
           }}
         >
           <ExclamationTriangleFill size={32} color="#EF4444"  />
         </div>
+<Row className="btns d-flex justify-content-between">
+  <Col md={6}>
+    <Button
+      variant="danger"
+      className="w-100 d-flex justify-content-center align-items-center yes-btn"
+      onClick={onConfirm}
+    >
+      <TrashFill className="ms-2" />
+      نعم، احذف
+    </Button>
+  </Col>
 
-        <Row className="btns">
-               <Col>
-            <Button
-              variant="danger"
-              className=" d-flex justify-content-center align-items-center yes-btn"
-              onClick={onConfirm}
-            >
-                 <TrashFill className="ms-2" />
-              نعم، احذف
-             
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              variant="secondary"
-              className=" d-flex justify-content-center align-items-center no-btn"
-              onClick={onCancel}
-            >
-              <X className="me-2" size={20}/>
-              إلغاء
-            </Button>
-          </Col>
-       
-        </Row>
+  <Col md={6}>
+    <Button
+      variant="secondary"
+      className="w-100 d-flex justify-content-center align-items-center no-btn"
+      onClick={onCancel}
+    >
+      <X className="me-2" size={20} />
+      إلغاء
+    </Button>
+  </Col>
+</Row>
+
       </Modal.Body>
     </Modal>
   );

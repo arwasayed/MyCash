@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Form, Button } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+import AppearPassIcon from "/Register2/icons/AppearPass.svg";
 import axios from 'axios';
 import './ResetPassword2.css';
 
@@ -11,6 +12,9 @@ const ResetPassword2 = () => {
   const [error, setError] = useState(null);
   const { token } = useParams();
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +27,6 @@ const ResetPassword2 = () => {
     }
 
     try {
-      // استخدم رابط نسبي يبدأ بـ /api فقط
       const response = await axios.patch(`/api/user/reset-password/${token}`, {
         password,
         passwordConfirm: confirmPassword,
@@ -35,11 +38,10 @@ const ResetPassword2 = () => {
           navigate('/login');
         }, 2000);
       }
-    }catch (err) {
-  console.log('Error Response:', err.response);
-  setError(err.response?.data?.message || 'حدث خطأ أثناء تحديث كلمة المرور. حاول مرة أخرى.');
-}
-
+    } catch (err) {
+      console.log('Error Response:', err.response);
+      setError(err.response?.data?.message || 'حدث خطأ أثناء تحديث كلمة المرور. حاول مرة أخرى.');
+    }
   };
 
   return (
@@ -54,48 +56,70 @@ const ResetPassword2 = () => {
           <Form onSubmit={handleSubmit} className="resetpass">
             <Form.Group className="mb-3">
               <Form.Label>🔑 كلمة السر الجديدة</Form.Label>
-              <div className="input-wrapper">
+              <div className="input-wrapper" style={{ position: 'relative' }}>
                 <Form.Control
-                  type="password"
-                  placeholder="أدخل كلمة السر الجديدة"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="أدخل كلمة المرور"
                   value={password}
-                  className="custom-placeholder"
-                  dir="rtl"
                   onChange={(e) => setPassword(e.target.value)}
-                  required
+                  style={{ paddingLeft: 40, paddingRight: 40 }}
                 />
-                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
+                <img
+                  src={AppearPassIcon}
+                  alt="show/hide password"
+                  style={{
+                    position: "absolute",
+                    left: 10,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                    width: 24,
+                    height: 24,
+                  }}
+                  onClick={() => setShowPassword(prev => !prev)}
+                />
               </div>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>🔑 تأكيد كلمة السر</Form.Label>
-              <div className="input-wrapper">
+              <div className="input-wrapper" style={{ position: 'relative' }}>
                 <Form.Control
-                  type="password"
-                  placeholder="أعد إدخال كلمة السر"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="أعد إدخال كلمة المرور"
                   value={confirmPassword}
-                  className="custom-placeholder"
-                  dir="rtl"
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
+                  style={{ paddingLeft: 40, paddingRight: 40 }}
                 />
-                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
+                <img
+                  src={AppearPassIcon}
+                  alt="show/hide password"
+                  style={{
+                    position: "absolute",
+                    left: 10,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                    width: 24,
+                    height: 24,
+                  }}
+                  onClick={() => setShowConfirmPassword(prev => !prev)}
+                />
               </div>
             </Form.Group>
-{message && (
-  <div className="custom-alert success">
-    <span className="alert-icon">✅</span>
-    <span className="alert-text">{message}</span>
-  </div>
-)}
 
-{error && (
-  <div className="custom-alert error">
-    <span className="alert-icon">❌</span>
-    <span className="alert-text">{error}</span>
-  </div>
-)}
+            {message && (
+              <div className="custom-alert success">
+                <span className="alert-icon">✅</span>
+                <span className="alert-text">{message}</span>
+              </div>
+            )}
 
+            {error && (
+              <div className="custom-alert error">
+                <span className="alert-icon">❌</span>
+                <span className="alert-text">{error}</span>
+              </div>
+            )}
 
             <Button type="submit" variant="primary" className="w-100 submit-btn">
               حفظ وتسجيل الدخول

@@ -149,14 +149,15 @@ letter-spacing: 0%;
 text-align: center;
 color:#374151 ;
 border: none;
-margin-left: 20px;
+margin-left: 100px;
+margin-top: 5px;
 
 }
 
 
 
 .cancel {
-  width: 100px !important;
+  width: 150px !important;
   height: 48px !important;
   border-radius: 12px !important;
   background: #E5E7EB;
@@ -164,6 +165,9 @@ margin-left: 20px;
   font-family: Cairo;
   font-size: 16px;
   border: none;
+  text-decoration: none;
+  padding: 15px;
+
 }
 
 .buttons-row {

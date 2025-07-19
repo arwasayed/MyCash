@@ -53,7 +53,7 @@ const Login = () => {
           navigate("/home");
         } else {          
           window.dispatchEvent(new Event("authChange"));
-          navigate("/challenge");
+          navigate("/managechallenge");
         }
       } else {
         setError(data.message);

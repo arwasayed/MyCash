@@ -193,7 +193,6 @@ export default function PlaneBudget() {
 
   const handleSave = async () => {
     if (!hasChanges) {
-      alert('لا يوجد تغييرات لحفظها');
       return;
     }
     
@@ -259,13 +258,9 @@ export default function PlaneBudget() {
       
       // Show appropriate success message
       if (savedIncome && savedExpenses) {
-        alert('تم حفظ الدخل والمصروفات بنجاح!');
       } else if (savedIncome) {
-        alert('تم حفظ الدخل بنجاح!');
       } else if (savedExpenses) {
-        alert('تم حفظ المصروفات بنجاح!');
       } else {
-        alert('لا يوجد تغييرات جديدة لحفظها');
       }
       
       // Refresh data

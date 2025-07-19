@@ -29,6 +29,8 @@ import ChangePassword from "./components/ChangePassword/ChangePassword.jsx";
 //Admin
 import ChallengesPage from "./components/Admin/ChallengesPage.jsx";
 import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badge.jsx";
+import  ManageChallenge from "./components/Admin/ManageChallenge/ManageChallenge.jsx"
+import AdminAccount from "./components/Admin/Account/Account.jsx";
 
 import { Routes, Route,useLocation } from "react-router-dom";
 import "./App.css";
@@ -79,9 +81,13 @@ function App() {
 
 
 
+
 {/* Admin */}
 <Route path="/challenge" element={<ChallengesPage/>}/>
 {/* <Route path="/task" element={<ChallengesSection/>}/> */}
+
+<Route path="/managechallenge" element={<ManageChallenge/>}/>
+<Route path="/admin-account" element ={<AdminAccount/>}/>
           {/* Admin */}
           <Route path="/challenge" element={<ChallengesPage />} />
           {/* <Route path="/task" element={<ChallengesSection/>}/> */}

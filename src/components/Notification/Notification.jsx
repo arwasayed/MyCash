@@ -94,11 +94,9 @@ const Notification = () => {
             }))
           );
         } else {
-          alert("حدث خطأ أثناء جلب الإشعارات");
         }
       } catch (err) {
         console.error("خطأ في جلب الإشعارات:", err);
-        alert("حدث خطأ في الاتصال بالخادم");
       } finally {
         setLoading(false);
       }
