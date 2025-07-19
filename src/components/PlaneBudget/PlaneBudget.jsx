@@ -307,7 +307,7 @@ export default function PlaneBudget() {
           أدخل خطتك المالية
         </div>
         <div className="plane-budget-input-group">
-          <label>💰 دخلك الشهري</label>
+          <label>💰 مكسب جديد</label>
           <input
             type="number"
             placeholder="ادخل دخلك الشهري"

@@ -230,7 +230,7 @@ const Home = () => {
               <div className="stat-icon-bg income">
                 <img
                   src="/Home/icons/allincome.svg"
-                  alt="الدخل الكلي"
+                  alt="فلوسي"
                   className="stat-icon"
                 />
               </div>
@@ -239,7 +239,7 @@ const Home = () => {
               </div>
             </div>
             <div className="stat-label" style={{ textAlign: "right" }}>
-              الدخل الكلي
+              فلوسي
             </div>
             <div className="stat-progress">
               <div className="stat-progress-bar income"></div>
