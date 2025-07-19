@@ -32,10 +32,21 @@ import ChallengesSection from "./components/Admin/Challenge-badge/Challenge-badg
 import  ManageChallenge from "./components/Admin/ManageChallenge/ManageChallenge.jsx"
 import AdminAccount from "./components/Admin/Account/Account.jsx";
 
-import { Routes, Route,useLocation } from "react-router-dom";
+import { Routes, Route,useLocation ,Navigate } from "react-router-dom";
 import "./App.css";
 
 function App() {
+  const ProtectedRoute = ({ children }) => {
+    const isAuthenticated = !!localStorage.getItem("token");
+    const location = useLocation();
+  
+    if (!isAuthenticated) {
+      // Redirect to login, preserving the intended location
+      return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+    
+    return children;
+  };
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
   const isregisterPage = location.pathname === "/register";  
@@ -47,7 +58,10 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register2 />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/ForgetPassword" element={<ForgotPassword />} />
 
@@ -61,18 +75,27 @@ function App() {
 
           <Route path="/EmailConfirm1" element={<EmailConfirm1 />} />
           <Route path="/subscription" element={<Subscription />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/notification" element={<Notification />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/planebudget" element={<PlaneBudget />} />
-          <Route path="/rename" element={<Rename />} />
-          <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/goals" element={<Goals />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/changePass" element={<ChangePassword />} />
+          <Route path="/account" element={
+            <ProtectedRoute>
+              <Account />
+            </ProtectedRoute>} />
+          <Route path="/notification" element={
+            <ProtectedRoute>
+              <Notification />
+            </ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+          <Route path="/planebudget" element={<ProtectedRoute><PlaneBudget /></ProtectedRoute>} />
+          <Route path="/rename" element={<ProtectedRoute><Rename /></ProtectedRoute>} />
+          <Route path="/chatbot" element={<ProtectedRoute><Chatbot /></ProtectedRoute>} />
+          <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+          <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
+          <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
+          <Route path="/chatbot" element={<ProtectedRoute><Chatbot /></ProtectedRoute>} />
+          <Route path="/payment" element={
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>} />
+          <Route path="/changePass" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
 
 <Route path="/chatbot" element={<Chatbot/>}/>
 <Route path="/payment" element={<Payment/>}/>
@@ -83,11 +106,11 @@ function App() {
 
 
 {/* Admin */}
-<Route path="/challenge" element={<ChallengesPage/>}/>
+<Route path="/challenge" element={<ProtectedRoute><ChallengesPage/></ProtectedRoute>}/>
 {/* <Route path="/task" element={<ChallengesSection/>}/> */}
 
-<Route path="/managechallenge" element={<ManageChallenge/>}/>
-<Route path="/admin-account" element ={<AdminAccount/>}/>
+<Route path="/managechallenge" element={<ProtectedRoute><ManageChallenge/></ProtectedRoute>}/>
+<Route path="/admin-account" element ={<ProtectedRoute><AdminAccount/></ProtectedRoute>}/>
           {/* Admin */}
           <Route path="/challenge" element={<ChallengesPage />} />
           {/* <Route path="/task" element={<ChallengesSection/>}/> */}

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './Chatbot.css';
 import { Container, Row, Col, Image, Button, Card, ProgressBar, Form, Alert } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Chatbot = () => {
+  const navigate =useNavigate()
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,15 @@ const userId = JSON.parse(localStorage.getItem('user'))?.id;
 
   useEffect(() => {
 
-
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/chatbot",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
       const fetchUser = async () => {
           try {
             const res = await axios.get('http://localhost:3000/api/user/settings/me', {
@@ -68,7 +78,7 @@ const userId = JSON.parse(localStorage.getItem('user'))?.id;
     };
 
     fetchChatHistory();
-  }, []);
+  }, [navigate]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();

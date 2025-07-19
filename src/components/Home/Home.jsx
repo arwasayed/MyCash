@@ -12,9 +12,10 @@ import {
 } from "recharts";
 import "./Home.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const arabicMonthOrder = [
     "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
     "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
@@ -55,6 +56,14 @@ const Home = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/home",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
 
     const fetchStats = async () => {
       try {
@@ -112,7 +121,7 @@ const Home = () => {
 
     fetchStats();
     fetchTasks();
-  }, []);
+  }, [navigate]);
 
   const completeTask = async (taskKey) => {
     const token = localStorage.getItem("token");

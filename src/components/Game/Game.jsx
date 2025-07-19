@@ -14,7 +14,9 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Game.css";
 import ChallengeCard from "../ChallengeCard/ChallengeCard";
+import { useNavigate } from "react-router-dom";
 const DashboardPage = () => {
+  const navigate=useNavigate();
   const [challenges, setChallenges] = useState({
     activeChallenges: [],
     personalizedChallenges: [],
@@ -50,9 +52,18 @@ const DashboardPage = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/game",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
     fetchChallenges();
     fetchBadges();
-  }, []);
+  }, [navigate]);
 
   const handleChallengeClick = async (challengeId) => {
     try {

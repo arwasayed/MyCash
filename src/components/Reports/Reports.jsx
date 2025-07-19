@@ -31,6 +31,7 @@ import {
 } from "recharts";
 import DownloadPdfIcon from "./DownloadPdfIcon";
 import DownloadExcelIcon from "./DownloadExcelIcon";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
   ArcElement,
@@ -45,6 +46,7 @@ ChartJS.register(
 );
 
 const Reports = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [financialData, setFinancialData] = useState(null);
   const [filter, setFilter] = useState({
@@ -84,8 +86,17 @@ const Reports = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/reports",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
     fetchFinancialData();
-  }, [filter]);
+  }, [filter,navigate]);
 
   // Prepare chart data from backend response
   const prepareChartData = () => {
