@@ -55,16 +55,6 @@ const Home = () => {
 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login", {
-        state: { 
-          from: "/home",
-          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
-        }
-      });
-    }
-
     const fetchStats = async () => {
       try {
         const [goalsRes, summaryRes, expensesRes, profileRes] = await Promise.all([ 
@@ -108,7 +98,18 @@ const Home = () => {
       } catch (err) {
         console.error("Error fetching stats:", err);
       }
-    };
+    };  
+    fetchStats();
+    const interval = setInterval(fetchStats, 1000);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/home",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
 
     const fetchTasks = async () => {
       try {
@@ -118,8 +119,6 @@ const Home = () => {
         console.error("Error fetching daily tasks:", err);
       }
     };
-
-    fetchStats();
     fetchTasks();
   }, [navigate]);
 
