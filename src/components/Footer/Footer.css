@@ -55,6 +55,7 @@
   font-size: 1rem;
   font-family: 'Cairo', sans-serif;
   transition: color 0.3s ease;
+  cursor: pointer;
 }
 
 .footer-link:hover {

@@ -40,17 +40,23 @@ const LandingPage = () => {
       />
     </span>
   </Link>
-              <button className="btn-secondary">
-                شاهد كيف يعمل
-                <span className="watchnow-icon" style={{ marginRight: 8 }}>
-                  <img
-                    src="/public/Landing-Page/landing-icons/WatchNow.svg"
-                    alt="شاهد كيف يعمل"
-                    width={15}
-                    height={19}
-                  />
-                </span>
-              </button>
+              <a
+  href="https://drive.google.com/file/d/10_g3gmz_tFbQULpHxaYQE4aHFPmnn2oC/view?usp=drive_link"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="btn-secondary"
+  style={{ textDecoration: "none" }}
+>
+  شاهد كيف يعمل
+  <span className="watchnow-icon" style={{ marginRight: 8 }}>
+    <img
+      src="/Landing-Page/landing-icons/WatchNow.svg"
+      alt="شاهد كيف يعمل"
+      width={15}
+      height={19}
+    />
+  </span>
+</a>
             </div>
           </div>
           <div className="hero-image">
