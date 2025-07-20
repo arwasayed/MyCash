@@ -63,7 +63,7 @@ exports.updateSavingGoal = catchAsync(async (req, res, next) => {
       amount: addedAmount,
       balance_after: balanceInfo.current_balance - addedAmount ,
       category: 'Saving',
-      description: `Saving towards goal: ${goal.title}`,
+      description: `Saving towards goal: ${goal._id}`,
       date: new Date()
     });
   }else{
@@ -77,6 +77,19 @@ exports.updateSavingGoal = catchAsync(async (req, res, next) => {
           description: "From Goals",
           balance_after: balanceInfo.new_balance,
         });
+
+        const existingExpense = await Expense.findOne({
+          user_id: userId,
+          category: "Saving",
+          description: `Saving towards goal: ${goal._id}`,
+          amount: { $gte: amount },
+        });      
+        
+        if (existingExpense) {
+          existingExpense.amount -= amount;
+          existingExpense.updated_at = new Date();
+          await existingExpense.save();
+        }
   }
 
   goal.currentAmount = newAmount;
