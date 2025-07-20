@@ -32,6 +32,15 @@ const Payment = () => {
     
   
     useEffect(() => {
+      const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/payment",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
       const createPaymentIntent = async () => {
         try {
           const token = localStorage.getItem("token");
@@ -56,7 +65,7 @@ const Payment = () => {
       };
   
       createPaymentIntent();
-    }, [amount, planType]);
+    }, [amount, planType,navigate]);
   
     const handlePayment = async () => {
       setLoading(true);

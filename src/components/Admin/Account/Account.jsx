@@ -109,6 +109,15 @@ const AdminAccount = () => {
 
 
   useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login", {
+            state: { 
+              from: "/admin-account",
+              message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+            }
+          });
+        }
     const fetchUserData = async () => {
       try {
         setLoading(true);
@@ -141,7 +150,7 @@ const AdminAccount = () => {
     ];
     const today = new Date();
     setMonthYearString(`${monthNames[today.getMonth()]} ${today.getFullYear()}`);
-  }, []);
+  }, [navigate]);
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];

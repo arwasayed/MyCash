@@ -9,6 +9,7 @@ import {
   Card,
   Spinner,
 } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const getIcon = (type) => {
   switch (type) {
@@ -48,12 +49,22 @@ const typeTextMap = {
 };
 
 const Notification = () => {
+  const navigate = useNavigate();
   const [allNotifications, setAllNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState("all");
   const [visibleCount, setVisibleCount] = useState(5);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/notification",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
     const fetchNotifications = async () => {
       setLoading(true);
       const token = localStorage.getItem("token");
@@ -105,7 +116,7 @@ const Notification = () => {
     
 
     fetchNotifications();
-  }, []);
+  }, [navigate]);
 
   const filteredNotifications =
     filterType === "all"

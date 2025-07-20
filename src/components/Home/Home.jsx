@@ -12,9 +12,10 @@ import {
 } from "recharts";
 import "./Home.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const arabicMonthOrder = [
     "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
     "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
@@ -54,8 +55,6 @@ const Home = () => {
 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
     const fetchStats = async () => {
       try {
         const [goalsRes, summaryRes, expensesRes, profileRes] = await Promise.all([ 
@@ -99,7 +98,18 @@ const Home = () => {
       } catch (err) {
         console.error("Error fetching stats:", err);
       }
-    };
+    };  
+    fetchStats();
+    const interval = setInterval(fetchStats, 1000);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/home",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
 
     const fetchTasks = async () => {
       try {
@@ -109,10 +119,8 @@ const Home = () => {
         console.error("Error fetching daily tasks:", err);
       }
     };
-
-    fetchStats();
     fetchTasks();
-  }, []);
+  }, [navigate]);
 
   const completeTask = async (taskKey) => {
     const token = localStorage.getItem("token");
@@ -222,7 +230,7 @@ const Home = () => {
               <div className="stat-icon-bg income">
                 <img
                   src="/Home/icons/allincome.svg"
-                  alt="الدخل الكلي"
+                  alt="فلوسي"
                   className="stat-icon"
                 />
               </div>
@@ -231,7 +239,7 @@ const Home = () => {
               </div>
             </div>
             <div className="stat-label" style={{ textAlign: "right" }}>
-              الدخل الكلي
+              فلوسي
             </div>
             <div className="stat-progress">
               <div className="stat-progress-bar income"></div>

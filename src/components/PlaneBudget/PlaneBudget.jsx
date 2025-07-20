@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./PlaneBudget.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function PlaneBudget() {
+  const navigate = useNavigate();
   const [income, setIncome] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [newCategory, setNewCategory] = useState("الصنع");
@@ -27,12 +29,21 @@ export default function PlaneBudget() {
 
   // Check for overspending
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/planebudget",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
     if (income && totalExpenses > Number(income)) {
       setShowOverspendingAlert(true);
     } else {
       setShowOverspendingAlert(false);
     }
-  }, [income, totalExpenses]);
+  }, [income, totalExpenses,navigate]);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -42,7 +53,7 @@ export default function PlaneBudget() {
     if (loggedInUserId) {
       fetchFinancialData(loggedInUserId);
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     // Check if there are changes compared to initial data
@@ -293,7 +304,7 @@ export default function PlaneBudget() {
           أدخل خطتك المالية
         </div>
         <div className="plane-budget-input-group">
-          <label>💰 دخلك الشهري</label>
+          <label>💰 مكسب جديد</label>
           <input
             type="number"
             placeholder="ادخل دخلك الشهري"

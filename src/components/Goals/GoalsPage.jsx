@@ -67,6 +67,15 @@ const GoalsPage = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/goals",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
     axios
       .get("/api/saving-goals", { headers: { Authorization: token } })
       .then((res) => {
@@ -88,7 +97,7 @@ const GoalsPage = () => {
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

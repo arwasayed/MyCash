@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Image, InputGroup, Button, Form } from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import { Link ,useNavigate } from "react-router-dom";
 import axios from 'axios';
 import './Rename.css';
 
 const Rename = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [newName, setNewName] = useState('');
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", {
+        state: { 
+          from: "/rename",
+          message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+        }
+      });
+    }
     const fetchUser = async () => {
       try {
         const res = await axios.get('/api/user/settings/me', {
@@ -22,7 +32,7 @@ const Rename = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [navigate]);
 
   const handleSave = async () => {
     try {

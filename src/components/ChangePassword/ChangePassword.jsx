@@ -3,6 +3,8 @@ import { Container, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 
 
+import { useEffect } from 'react';
+
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -54,6 +56,19 @@ const ChangePassword = () => {
       setError('فشل الاتصال بالسيرفر. حاول لاحقًا.');
     }
   };
+
+  useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login", {
+          state: { 
+            from: "/reports",
+            message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+          }
+        });
+      }
+      
+    }, [navigate]);
 
   const togglePasswordVisibility = (field) => {
     if (field === 'current') {

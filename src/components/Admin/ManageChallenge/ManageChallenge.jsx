@@ -6,12 +6,13 @@ import DeleteConfirmModal from "../Delete/Delete";
 import AddBadgeModel from "../AddBadge/AddBadge";
 import UpdateBadgeModel from "../UpdateBadge/UpdateBadge";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const svgIcon = (name) => `/Admin UI/${name}`;
 
 
 // ChallengeCard component
 function ChallengeCard({ challenge, onDelete , onUpdate}) {
+  const navigate=useNavigate();
   console.log("ChallengeCard props.challenge:", challenge);
 
 
@@ -29,6 +30,17 @@ function ChallengeCard({ challenge, onDelete , onUpdate}) {
     setDeleteTarget(null);
   };
 
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login", {
+          state: { 
+            from: "/managechallenge",
+            message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
+          }
+        });
+      }
+    }, [navigate]);
   
 
   const handleDeleteConfirm = async () => {

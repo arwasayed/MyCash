@@ -141,7 +141,7 @@ useEffect(() => {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/game">
-                    التحديات والشارات
+                    التحديات
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -303,7 +303,7 @@ useEffect(() => {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/game">
-                    التحديات والشارات
+                    التحديات 
                   </Link>
                 </li>
                 <li className="nav-item">

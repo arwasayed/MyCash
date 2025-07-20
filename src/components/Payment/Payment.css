@@ -185,7 +185,7 @@ letter-spacing: 0%;
 }
 
 .confirm-button {
-  background-color: #6c5dd3;
+  background-color: #6c5dd3 !important;
   border: none;
   width: 100%;
   padding: 12px;
