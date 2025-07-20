@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-import { Link, useNavigate } from "react-router-dom";
-
-
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -11,10 +8,8 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +25,7 @@ const ChangePassword = () => {
       const token = localStorage.getItem('token');
 
       const response = await fetch('/api/user/settings/change-password', {
-        method: 'POST',
+        method: 'POST', 
         headers: {
           'Content-Type': 'application/json',
           Authorization: ` ${token}`
@@ -45,38 +40,19 @@ const ChangePassword = () => {
 
       if (response.ok && data.status === 'success') {
         setMessage('تم تحديث كلمة المرور بنجاح! سيتم توجيهك إلى صفحة الحساب.');
-        setTimeout(() => {
-          navigate('/account');
-        }, 2000);
-      } else {
-        setError(data.message || 'حدث خطأ أثناء تحديث كلمة المرور');
-      }
+       setTimeout(() => {
+    if (user?.role === 'admin') {
+      navigate('/admin-account');
+    } else {
+      navigate('/account');
+    }
+  }, 2000);
+} else {
+  setError(data.message || 'حدث خطأ أثناء تحديث كلمة المرور');
+}
     } catch (err) {
       console.log('Error Response:', err);
       setError('فشل الاتصال بالسيرفر. حاول لاحقًا.');
-    }
-  };
-
-  useEffect(() => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/login", {
-          state: { 
-            from: "/reports",
-            message: "يجب تسجيل الدخول أولاً للوصول لصفحة الدفع" 
-          }
-        });
-      }
-      
-    }, [navigate]);
-
-  const togglePasswordVisibility = (field) => {
-    if (field === 'current') {
-      setShowCurrentPassword(!showCurrentPassword);
-    } else if (field === 'new') {
-      setShowNewPassword(!showNewPassword);
-    } else if (field === 'confirm') {
-      setShowConfirmPassword(!showConfirmPassword);
     }
   };
 
@@ -92,9 +68,9 @@ const ChangePassword = () => {
           <Form onSubmit={handleSubmit} className="resetpass">
             <Form.Group className="mb-3">
               <Form.Label>🔑 كلمة المرور الحالية</Form.Label>
-              <div className="input-wrapper position-relative">
+              <div className="input-wrapper">
                 <Form.Control
-                  type={showCurrentPassword ? 'text' : 'password'}
+                  type="password"
                   placeholder="ادخل كلمة المرور الحالية"
                   value={currentPassword}
                   className="custom-placeholder"
@@ -102,21 +78,15 @@ const ChangePassword = () => {
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   required
                 />
-                <img
-                  src="/images/Frame (5).svg"
-                  alt="eye icon"
-                  className="input-icon position-absolute"
-                  style={{ cursor: 'pointer', top: '50%', transform: 'translateY(-50%)', left: '10px' }}
-                  onClick={() => togglePasswordVisibility('current')}
-                />
+                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
               </div>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>🔑 كلمة السر الجديدة</Form.Label>
-              <div className="input-wrapper position-relative">
+              <div className="input-wrapper">
                 <Form.Control
-                  type={showNewPassword ? 'text' : 'password'}
+                  type="password"
                   placeholder="أدخل كلمة السر الجديدة"
                   value={newPassword}
                   className="custom-placeholder"
@@ -124,21 +94,15 @@ const ChangePassword = () => {
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                 />
-                <img
-                  src="/images/Frame (5).svg"
-                  alt="eye icon"
-                  className="input-icon position-absolute"
-                  style={{ cursor: 'pointer', top: '50%', transform: 'translateY(-50%)', left: '10px' }}
-                  onClick={() => togglePasswordVisibility('new')}
-                />
+                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
               </div>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>🔑 تأكيد كلمة السر</Form.Label>
-              <div className="input-wrapper position-relative">
+              <div className="input-wrapper">
                 <Form.Control
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type="password"
                   placeholder="أعد إدخال كلمة السر"
                   value={confirmPassword}
                   className="custom-placeholder"
@@ -146,13 +110,7 @@ const ChangePassword = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-                <img
-                  src="/images/Frame (5).svg"
-                  alt="eye icon"
-                  className="input-icon position-absolute"
-                  style={{ cursor: 'pointer', top: '50%', transform: 'translateY(-50%)', left: '10px' }}
-                  onClick={() => togglePasswordVisibility('confirm')}
-                />
+                <img src="/images/Frame (5).svg" alt="eye icon" className="input-icon" />
               </div>
             </Form.Group>
 
@@ -169,9 +127,9 @@ const ChangePassword = () => {
               </div>
             )}
 
-            <Link  variant="primary" className="w-100 submit-btn"   to={user.role === 'admin' ? '/admin-account' : '/account'}> 
+            <Button type="submit" variant="primary" className="w-100 submit-btn">
               حفظ وتسجيل الدخول
-            </Link>
+            </Button>
           </Form>
         </div>
       </div>
