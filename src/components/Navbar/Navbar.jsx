@@ -3,6 +3,10 @@ import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Badge, Image, Form, Button, ProgressBar } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
+import { BsGear, BsBell } from "react-icons/bs";
+
+
+
 import axios from "axios";
 
 const Navbar = () => {
@@ -105,7 +109,7 @@ useEffect(() => {
         >
           <div className="d-flex">
             <Link
-              to={isAuthenticated ? "/home" : "/"}
+               to={user.role === 'admin' ? '/managechallenge' : '/home'}
               className="navbar-brand fw-bold"
               style={{
                 color: "#6c5dd3",
@@ -195,16 +199,26 @@ useEffect(() => {
                   <FaUserCircle size={60} style={{ color: '#6c5dd3' }} />
                 )}
                 <span className="icon-notification" title="الإشعارات">
-                  <Link className="nav-link" to="/notification">
-                    🔔
-                  </Link>
+                  <Link className="nav-link"   to={user.role === 'admin' ? '/managechallenge' : '/notification'} >
+      {user.role === "admin" ? (
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <path d="M8 2L12 8L16 2H8Z" fill="#2980b9" />
+          <circle cx="12" cy="15" r="6" fill="#f1c40f" />
+          <text x="12" y="18" textAnchor="middle" fontSize="6" fill="#fff" fontWeight="bold">1</text>
+        </svg>
+      ) : (
+        <BsBell size={24} color="#6c757d" />
+      )}
+    </Link>
                 </span>
                 <span className="icon-settings" title="الإعدادات">
                   <Link
                     className="nav-link"
                     to={user.role === 'admin' ? '/admin-account' : '/account'}
                   >
-                    ⚙️
+<BsGear size={24} color="#6c757d" style={{fill:"#6c757d"}} />
+
+   
                   </Link>
                 </span>
                 <button
@@ -220,14 +234,14 @@ useEffect(() => {
         </div>
       </nav>
 
-      {/* شريط التنقل للجوال */}
+      {/* Mobile*/}
       <nav
         className="navbar bg-white shadow-sm fixed-top d-flex d-lg-none"
         dir="ltr"
       >
         <div className="container d-flex align-items-center justify-content-between">
           <Link
-            to={isAuthenticated ? "/home" : "/"}
+             to={user.role === 'admin' ? '/managechallenge' : '/home'}
             className="navbar-brand fw-bold"
             style={{
               color: "#6c5dd3",

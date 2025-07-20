@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -153,9 +154,9 @@ const ChangePassword = () => {
               </div>
             )}
 
-            <Button type="submit" variant="primary" className="w-100 submit-btn">
+            <Link  variant="primary" className="w-100 submit-btn"   to={user.role === 'admin' ? '/admin-account' : '/account'}> 
               حفظ وتسجيل الدخول
-            </Button>
+            </Link>
           </Form>
         </div>
       </div>

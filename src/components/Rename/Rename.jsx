@@ -94,7 +94,7 @@ const Rename = () => {
 
           <div className="d-flex gap-2 mt-3 mb-3 buttons-row">
             <Button className="save-name" onClick={handleSave}>💾 حفظ التعديل</Button>
-            <Link className="cancel " to="/account">إلغاء</Link>
+            <Link className="cancel "  to={user.role === 'admin' ? '/admin-account' : '/account'}>إلغاء</Link>
           </div>
         </Form>
       </div>

@@ -196,10 +196,7 @@ export default function PlaneBudget() {
       return;
     }
     
-    if (showOverspendingAlert) {
-      const confirmSave = window.confirm("المصروفات اكتر من دخلك! هل تريد الاستمرار في الحفظ؟");
-      if (!confirmSave) return;
-    }
+   
     
     setIsLoading(true);
     setError(null);

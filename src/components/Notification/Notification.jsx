@@ -102,6 +102,8 @@ const Notification = () => {
       }
     };
 
+    
+
     fetchNotifications();
   }, []);
 
